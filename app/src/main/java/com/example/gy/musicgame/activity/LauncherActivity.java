@@ -2,6 +2,7 @@ package com.example.gy.musicgame.activity;
 
 import android.content.Intent;
 import android.os.Handler;
+
 import com.example.gy.musicgame.R;
 
 public class LauncherActivity extends BaseActivity {
@@ -30,7 +31,7 @@ public class LauncherActivity extends BaseActivity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                Intent intent = new Intent(mActivity, MainActivity.class);
+                Intent intent = new Intent(mActivity, SplashActivity.class);
                 startActivity(intent);
                 finish();
             }

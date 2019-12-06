@@ -17,6 +17,7 @@ public class Constants {
     public static final String METHOD_DOWNLOAD = "baidu.ting.song.downWeb";
     public static final String METHOD_SINGER = "baidu.ting.artist.getInfo";
     public static final String METHOD_SINGER_LIST = "baidu.ting.artist.getSongList";
+    public static final String SPLASH_URL = "http://cn.bing.com/";
 
     public static final String PLAY = "play";
 

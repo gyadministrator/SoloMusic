@@ -1,8 +1,14 @@
 package com.example.gy.musicgame.helper;
+
+import android.text.TextUtils;
+
 import com.example.gy.musicgame.api.Api;
 import com.example.gy.musicgame.constant.Constants;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.IOException;
+import java.net.Proxy;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -29,9 +35,9 @@ public class RetrofitHelper {
     private Map<String, Object> mParams = new HashMap<>();
     private List<Integer> types = new ArrayList<>();
     private List<String> titles = new ArrayList<>();
+    private static String mBaseUrl;
 
     private RetrofitHelper() {
-        initOKHttp();
         initParams();
         initTypes();
         initTitles();
@@ -105,14 +111,20 @@ public class RetrofitHelper {
         return instance;
     }
 
-    public Api initRetrofit() {
+    public Api initRetrofit(String baseUrl) {
+        mBaseUrl = baseUrl;
+        initOKHttp();
         Retrofit retrofit = new Retrofit.Builder()
                 .client(mOkHttpClient)
-                .baseUrl(Constants.BASE_URL)
+                .baseUrl(mBaseUrl)
                 .addConverterFactory(GsonConverterFactory.create())
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .build();
         return retrofit.create(Api.class);
+    }
+
+    public void destroy() {
+        instance = null;
     }
 
     /**
@@ -122,22 +134,26 @@ public class RetrofitHelper {
      */
     private void initOKHttp() {
         if (mOkHttpClient == null) {
-            mOkHttpClient = new OkHttpClient.Builder()
+            OkHttpClient.Builder builder = new OkHttpClient.Builder()
                     .connectTimeout(TIMEOUT, TimeUnit.SECONDS)//设置连接超时时间
                     .readTimeout(TIMEOUT, TimeUnit.SECONDS)//设置读取超时时间
-                    .writeTimeout(TIMEOUT, TimeUnit.SECONDS)//设置写入超时时间
-                    .addInterceptor(new Interceptor() {
-                        @Override
-                        public Response intercept(Chain chain) throws IOException {
-                            Request request = chain.request().newBuilder()
-                                    .removeHeader("User-Agent")
-                                    .addHeader("User-Agent", "Mozilla/5.0 (" +
-                                            "                        Windows; U; Windows NT 5.1; en-US; rv:0.9.4" +
-                                            "                    )").build();
-                            return chain.proceed(request);
-                        }
-                    })
-                    .build();
+                    .writeTimeout(TIMEOUT, TimeUnit.SECONDS);//设置写入超时时间
+            builder.proxy(Proxy.NO_PROXY);
+            if (mBaseUrl.equals(Constants.BASE_URL)) {
+                builder.addInterceptor(new Interceptor() {
+                    @NotNull
+                    @Override
+                    public Response intercept(@NotNull Chain chain) throws IOException {
+                        Request request = chain.request().newBuilder()
+                                .removeHeader("User-Agent")
+                                .addHeader("User-Agent", "Mozilla/5.0 (" +
+                                        "                        Windows; U; Windows NT 5.1; en-US; rv:0.9.4" +
+                                        "                    )").build();
+                        return chain.proceed(request);
+                    }
+                });
+            }
+            mOkHttpClient = builder.build();
         }
     }
 }

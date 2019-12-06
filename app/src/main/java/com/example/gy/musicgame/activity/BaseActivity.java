@@ -12,7 +12,7 @@ import android.view.View;
 
 import androidx.annotation.IdRes;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
+
 import com.blankj.utilcode.util.ToastUtils;
 import com.example.gy.musicgame.R;
 import com.example.gy.musicgame.utils.NetWorkUtils;
@@ -21,12 +21,14 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import me.imid.swipebacklayout.lib.app.SwipeBackActivity;
+
 /**
  * Description: CustomerMusic
  * Created by gy(1984629668@qq.com)
  * Created Time on 2019/10/30 14:21
  */
-public abstract class BaseActivity extends AppCompatActivity {
+public abstract class BaseActivity extends SwipeBackActivity {
     protected Activity mActivity;
     private NetworkChangedReceiver networkChangedReceiver;
     private long start;
@@ -62,7 +64,7 @@ public abstract class BaseActivity extends AppCompatActivity {
      * @return
      */
     protected <T extends View> T fd(@IdRes int id) {
-        return findViewById(id);
+        return (T) findViewById(id);
     }
 
     //处理eventBus事件

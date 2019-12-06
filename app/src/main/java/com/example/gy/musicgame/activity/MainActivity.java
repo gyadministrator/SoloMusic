@@ -31,6 +31,7 @@ public class MainActivity extends BaseActivity {
 
     @Override
     protected void initData() {
+        setSwipeBackEnable(false);
         fragments.add(ListenFragment.newInstance());
         fragments.add(RecordFragment.newInstance());
         fragments.add(FriendFragment.newInstance());
@@ -47,8 +48,8 @@ public class MainActivity extends BaseActivity {
                 .fragmentManager(getSupportFragmentManager())
                 .build();
 
-        navigationBar.setMsgPointCount(0, 12);
-        navigationBar.setHintPoint(3, true);
+       /* navigationBar.setMsgPointCount(0, 12);
+        navigationBar.setHintPoint(3, true);*/
     }
 
     @Override

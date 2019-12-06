@@ -1,13 +1,13 @@
 package com.example.gy.musicgame.api;
 
 
-
 import com.example.gy.musicgame.model.LrcModel;
 import com.example.gy.musicgame.model.MusicModel;
 import com.example.gy.musicgame.model.PlayMusicModel;
 import com.example.gy.musicgame.model.RecommendMusicModel;
 import com.example.gy.musicgame.model.SearchMusicModel;
 import com.example.gy.musicgame.model.SingerInfoModel;
+import com.example.gy.musicgame.model.SplashModel;
 
 import java.util.Map;
 
@@ -58,9 +58,10 @@ public interface Api {
     Observable<PlayMusicModel> play(@QueryMap Map<String, Object> params);
 
     /**
-     *method=baidu.ting.song.getRecommandSongList&song_id=877578&num=5
+     * method=baidu.ting.song.getRecommandSongList&song_id=877578&num=5
      * 参数： song_id = 877578
      * num = 5//返回条目数量
+     *
      * @param params 参数
      * @return
      */
@@ -69,6 +70,7 @@ public interface Api {
 
     /**
      * method=baidu.ting.song.lry&songid=877578
+     *
      * @param params 参数
      * @return
      */
@@ -77,9 +79,19 @@ public interface Api {
 
     /**
      * method=baidu.ting.artist.getInfo&tinguid=877578
+     *
      * @param params 参数
      * @return
      */
     @GET("v1/restserver/ting")
     Observable<SingerInfoModel> getInfo(@QueryMap Map<String, Object> params);
+
+    /**
+     * 获取启动页
+     * format=js&idx=0&n=1
+     * @param params 参数
+     * @return
+     */
+    @GET("HPImageArchive.aspx")
+    Observable<SplashModel> getSplash(@QueryMap Map<String, Object> params);
 }

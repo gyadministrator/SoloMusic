@@ -1,3 +1,25 @@
 <resources>
-    <string name="app_name">SoloMusic</string>
+    <string name="app_name">爱猜歌</string>
+    <string name="recommend_music">推荐歌单</string>
+    <string name="new_music">最新音乐</string>
+    <string name="search">搜索</string>
+    <string name="tip">\n温馨提示： \n你可以搜索歌手，歌名，专辑</string>
+    <string name="bottom_tip">我也是有底的呀</string>
+    <string name="singer_info">查看歌手信息</string>
+    <string name="cancel">取消</string>
+    <string name="bottom_listen">听歌</string>
+    <string name="bottom_record">最近</string>
+    <string name="bottom_friend">歌友</string>
+    <string name="bottom_me">我的</string>
+    <string name="album">专辑</string>
+    <string name="copyright_2018">爱猜歌 ©copyright 2018</string>
+    <string name="_3s">倒计时3s</string>
+    <string name="update">检查更新</string>
+    <string name="setting">清除缓存</string>
+    <string name="about">关于</string>
+    <string name="collect">我的金币</string>
+    <string name="scan">扫一扫</string>
+    <string name="zan">赞助开发者</string>
+    <string name="logout">退出登录</string>
+    <string name="modify">修改</string>
 </resources>

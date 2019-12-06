@@ -1,6 +1,5 @@
 package com.example.gy.musicgame.presenter;
 
-import com.example.gy.musicgame.api.Api;
 import com.example.gy.musicgame.helper.RetrofitHelper;
 
 import java.util.List;
@@ -16,13 +15,11 @@ public class BasePresenter {
     protected List<String> mTitle;
     protected List<Integer> mType;
     protected Map<String, Object> mParams;
-    protected Api mApi;
 
     public BasePresenter() {
         mRetrofitHelper = RetrofitHelper.getInstance();
         mTitle = mRetrofitHelper.getTitles();
         mType = mRetrofitHelper.getTypes();
         mParams = mRetrofitHelper.getmParams();
-        mApi = mRetrofitHelper.initRetrofit();
     }
 }
