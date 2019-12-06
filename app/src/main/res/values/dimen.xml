@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="navHeight">56dp</dimen>
+    <dimen name="marginSize">16dp</dimen>
+    <dimen name="navTitleSize">22sp</dimen>
+    <dimen name="itemWidth">4dp</dimen>
+</resources>

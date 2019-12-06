@@ -1,0 +1,36 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimaryDark">@color/mainColor</item>
+    </style>
+
+    <style name="fade" parent="@android:style/Animation.Activity">
+        <item name="android:activityOpenEnterAnimation">@anim/fade_in</item>
+        <item name="android:activityOpenExitAnimation">@anim/fade_out</item>
+        <item name="android:activityCloseEnterAnimation">@anim/fade_in</item>
+        <item name="android:activityCloseExitAnimation">@anim/fade_out</item>
+    </style>
+
+    <style name="translate" parent="@android:style/Animation.Activity"> 
+               <item name="android:activityOpenEnterAnimation">@anim/slide_in_left</item>  
+               <item name="android:activityOpenExitAnimation">@anim/slide_out_right</item>  
+               <item name="android:activityCloseEnterAnimation">@anim/slide_in_right</item>  
+        <item name="android:activityCloseExitAnimation">@anim/slide_out_left</item>
+    </style>
+
+    <!--应用启动页主题-->
+    <style name="AppTheme.StartingWindowTheme" parent="AppTheme">
+        <item name="android:windowBackground">@drawable/layer_launcher</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowFullscreen">true</item>
+    </style>
+
+    <declare-styleable name="TitleView">
+        <attr name="title" format="string" />
+        <attr name="showBack" format="boolean" />
+        <attr name="showRight" format="boolean" />
+        <attr name="srcBack" format="reference" />
+        <attr name="srcRight" format="reference" />
+    </declare-styleable>
+</resources>
