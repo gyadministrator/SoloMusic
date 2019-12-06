@@ -129,7 +129,7 @@ public class SplashActivity extends BaseActivity implements View.OnClickListener
     };
 
     private void jumpActivity() {
-        Intent intent = new Intent(mActivity, MainActivity.class);
+        Intent intent = new Intent(mActivity, LoginActivity.class);
         startActivity(intent);
         finish();
     }

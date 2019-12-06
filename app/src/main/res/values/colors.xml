@@ -8,4 +8,5 @@
     <color name="normal">#707070</color>
     <color name="pressed">#d81e06</color>
     <color name="splash_top_color">#FAFAFA</color>
+    <color name="black">#000000</color>
 </resources>

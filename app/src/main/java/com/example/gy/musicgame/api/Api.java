@@ -1,6 +1,7 @@
 package com.example.gy.musicgame.api;
 
 
+import com.example.gy.musicgame.model.LoginVo;
 import com.example.gy.musicgame.model.LrcModel;
 import com.example.gy.musicgame.model.MusicModel;
 import com.example.gy.musicgame.model.PlayMusicModel;
@@ -12,7 +13,9 @@ import com.example.gy.musicgame.model.SplashModel;
 import java.util.Map;
 
 import io.reactivex.Observable;
+import retrofit2.http.Body;
 import retrofit2.http.GET;
+import retrofit2.http.POST;
 import retrofit2.http.QueryMap;
 
 /**
@@ -94,4 +97,7 @@ public interface Api {
      */
     @GET("HPImageArchive.aspx")
     Observable<SplashModel> getSplash(@QueryMap Map<String, Object> params);
+
+    @POST("auth/login")
+    Observable<Map> login(@Body LoginVo loginVo);
 }

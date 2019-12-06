@@ -23,7 +23,6 @@ public class LoadingDialogHelper {
     public static void show(Activity activity, String msg) {
         progressHUD = KProgressHUD.create(activity)
                 .setStyle(KProgressHUD.Style.SPIN_INDETERMINATE)
-                .setLabel(activity.getResources().getString(R.string.app_name))
                 .setDetailsLabel(msg)
                 .setCancellable(true)
                 .setAnimationSpeed(2)

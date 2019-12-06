@@ -22,7 +22,7 @@ import com.example.gy.musicgame.activity.MainActivity;
 import com.example.gy.musicgame.constant.Constants;
 import com.example.gy.musicgame.event.CustomEvent;
 import com.example.gy.musicgame.helper.MediaPlayerHelper;
-import com.example.gy.musicgame.model.Music;
+import com.example.gy.musicgame.model.MusicVo;
 import com.example.gy.musicgame.utils.NotificationPermissionUtil;
 import com.example.gy.musicgame.utils.NotificationUtils;
 
@@ -46,7 +46,7 @@ import java.util.Objects;
  */
 public class MusicService extends Service {
     private MediaPlayerHelper mMediaPlayerHelper;
-    private Music mMusic;
+    private MusicVo mMusic;
     private final int NOTIFICATION_ID = 1;//不可为0
     private String CHANNEL_ONE_ID = "CHANNEL_ONE_ID";
     private String CHANNEL_ONE_NAME = "CHANNEL_ONE_ID";
@@ -86,7 +86,7 @@ public class MusicService extends Service {
          * 设置音乐（MusicModel）
          */
         @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
-        public void setMusic(final Music music) {
+        public void setMusic(final MusicVo music) {
             mMusic = music;
             //startForeground();
             new Thread(new Runnable() {

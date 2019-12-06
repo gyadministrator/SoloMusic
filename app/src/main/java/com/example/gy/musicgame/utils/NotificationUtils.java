@@ -20,7 +20,7 @@ import com.example.gy.musicgame.BuildConfig;
 import com.example.gy.musicgame.R;
 import com.example.gy.musicgame.activity.MainActivity;
 import com.example.gy.musicgame.constant.Constants;
-import com.example.gy.musicgame.model.Music;
+import com.example.gy.musicgame.model.MusicVo;
 import com.example.gy.musicgame.service.MusicService;
 
 import static android.app.Notification.VISIBILITY_SECRET;
@@ -32,7 +32,7 @@ import static android.app.Notification.VISIBILITY_SECRET;
 public class NotificationUtils {
     private static NotificationManager notificationManager;
     private static RemoteViews remoteViews;
-    private static Music mMusic;
+    private static MusicVo mMusic;
     private final static String CHANNEL_ID = BuildConfig.APPLICATION_ID + ".channel";
     private final static String CHANNEL_NAME = BuildConfig.APPLICATION_ID + ".name";
 
@@ -42,7 +42,7 @@ public class NotificationUtils {
         return notificationManager;
     }
 
-    public static void setMusic(Music music) {
+    public static void setMusic(MusicVo music) {
         mMusic = music;
     }
 
@@ -53,7 +53,7 @@ public class NotificationUtils {
     }
 
     @TargetApi(Build.VERSION_CODES.O)
-    public static void sendCustomNotification(Context context, Music music, Bitmap bitmap, int image) {
+    public static void sendCustomNotification(Context context, MusicVo music, Bitmap bitmap, int image) {
         if (music == null) music = mMusic;
         Notification.Builder builder = getNotificationBuilder(context);
         remoteViews = new RemoteViews(context.getPackageName(), R.layout.back_view);
@@ -126,7 +126,7 @@ public class NotificationUtils {
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @SuppressLint("ObsoleteSdkInt")
-    public static void showNotification(Context context, Music music) {
+    public static void showNotification(Context context, MusicVo music) {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
         builder.setSmallIcon(R.mipmap.logo);
         builder.setContentTitle(music.getTitle());

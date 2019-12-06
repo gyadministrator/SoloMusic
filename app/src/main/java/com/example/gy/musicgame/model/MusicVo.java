@@ -5,7 +5,7 @@ package com.example.gy.musicgame.model;
  * Created by gy(1984629668@qq.com)
  * Created Time on 2019/11/2 22:00
  */
-public class Music {
+public class MusicVo {
     private String imageUrl;
     private String path;
     private String title;
@@ -54,7 +54,7 @@ public class Music {
 
     @Override
     public String toString() {
-        return "Music{" +
+        return "MusicVo{" +
                 "imageUrl='" + imageUrl + '\'' +
                 ", path='" + path + '\'' +
                 ", title='" + title + '\'' +
