@@ -1,6 +1,10 @@
 package com.example.gy.musicgame.utils;
 
+import android.app.Activity;
+
 import com.blankj.utilcode.util.ToastUtils;
+import com.example.gy.musicgame.activity.LoginActivity;
+import com.example.gy.musicgame.model.UserInfoVo;
 
 import java.util.Map;
 
@@ -10,8 +14,17 @@ import java.util.Map;
  * Created Time on 2019/12/6 23:55
  */
 public class HandlerUtils {
-    public static boolean isHandler(Map map) {
+    public static boolean isHandler(Map map, Activity activity) {
         if (map != null) {
+            if (map.containsKey("errno")) {
+                double code = (double) map.get("errno");
+                if (code == 501) {
+                    //登录失效
+                    ToastUtils.showShort("登录信息失效，请重新登录！");
+                    goLogin(activity);
+                    return true;
+                }
+            }
             if (!map.containsKey("data")) {
                 if (map.containsKey("errmsg")) {
                     String errmsg = (String) map.get("errmsg");
@@ -28,5 +41,14 @@ public class HandlerUtils {
             ToastUtils.showShort("数据异常");
         }
         return true;
+    }
+
+    private static void goLogin(Activity activity) {
+        String username = null;
+        UserInfoVo userInfoVo = UserManager.getUserInfoVo(activity);
+        if (userInfoVo != null) {
+            username = userInfoVo.getUserName();
+        }
+        LoginActivity.startActivity(activity, username);
     }
 }

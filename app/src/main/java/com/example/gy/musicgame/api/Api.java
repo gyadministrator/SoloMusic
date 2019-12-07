@@ -16,6 +16,7 @@ import java.util.Map;
 import io.reactivex.Observable;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
+import retrofit2.http.Header;
 import retrofit2.http.POST;
 import retrofit2.http.Query;
 import retrofit2.http.QueryMap;
@@ -127,4 +128,7 @@ public interface Api {
      */
     @GET("auth/checkMobile")
     Observable<Map> checkMobile(@Query("mobile") String mobile);
+
+    @GET("auth/info")
+    Observable<Map> userInfo(@Header("back-manager-token") String token);
 }

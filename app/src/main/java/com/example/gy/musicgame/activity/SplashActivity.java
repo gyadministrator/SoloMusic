@@ -30,6 +30,7 @@ public class SplashActivity extends BaseActivity implements View.OnClickListener
     private TextView tv_clock;
     private ImageView splash_image;
     private TextView tv_copy;
+    private ImmersionBar immersionBar;
     private static Map<String, Object> params = new HashMap<>();
 
     @Override
@@ -51,7 +52,8 @@ public class SplashActivity extends BaseActivity implements View.OnClickListener
     @Override
     protected void initData() {
         setSwipeBackEnable(false);
-        ImmersionBar.with(mActivity).statusBarDarkFont(true, 0.2f)
+        immersionBar = ImmersionBar.with(mActivity);
+        immersionBar.statusBarDarkFont(true, 0.2f)
                 .statusBarColor(R.color.transparent)
                 .navigationBarColor(R.color.splash_top_color)
                 .init();
@@ -62,6 +64,14 @@ public class SplashActivity extends BaseActivity implements View.OnClickListener
         initLogo();
         getSplash();
         countDownTimer.start();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (immersionBar!=null){
+            immersionBar.destroy();
+        }
     }
 
     private void getSplash() {

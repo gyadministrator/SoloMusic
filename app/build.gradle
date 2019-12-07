@@ -130,4 +130,8 @@ dependencies {
     // 引入multiDex库
     implementation 'com.android.support:multidex:1.0.3'
     implementation 'com.gyf.immersionbar:immersionbar:2.3.2-beta03'
+    //对话框
+    implementation 'com.github.andyxialm:ColorDialog:1.0.0'
+    implementation project(path: ':imagepicker')
+    implementation project(path: ':zxinglibrary')
 }

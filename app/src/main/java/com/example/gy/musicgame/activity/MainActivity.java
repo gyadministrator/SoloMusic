@@ -1,21 +1,17 @@
 package com.example.gy.musicgame.activity;
 
 import android.graphics.Color;
-import android.text.TextUtils;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
-import com.blankj.utilcode.util.ToastUtils;
 import com.example.gy.musicgame.R;
-import com.example.gy.musicgame.constant.Constants;
 import com.example.gy.musicgame.fragment.FriendFragment;
 import com.example.gy.musicgame.fragment.ListenFragment;
 import com.example.gy.musicgame.fragment.MeFragment;
 import com.example.gy.musicgame.fragment.RecordFragment;
-import com.example.gy.musicgame.utils.SharedPreferenceUtil;
 import com.next.easynavigation.view.EasyNavigationBar;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,7 +24,6 @@ public class MainActivity extends BaseActivity {
 
     private List<Fragment> fragments = new ArrayList<>();
     private EasyNavigationBar navigationBar;
-    private String token;
 
     @Override
     protected void initView() {
@@ -59,31 +54,21 @@ public class MainActivity extends BaseActivity {
     }
 
     @Override
-    protected void initAction() {
-        try {
-            token = (String) SharedPreferenceUtil.getObject(mActivity, Constants.CURRENT_TOKEN);
-        } catch (IOException e) {
-            e.printStackTrace();
-            ToastUtils.showShort("获取token异常");
-            goLogin();
-            return;
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-        if (TextUtils.isEmpty(token)) {
-            goLogin();
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        // 获取到Activity下的Fragment
+        List<Fragment> fragments = getSupportFragmentManager().getFragments();
+        // 查找在Fragment中onRequestPermissionsResult方法并调用
+        for (Fragment fragment : fragments) {
+            if (fragment != null) {
+                // 这里就会调用我们Fragment中的onRequestPermissionsResult方法
+                fragment.onRequestPermissionsResult(requestCode, permissions, grantResults);
+            }
         }
     }
 
-    /**
-     * 去登录
-     */
-    private void goLogin() {
-        String username = null;
-        /*if (userInfoVo != null) {
-            username = userInfoVo.getNickName();
-        }*/
-        LoginActivity.startActivity(mActivity, username);
+    @Override
+    protected void initAction() {
     }
 
     @Override

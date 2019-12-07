@@ -25,7 +25,6 @@ import com.example.gy.musicgame.helper.RetrofitHelper;
 import com.example.gy.musicgame.model.LoginVo;
 import com.example.gy.musicgame.utils.SharedPreferenceUtil;
 
-import java.io.IOException;
 import java.util.Map;
 import java.util.Objects;
 
@@ -144,22 +143,18 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
                     @Override
                     public void onNext(Map map) {
-                        boolean handler = isHandler(map);
+                        boolean handler = isHandler(map, mActivity);
                         if (!handler) {
                             Map<String, Object> data = (Map<String, Object>) map.get("data");
                             if (data != null) {
                                 if (data.containsKey("token")) {
                                     String token = (String) data.get("token");
                                     if (!TextUtils.isEmpty(token)) {
-                                        try {
-                                            SharedPreferenceUtil.saveObject(token, mActivity, Constants.CURRENT_TOKEN);
+                                        SharedPreferenceUtil<String> preferenceUtil = new SharedPreferenceUtil<>();
+                                        preferenceUtil.saveObject(token, mActivity, Constants.CURRENT_TOKEN);
 
-                                            startActivity(new Intent(mActivity, MainActivity.class));
-                                            finish();
-                                        } catch (IOException e) {
-                                            e.printStackTrace();
-                                            ToastUtils.showShort("存储token异常");
-                                        }
+                                        startActivity(new Intent(mActivity, MainActivity.class));
+                                        finish();
                                     }
                                 } else {
                                     ToastUtils.showShort("数据异常，token未获取");

@@ -1,2 +1,4 @@
 include ':app'
-rootProject.name='SoloMusic'
+include ':imagepicker'
+include ':zxinglibrary'
+rootProject.name = 'SoloMusic'

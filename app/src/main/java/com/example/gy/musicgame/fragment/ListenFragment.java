@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,13 +22,21 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.blankj.utilcode.util.ToastUtils;
 import com.cooltechworks.views.shimmer.ShimmerRecyclerView;
 import com.example.gy.musicgame.R;
+import com.example.gy.musicgame.activity.LoginActivity;
 import com.example.gy.musicgame.activity.SearchActivity;
 import com.example.gy.musicgame.adapter.MainAdapter;
 import com.example.gy.musicgame.adapter.RecyclerAdapter;
+import com.example.gy.musicgame.api.Api;
+import com.example.gy.musicgame.constant.Constants;
 import com.example.gy.musicgame.helper.LoadingDialogHelper;
+import com.example.gy.musicgame.helper.RetrofitHelper;
 import com.example.gy.musicgame.model.RecommendMusicModel;
+import com.example.gy.musicgame.model.UserInfoVo;
 import com.example.gy.musicgame.presenter.MainPresenter;
+import com.example.gy.musicgame.utils.HandlerUtils;
 import com.example.gy.musicgame.utils.NotificationPermissionUtil;
+import com.example.gy.musicgame.utils.SharedPreferenceUtil;
+import com.example.gy.musicgame.utils.UserManager;
 import com.example.gy.musicgame.view.MainView;
 import com.example.gy.musicgame.view.RecyclerDecoration;
 import com.example.gy.musicgame.view.TitleView;
@@ -35,6 +44,14 @@ import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.tencent.bugly.beta.Beta;
+
+import java.util.Map;
+
+import io.reactivex.Observable;
+import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 
 public class ListenFragment extends Fragment implements OnRefreshListener, TitleView.OnRightClickListener, MainView, MainAdapter.OnMainAdapterListener {
 
@@ -81,6 +98,71 @@ public class ListenFragment extends Fragment implements OnRefreshListener, Title
         mainAdapter = new MainAdapter(mActivity, recyclerView, mainPresenter.getTitles(), mainPresenter.getTypes());
         mainAdapter.setOnMainAdapterListener(this);
         recyclerView.setAdapter(mainAdapter);
+
+        SharedPreferenceUtil<String> preferenceUtil = new SharedPreferenceUtil<>();
+        String token = preferenceUtil.getObject(mActivity, Constants.CURRENT_TOKEN);
+        getUserInfo(token);
+        if (TextUtils.isEmpty(token)) {
+            goLogin();
+        }
+    }
+
+    private void getUserInfo(String token) {
+        RetrofitHelper retrofitHelper = RetrofitHelper.getInstance();
+        Api api = retrofitHelper.initRetrofit(Constants.SERVER_URL);
+        Observable<Map> observable = api.userInfo(token);
+        observable.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<Map>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(Map map) {
+                        boolean handler = HandlerUtils.isHandler(map, mActivity);
+                        if (!handler) {
+                            Map<String, Object> data = (Map<String, Object>) map.get("data");
+                            UserInfoVo userInfoVo = new UserInfoVo();
+                            if (data != null) {
+                                if (data.containsKey("username")) {
+                                    String username = (String) data.get("username");
+                                    userInfoVo.setUserName(username);
+                                }
+                                if (data.containsKey("avatar")) {
+                                    String avatar = (String) data.get("avatar");
+                                    userInfoVo.setAvatarUrl(avatar);
+                                }
+                                if (data.containsKey("mobile")) {
+                                    String mobile = (String) data.get("mobile");
+                                    userInfoVo.setMobile(mobile);
+                                }
+                            }
+                            UserManager.setUserInfoVo(userInfoVo, mActivity);
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        goLogin();
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    /**
+     * 去登录
+     */
+    private void goLogin() {
+        String username = null;
+        if (UserManager.getUserInfoVo(mActivity) != null) {
+            username = UserManager.getUserInfoVo(mActivity).getUserName();
+        }
+        LoginActivity.startActivity(mActivity, username);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
