@@ -14,7 +14,7 @@ public class LauncherActivity extends BaseActivity {
 
     @Override
     protected void initData() {
-
+        setSwipeBackEnable(false);
     }
 
     @Override

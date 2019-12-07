@@ -101,6 +101,7 @@ public class RetrofitHelper {
     }
 
     public static RetrofitHelper getInstance() {
+        instance = null;
         if (instance == null) {
             synchronized (RetrofitHelper.class) {
                 if (instance == null) {

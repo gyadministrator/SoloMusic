@@ -13,6 +13,7 @@ import com.example.gy.musicgame.api.Api;
 import com.example.gy.musicgame.constant.Constants;
 import com.example.gy.musicgame.helper.RetrofitHelper;
 import com.example.gy.musicgame.model.SplashModel;
+import com.gyf.barlibrary.ImmersionBar;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -49,7 +50,11 @@ public class SplashActivity extends BaseActivity implements View.OnClickListener
 
     @Override
     protected void initData() {
-
+        setSwipeBackEnable(false);
+        ImmersionBar.with(mActivity).statusBarDarkFont(true, 0.2f)
+                .statusBarColor(R.color.transparent)
+                .navigationBarColor(R.color.splash_top_color)
+                .init();
     }
 
     @Override
@@ -129,7 +134,7 @@ public class SplashActivity extends BaseActivity implements View.OnClickListener
     };
 
     private void jumpActivity() {
-        Intent intent = new Intent(mActivity, LoginActivity.class);
+        Intent intent = new Intent(mActivity, MainActivity.class);
         startActivity(intent);
         finish();
     }

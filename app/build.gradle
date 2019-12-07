@@ -1,4 +1,21 @@
 apply plugin: 'com.android.application'
+apply plugin: 'com.mob.sdk'
+
+// 在MobSDK的扩展中注册MobPush的相关信息
+MobSDK {
+    appKey "29c9b0cece51d"
+    appSecret "251072b5d3cce225be6516bfded12018"
+
+    SMSSDK {}
+
+    PaySDK {
+        info {
+            AliPay {}
+            Wechat {}
+            UnionPay {}
+        }
+    }
+}
 
 android {
     signingConfigs {
@@ -25,6 +42,7 @@ android {
             //设置支持的SO库架构
             abiFilters 'armeabi', 'armeabi-v7a' //, 'x86', 'armeabi-v7a', 'x86_64', 'arm64-v8a'
         }
+        multiDexEnabled true
     }
     buildTypes {
         release {
@@ -109,4 +127,7 @@ dependencies {
     implementation 'com.github.forvv231:EasyNavigation:1.0.3'
     //右滑返回上一页
     implementation 'me.imid.swipebacklayout.lib:library:1.1.0'
+    // 引入multiDex库
+    implementation 'com.android.support:multidex:1.0.3'
+    implementation 'com.gyf.immersionbar:immersionbar:2.3.2-beta03'
 }

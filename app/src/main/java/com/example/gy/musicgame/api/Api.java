@@ -6,6 +6,7 @@ import com.example.gy.musicgame.model.LrcModel;
 import com.example.gy.musicgame.model.MusicModel;
 import com.example.gy.musicgame.model.PlayMusicModel;
 import com.example.gy.musicgame.model.RecommendMusicModel;
+import com.example.gy.musicgame.model.RegisterVo;
 import com.example.gy.musicgame.model.SearchMusicModel;
 import com.example.gy.musicgame.model.SingerInfoModel;
 import com.example.gy.musicgame.model.SplashModel;
@@ -16,6 +17,7 @@ import io.reactivex.Observable;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
+import retrofit2.http.Query;
 import retrofit2.http.QueryMap;
 
 /**
@@ -92,12 +94,37 @@ public interface Api {
     /**
      * 获取启动页
      * format=js&idx=0&n=1
+     *
      * @param params 参数
      * @return
      */
     @GET("HPImageArchive.aspx")
     Observable<SplashModel> getSplash(@QueryMap Map<String, Object> params);
 
+    /**
+     * 用户登录
+     *
+     * @param loginVo 登录信息
+     * @return
+     */
     @POST("auth/login")
     Observable<Map> login(@Body LoginVo loginVo);
+
+    /**
+     * 用户注册
+     *
+     * @param registerVo 注册信息
+     * @return
+     */
+    @POST("auth/register")
+    Observable<Map> register(@Body RegisterVo registerVo);
+
+    /**
+     * 检测手机是否注册
+     *
+     * @param mobile 手机号
+     * @return
+     */
+    @GET("auth/checkMobile")
+    Observable<Map> checkMobile(@Query("mobile") String mobile);
 }

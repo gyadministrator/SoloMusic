@@ -9,4 +9,6 @@
     <color name="pressed">#d81e06</color>
     <color name="splash_top_color">#FAFAFA</color>
     <color name="black">#000000</color>
+    <color name="transparent">@android:color/transparent</color>
+    <color name="bottom_color">#F5B4F5</color>
 </resources>

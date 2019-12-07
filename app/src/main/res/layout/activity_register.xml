@@ -5,65 +5,58 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".activity.MobileActivity">
+    tools:context=".activity.RegisterActivity">
 
     <com.example.gy.musicgame.view.TitleView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:showRight="false"
-        app:title="@string/mobile" />
+        app:title="@string/register" />
 
     <EditText
-        android:id="@+id/et_mobile"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/btn_height"
-        android:background="@color/white"
-        android:hint="@string/mobile"
-        android:inputType="phone"
-        android:maxLength="11"
-        android:paddingStart="15dp"
-        android:paddingLeft="15dp"
-        tools:ignore="RtlSymmetry" />
-
-    <LinearLayout
+        android:id="@+id/et_user"
         android:layout_width="match_parent"
         android:layout_height="@dimen/btn_height"
         android:layout_marginTop="@dimen/btn_margin"
         android:background="@color/white"
-        android:orientation="horizontal">
+        android:hint="@string/user"
+        android:inputType="text"
+        android:paddingStart="15dp"
+        android:paddingLeft="15dp"
+        tools:ignore="RtlSymmetry" />
 
-        <EditText
-            android:id="@+id/et_code"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="@color/white"
-            android:hint="@string/code"
-            android:inputType="number"
-            android:maxLength="4"
-            android:paddingStart="15dp"
-            android:paddingLeft="15dp"
-            tools:ignore="RtlSymmetry" />
+    <EditText
+        android:id="@+id/et_password"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/btn_height"
+        android:layout_marginTop="@dimen/btn_margin"
+        android:background="@color/white"
+        android:hint="@string/password"
+        android:inputType="textPassword"
+        android:paddingStart="15dp"
+        android:paddingLeft="15dp"
+        tools:ignore="RtlSymmetry" />
 
-        <TextView
-            android:id="@+id/tv_code"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:paddingStart="30dp"
-            android:paddingEnd="30dp"
-            android:text="@string/get_code"
-            android:textColor="@color/normal" />
-    </LinearLayout>
+    <EditText
+        android:id="@+id/et_sure_password"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/btn_height"
+        android:layout_marginTop="@dimen/btn_margin"
+        android:background="@color/white"
+        android:hint="@string/sure_password"
+        android:inputType="textPassword"
+        android:paddingStart="15dp"
+        android:paddingLeft="15dp"
+        tools:ignore="RtlSymmetry" />
 
     <TextView
-        android:id="@+id/tv_next"
+        android:id="@+id/tv_register"
         android:layout_width="match_parent"
         android:layout_height="@dimen/btn_height"
         android:layout_margin="@dimen/btn_margin"
         android:background="@drawable/btn_selector"
         android:gravity="center"
-        android:text="@string/next"
+        android:text="@string/register"
         android:textColor="@color/white"
         android:textSize="@dimen/btn_size" />
 </LinearLayout>

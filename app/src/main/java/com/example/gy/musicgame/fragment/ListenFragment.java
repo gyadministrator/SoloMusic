@@ -49,6 +49,7 @@ public class ListenFragment extends Fragment implements OnRefreshListener, Title
     private ShimmerRecyclerView gridShimmerRecyclerView;
     private TitleView titleView;
     private Activity mActivity;
+    private boolean isShow = true;
 
     public static ListenFragment newInstance() {
         return new ListenFragment();
@@ -73,7 +74,7 @@ public class ListenFragment extends Fragment implements OnRefreshListener, Title
 
     private void initAction() {
         mainPresenter = new MainPresenter<MainView>(this);
-        mainPresenter.getRecommendList();
+        mainPresenter.getRecommendList(isShow);
         mShimmerRecyclerView.showShimmerAdapter();
         recyclerView.setLayoutManager(new LinearLayoutManager(mActivity));
         recyclerView.setNestedScrollingEnabled(false);
@@ -120,6 +121,7 @@ public class ListenFragment extends Fragment implements OnRefreshListener, Title
 
     @Override
     public void onRefresh(@NonNull RefreshLayout refreshLayout) {
+        isShow = false;
         initAction();
         gridShimmerRecyclerView.showShimmerAdapter();
     }
@@ -152,6 +154,7 @@ public class ListenFragment extends Fragment implements OnRefreshListener, Title
 
     @Override
     public void fail(String msg) {
+        LoadingDialogHelper.dismiss();
         gridShimmerRecyclerView.hideShimmerAdapter();
         ToastUtils.showShort(msg);
         refreshLayout.finishRefresh(false);//传入false表示刷新失败

@@ -1,5 +1,7 @@
 package com.example.gy.musicgame.activity;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Build;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
@@ -21,8 +23,9 @@ import com.example.gy.musicgame.constant.Constants;
 import com.example.gy.musicgame.helper.LoadingDialogHelper;
 import com.example.gy.musicgame.helper.RetrofitHelper;
 import com.example.gy.musicgame.model.LoginVo;
-import com.example.gy.musicgame.utils.LogUtils;
+import com.example.gy.musicgame.utils.SharedPreferenceUtil;
 
+import java.io.IOException;
 import java.util.Map;
 import java.util.Objects;
 
@@ -55,6 +58,19 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         tvLogin.setOnClickListener(this);
     }
 
+    /**
+     * 启动活动
+     *
+     * @param activity 活动
+     * @param username 用户名
+     */
+    public static void startActivity(Activity activity, String username) {
+        Intent intent = new Intent(activity, LoginActivity.class);
+        intent.putExtra("username", username);
+        activity.startActivity(intent);
+        activity.finish();
+    }
+
     private String getUser() {
         return etUser.getText().toString();
     }
@@ -65,7 +81,11 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
     @Override
     protected void initData() {
-
+        Intent intent = getIntent();
+        String username = intent.getStringExtra("username");
+        if (!TextUtils.isEmpty(username)) {
+            etUser.setText(username);
+        }
     }
 
     @Override
@@ -124,15 +144,34 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
                     @Override
                     public void onNext(Map map) {
-                        boolean isHandler = isHandler(map);
-                        if (!isHandler) {
-                            //未处理
+                        boolean handler = isHandler(map);
+                        if (!handler) {
+                            Map<String, Object> data = (Map<String, Object>) map.get("data");
+                            if (data != null) {
+                                if (data.containsKey("token")) {
+                                    String token = (String) data.get("token");
+                                    if (!TextUtils.isEmpty(token)) {
+                                        try {
+                                            SharedPreferenceUtil.saveObject(token, mActivity, Constants.CURRENT_TOKEN);
+
+                                            startActivity(new Intent(mActivity, MainActivity.class));
+                                            finish();
+                                        } catch (IOException e) {
+                                            e.printStackTrace();
+                                            ToastUtils.showShort("存储token异常");
+                                        }
+                                    }
+                                } else {
+                                    ToastUtils.showShort("数据异常，token未获取");
+                                }
+                            }
                         }
                     }
 
                     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
                     @Override
                     public void onError(Throwable e) {
+                        LoadingDialogHelper.dismiss();
                         ToastUtils.showShort(Objects.requireNonNull(e.getMessage()));
                     }
 

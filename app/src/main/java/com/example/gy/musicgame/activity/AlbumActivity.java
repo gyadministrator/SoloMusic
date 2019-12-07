@@ -70,11 +70,13 @@ public class AlbumActivity extends BaseActivity implements OnRefreshListener, On
 
     @Override
     protected void initAction() {
-        setData();
+        setData(true);
     }
 
-    private void setData() {
-        LoadingDialogHelper.show(mActivity, "加载中...");
+    private void setData(final boolean isShow) {
+        if (isShow) {
+            LoadingDialogHelper.show(mActivity, "加载中...");
+        }
         RetrofitHelper retrofitHelper = RetrofitHelper.getInstance();
         Map<String, Object> params = retrofitHelper.getmParams();
         params.put("method", Constants.METHOD_LIST);
@@ -111,6 +113,9 @@ public class AlbumActivity extends BaseActivity implements OnRefreshListener, On
                     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
                     @Override
                     public void onError(Throwable e) {
+                        if (isShow) {
+                            LoadingDialogHelper.dismiss();
+                        }
                         ToastUtils.showShort(Objects.requireNonNull(e.getMessage()));
                         if (isLoad) {
                             refreshLayout.finishLoadMore(false);//传入false表示加载失败
@@ -121,7 +126,9 @@ public class AlbumActivity extends BaseActivity implements OnRefreshListener, On
 
                     @Override
                     public void onComplete() {
-                        LoadingDialogHelper.dismiss();
+                        if (isShow) {
+                            LoadingDialogHelper.dismiss();
+                        }
                     }
                 });
     }
@@ -147,13 +154,13 @@ public class AlbumActivity extends BaseActivity implements OnRefreshListener, On
 
     @Override
     public void onRefresh(@NonNull RefreshLayout refreshLayout) {
-        initAction();
+        setData(false);
     }
 
     @Override
     public void onLoadMore(@NonNull RefreshLayout refreshLayout) {
         isLoad = true;
         ++offset;
-        initAction();
+        setData(false);
     }
 }

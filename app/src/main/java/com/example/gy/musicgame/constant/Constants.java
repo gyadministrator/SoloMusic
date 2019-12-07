@@ -18,7 +18,7 @@ public class Constants {
     public static final String METHOD_SINGER = "baidu.ting.artist.getInfo";
     public static final String METHOD_SINGER_LIST = "baidu.ting.artist.getSongList";
     public static final String SPLASH_URL = "http://cn.bing.com/";
-    public static final String SERVER_URL = "http://192.168.31.184:8002/api/front/";
+    public static final String SERVER_URL = "http://192.168.43.170:8002/api/front/";
 
     public static final String PLAY = "play";
 
@@ -29,4 +29,8 @@ public class Constants {
     public static final String BUGLY_APPID = "48f50ca656";
 
     public static final boolean isDebug = true;
+
+    public static final String CURRENT_TOKEN = "current_token";
+
+    public static final String CURRENT_USER_INFO = "current_user_info";
 }
