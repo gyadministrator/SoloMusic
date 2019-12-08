@@ -11,13 +11,17 @@ import com.example.gy.musicgame.model.SearchMusicModel;
 import com.example.gy.musicgame.model.SingerInfoModel;
 import com.example.gy.musicgame.model.SplashModel;
 
+import java.io.File;
 import java.util.Map;
 
 import io.reactivex.Observable;
+import okhttp3.MultipartBody;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
+import retrofit2.http.Multipart;
 import retrofit2.http.POST;
+import retrofit2.http.Part;
 import retrofit2.http.Query;
 import retrofit2.http.QueryMap;
 
@@ -129,9 +133,59 @@ public interface Api {
     @GET("auth/checkMobile")
     Observable<Map> checkMobile(@Query("mobile") String mobile);
 
+    /**
+     * 获取用户信息
+     *
+     * @param token token
+     * @return
+     */
     @GET("auth/info")
     Observable<Map> userInfo(@Header("back-manager-token") String token);
 
+    /**
+     * 检测版本更新
+     *
+     * @param token       token
+     * @param packageName 包名
+     * @param versionCode code
+     * @return
+     */
     @GET("apk/update")
     Observable<Map> apkUpdate(@Header("back-manager-token") String token, @Query("packageName") String packageName, @Query("versionCode") Integer versionCode);
+
+
+    /**
+     * 上传文件
+     *
+     * @param token token
+     * @param file  文件
+     * @return
+     */
+    @Multipart
+    @POST("file/upload")
+    Observable<Map> uploadFile(@Header("back-manager-token") String token, @Part MultipartBody.Part file);
+
+    /**
+     * 更换头像
+     *
+     * @param token token
+     * @param image 头像
+     * @return
+     */
+    @GET("auth/changeImage")
+    Observable<Map> changeImage(@Header("back-manager-token") String token, @Query("image") String image);
+
+    /**
+     * 修改密码
+     *
+     * @param token       token
+     * @param password    原密码
+     * @param newPassword 新密码
+     * @return
+     */
+    @GET("auth/changePassword")
+    Observable<Map> changePassword(@Header("back-manager-token") String token, @Query("password") String password, @Query("newPassword") String newPassword);
+
+    @GET("auth/forgetPassword")
+    Observable<Map> forgetPassword(@Query("mobile") String mobile, @Query("newPassword") String newPassword);
 }

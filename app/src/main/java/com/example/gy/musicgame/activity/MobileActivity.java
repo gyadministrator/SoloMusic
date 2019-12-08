@@ -118,7 +118,7 @@ public class MobileActivity extends BaseActivity implements View.OnClickListener
 
                     @Override
                     public void onNext(Map map) {
-                        boolean handler = HandlerUtils.isHandler(map,mActivity);
+                        boolean handler = HandlerUtils.isHandler(map, mActivity);
                         if (!handler) {
                             isRegister = (boolean) map.get("data");
                         }
@@ -181,6 +181,7 @@ public class MobileActivity extends BaseActivity implements View.OnClickListener
                     //忘记密码
                     if (!isRegister) {
                         countDownTimer.cancel();
+                        ForgetPasswordActivity.startActivity(mActivity, mobile);
                     }
                 }
             }

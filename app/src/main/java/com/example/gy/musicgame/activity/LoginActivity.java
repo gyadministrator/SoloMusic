@@ -47,6 +47,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     private TextView tvLogin;
     private TextView tvForget;
     private TextView tvRegister;
+    private SharedPreferenceUtil<String> preferenceUtil;
 
     @Override
     protected void initView() {
@@ -65,12 +66,10 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
      * 启动活动
      *
      * @param activity 活动
-     * @param username 用户名
      */
-    public static void startActivity(Activity activity, String username) {
+    public static void startActivity(Activity activity) {
         if (ActivityUtils.isActivityExistsInStack(LoginActivity.class)) return;
         Intent intent = new Intent(activity, LoginActivity.class);
-        intent.putExtra("username", username);
         //intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         activity.startActivity(intent);
         activity.finish();
@@ -87,8 +86,8 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     @Override
     protected void initData() {
         KeyboardHelper.getInstance().openKeyBoard(etUser, mActivity);
-        Intent intent = getIntent();
-        String username = intent.getStringExtra("username");
+        preferenceUtil = new SharedPreferenceUtil<>();
+        String username = preferenceUtil.getObject(mActivity, Constants.CURRENT_USER_NAME);
         if (!TextUtils.isEmpty(username)) {
             etUser.setText(username);
         }
@@ -144,7 +143,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         }
     }
 
-    private void login(String user, String password) {
+    private void login(final String user, String password) {
         LoadingDialogHelper.show(mActivity, "登录中...");
         RetrofitHelper retrofitHelper = RetrofitHelper.getInstance();
         Api api = retrofitHelper.initRetrofit(Constants.SERVER_URL);
@@ -168,9 +167,8 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                                 if (data.containsKey("token")) {
                                     String token = (String) data.get("token");
                                     if (!TextUtils.isEmpty(token)) {
-                                        SharedPreferenceUtil<String> preferenceUtil = new SharedPreferenceUtil<>();
                                         preferenceUtil.saveObject(token, mActivity, Constants.CURRENT_TOKEN);
-
+                                        preferenceUtil.saveObject(user, mActivity, Constants.CURRENT_USER_NAME);
                                         startActivity(new Intent(mActivity, MainActivity.class));
                                         finish();
                                     }

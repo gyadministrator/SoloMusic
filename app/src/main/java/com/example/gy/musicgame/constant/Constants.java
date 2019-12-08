@@ -33,4 +33,6 @@ public class Constants {
     public static final String CURRENT_TOKEN = "current_token";
 
     public static final String CURRENT_USER_INFO = "current_user_info";
+
+    public static final String CURRENT_USER_NAME = "current_user_name";
 }

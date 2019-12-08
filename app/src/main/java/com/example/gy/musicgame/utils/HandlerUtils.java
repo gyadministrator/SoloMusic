@@ -4,7 +4,6 @@ import android.app.Activity;
 
 import com.blankj.utilcode.util.ToastUtils;
 import com.example.gy.musicgame.activity.LoginActivity;
-import com.example.gy.musicgame.model.UserInfoVo;
 
 import java.util.Map;
 
@@ -33,21 +32,17 @@ public class HandlerUtils {
                         ToastUtils.showShort("数据异常");
                     }
                 }
+                return true;
             } else {
                 return false;
             }
         } else {
             ToastUtils.showShort("数据异常");
+            return true;
         }
-        return true;
     }
 
     private static void goLogin(Activity activity) {
-        String username = null;
-        UserInfoVo userInfoVo = UserManager.getUserInfoVo(activity);
-        if (userInfoVo != null) {
-            username = userInfoVo.getUserName();
-        }
-        LoginActivity.startActivity(activity, username);
+        LoginActivity.startActivity(activity);
     }
 }

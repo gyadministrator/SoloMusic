@@ -159,11 +159,7 @@ public class ListenFragment extends Fragment implements OnRefreshListener, Title
      * 去登录
      */
     private void goLogin() {
-        String username = null;
-        if (UserManager.getUserInfoVo(mActivity) != null) {
-            username = UserManager.getUserInfoVo(mActivity).getUserName();
-        }
-        LoginActivity.startActivity(mActivity, username);
+        LoginActivity.startActivity(mActivity);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)

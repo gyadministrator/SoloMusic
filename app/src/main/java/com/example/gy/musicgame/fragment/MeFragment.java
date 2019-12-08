@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,6 +30,10 @@ import com.blankj.utilcode.util.CleanUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.bumptech.glide.Glide;
 import com.example.gy.musicgame.R;
+import com.example.gy.musicgame.activity.AboutActivity;
+import com.example.gy.musicgame.activity.ChangePasswordActivity;
+import com.example.gy.musicgame.activity.CodeActivity;
+import com.example.gy.musicgame.activity.DevelopActivity;
 import com.example.gy.musicgame.activity.LoginActivity;
 import com.example.gy.musicgame.adapter.MyListAdapter;
 import com.example.gy.musicgame.api.Api;
@@ -38,6 +43,7 @@ import com.example.gy.musicgame.helper.LoadingDialogHelper;
 import com.example.gy.musicgame.helper.RetrofitHelper;
 import com.example.gy.musicgame.listener.DialogListener;
 import com.example.gy.musicgame.model.ApkModel;
+import com.example.gy.musicgame.model.FileVo;
 import com.example.gy.musicgame.model.ItemModel;
 import com.example.gy.musicgame.model.UserInfoVo;
 import com.example.gy.musicgame.utils.DataCleanManager;
@@ -57,6 +63,7 @@ import com.lzy.imagepicker.view.CropImageView;
 import com.yzq.zxinglibrary.android.CaptureActivity;
 import com.yzq.zxinglibrary.common.Constant;
 
+import java.io.File;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
@@ -69,6 +76,9 @@ import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 
 public class MeFragment extends Fragment implements View.OnClickListener, AdapterView.OnItemClickListener {
 
@@ -186,7 +196,9 @@ public class MeFragment extends Fragment implements View.OnClickListener, Adapte
                                 }
                             }
                             tvName.setText(userInfoVo.getUserName());
-                            Glide.with(mActivity).load(userInfoVo.getAvatarUrl()).into(ivUser);
+                            if (!TextUtils.isEmpty(userInfoVo.getAvatarUrl())) {
+                                Glide.with(mActivity).load(userInfoVo.getAvatarUrl()).into(ivUser);
+                            }
                             UserManager.setUserInfoVo(userInfoVo, mActivity);
                         }
                     }
@@ -256,8 +268,10 @@ public class MeFragment extends Fragment implements View.OnClickListener, Adapte
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.iv_code:
+                startActivity(new Intent(mActivity, CodeActivity.class));
                 break;
             case R.id.tv_modify:
+                ChangePasswordActivity.startActivity(mActivity, token);
                 break;
             case R.id.iv_refresh:
                 initAction();
@@ -339,7 +353,7 @@ public class MeFragment extends Fragment implements View.OnClickListener, Adapte
                         CleanUtils.cleanInternalFiles();
                         CleanUtils.cleanExternalCache();
                         CleanUtils.cleanInternalCache();
-                        LoginActivity.startActivity(mActivity, null);
+                        LoginActivity.startActivity(mActivity);
                     }
 
                     @Override
@@ -358,6 +372,7 @@ public class MeFragment extends Fragment implements View.OnClickListener, Adapte
                 break;
             case 1:
                 //关于
+                startActivity(new Intent(mActivity, AboutActivity.class));
                 break;
             case 2:
                 //清除缓存
@@ -369,6 +384,7 @@ public class MeFragment extends Fragment implements View.OnClickListener, Adapte
                 break;
             case 4:
                 //赞助开发者
+                startActivity(new Intent(mActivity, DevelopActivity.class));
                 break;
             case 5:
                 //退出登录
@@ -484,7 +500,80 @@ public class MeFragment extends Fragment implements View.OnClickListener, Adapte
      * @param path 路径
      */
     private void uploadImage(String path) {
+        final File file = new File(path);
+        RequestBody requestFile = RequestBody.create(MediaType.parse("image/jpg"), file);
+        MultipartBody.Part body = MultipartBody.Part.createFormData("file", file.getName(), requestFile);
+        RetrofitHelper retrofitHelper = RetrofitHelper.getInstance();
+        Api api = retrofitHelper.initRetrofit(Constants.SERVER_URL);
+        Observable<Map> observable = api.uploadFile(token, body);
+        observable.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<Map>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
 
+                    }
+
+                    @Override
+                    public void onNext(Map map) {
+                        boolean handler = HandlerUtils.isHandler(map, mActivity);
+                        if (!handler) {
+                            Gson gson = new Gson();
+                            String json = gson.toJson(map.get("data"));
+                            Type type = new TypeToken<FileVo>() {
+                            }.getType();
+                            FileVo fileVo = gson.fromJson(json, type);
+                            if (fileVo != null) {
+                                if (!TextUtils.isEmpty(fileVo.getUrl())) {
+                                    Glide.with(mActivity).load(fileVo.getUrl()).into(ivUser);
+
+                                    //更新用户信息
+                                    updateUserInfo(fileVo.getUrl());
+                                }
+                            }
+                        }
+                    }
+
+                    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+                    @Override
+                    public void onError(Throwable e) {
+                        ToastUtils.showShort(Objects.requireNonNull(e.getMessage()));
+                    }
+
+                    @Override
+                    public void onComplete() {
+                    }
+                });
+    }
+
+    private void updateUserInfo(String url) {
+        LoadingDialogHelper.show(mActivity, "更新用户信息中...");
+        RetrofitHelper retrofitHelper = RetrofitHelper.getInstance();
+        Api api = retrofitHelper.initRetrofit(Constants.SERVER_URL);
+        Observable<Map> observable = api.changeImage(token, url);
+        observable.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<Map>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(Map map) {
+                        HandlerUtils.isHandler(map, mActivity);
+                    }
+
+                    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+                    @Override
+                    public void onError(Throwable e) {
+                        LoadingDialogHelper.dismiss();
+                        ToastUtils.showShort(Objects.requireNonNull(e.getMessage()));
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        LoadingDialogHelper.dismiss();
+                    }
+                });
     }
 
     private void clean() {
