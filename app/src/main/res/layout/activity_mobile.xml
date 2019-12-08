@@ -13,7 +13,7 @@
         app:showRight="false"
         app:title="@string/mobile" />
 
-    <EditText
+    <com.example.gy.musicgame.view.ClearEditText
         android:id="@+id/et_mobile"
         android:layout_width="match_parent"
         android:layout_height="@dimen/btn_height"
@@ -33,7 +33,7 @@
         android:layout_marginTop="@dimen/btn_margin"
         android:orientation="horizontal">
 
-        <EditText
+        <com.example.gy.musicgame.view.ClearEditText
             android:id="@+id/et_code"
             android:layout_width="0dp"
             android:layout_height="match_parent"

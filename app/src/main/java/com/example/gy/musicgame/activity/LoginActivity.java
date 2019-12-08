@@ -23,6 +23,7 @@ import com.blankj.utilcode.util.ToastUtils;
 import com.example.gy.musicgame.R;
 import com.example.gy.musicgame.api.Api;
 import com.example.gy.musicgame.constant.Constants;
+import com.example.gy.musicgame.helper.KeyboardHelper;
 import com.example.gy.musicgame.helper.LoadingDialogHelper;
 import com.example.gy.musicgame.helper.RetrofitHelper;
 import com.example.gy.musicgame.model.LoginVo;
@@ -67,6 +68,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
      * @param username 用户名
      */
     public static void startActivity(Activity activity, String username) {
+        if (ActivityUtils.isActivityExistsInStack(LoginActivity.class)) return;
         Intent intent = new Intent(activity, LoginActivity.class);
         intent.putExtra("username", username);
         //intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -84,6 +86,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
     @Override
     protected void initData() {
+        KeyboardHelper.getInstance().openKeyBoard(etUser, mActivity);
         Intent intent = getIntent();
         String username = intent.getStringExtra("username");
         if (!TextUtils.isEmpty(username)) {

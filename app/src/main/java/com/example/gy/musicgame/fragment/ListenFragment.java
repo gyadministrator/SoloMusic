@@ -101,9 +101,10 @@ public class ListenFragment extends Fragment implements OnRefreshListener, Title
 
         SharedPreferenceUtil<String> preferenceUtil = new SharedPreferenceUtil<>();
         String token = preferenceUtil.getObject(mActivity, Constants.CURRENT_TOKEN);
-        getUserInfo(token);
         if (TextUtils.isEmpty(token)) {
             goLogin();
+        }else {
+            getUserInfo(token);
         }
     }
 

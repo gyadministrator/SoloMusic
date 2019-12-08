@@ -20,7 +20,6 @@ public class HandlerUtils {
                 double code = (double) map.get("errno");
                 if (code == 501) {
                     //登录失效
-                    ToastUtils.showShort("登录信息失效，请重新登录！");
                     goLogin(activity);
                     return true;
                 }

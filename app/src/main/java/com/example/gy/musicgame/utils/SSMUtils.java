@@ -1,4 +1,5 @@
 package com.example.gy.musicgame.utils;
+
 import com.example.gy.musicgame.listener.SSMListener;
 import com.example.gy.musicgame.listener.ValidateListener;
 
@@ -13,6 +14,7 @@ import cn.smssdk.SMSSDK;
 public class SSMUtils {
     private static SSMListener listener;
     private static ValidateListener validateListener;
+    private static boolean isFirst = true;
 
     public static void setValidateListener(ValidateListener validateListener) {
         SSMUtils.validateListener = validateListener;
@@ -37,7 +39,10 @@ public class SSMUtils {
                 if (result == SMSSDK.RESULT_COMPLETE) {
                     // TODO 处理成功得到验证码的结果
                     // 请注意，此时只是完成了发送验证码的请求，验证码短信还需要几秒钟之后才送达
-                    listener.success("发送验证码成功");
+                    if (isFirst) {
+                        listener.success("发送验证码成功");
+                        isFirst = false;
+                    }
                 } else {
                     // TODO 处理错误的结果
                     listener.error("发送验证码失败");
