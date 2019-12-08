@@ -32,6 +32,7 @@ public class DialogHelper {
         final ColorDialog dialog = new ColorDialog(context);
         dialog.setTitle(title);
         dialog.setContentText(content);
+        dialog.setCanceledOnTouchOutside(false);
         dialog.setPositiveListener("确定", new ColorDialog.OnPositiveListener() {
             @Override
             public void onClick(ColorDialog colorDialog) {

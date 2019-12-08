@@ -131,4 +131,7 @@ public interface Api {
 
     @GET("auth/info")
     Observable<Map> userInfo(@Header("back-manager-token") String token);
+
+    @GET("apk/update")
+    Observable<Map> apkUpdate(@Header("back-manager-token") String token, @Query("packageName") String packageName, @Query("versionCode") Integer versionCode);
 }

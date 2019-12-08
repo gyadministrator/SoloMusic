@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -18,6 +19,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
@@ -32,8 +34,10 @@ import com.example.gy.musicgame.adapter.MyListAdapter;
 import com.example.gy.musicgame.api.Api;
 import com.example.gy.musicgame.constant.Constants;
 import com.example.gy.musicgame.helper.DialogHelper;
+import com.example.gy.musicgame.helper.LoadingDialogHelper;
 import com.example.gy.musicgame.helper.RetrofitHelper;
 import com.example.gy.musicgame.listener.DialogListener;
+import com.example.gy.musicgame.model.ApkModel;
 import com.example.gy.musicgame.model.ItemModel;
 import com.example.gy.musicgame.model.UserInfoVo;
 import com.example.gy.musicgame.utils.DataCleanManager;
@@ -44,6 +48,8 @@ import com.example.gy.musicgame.utils.UpdateManager;
 import com.example.gy.musicgame.utils.UserManager;
 import com.example.gy.musicgame.view.GlideImageLoader;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.lzy.imagepicker.ImagePicker;
 import com.lzy.imagepicker.bean.ImageItem;
 import com.lzy.imagepicker.ui.ImageGridActivity;
@@ -51,9 +57,11 @@ import com.lzy.imagepicker.view.CropImageView;
 import com.yzq.zxinglibrary.android.CaptureActivity;
 import com.yzq.zxinglibrary.common.Constant;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import io.reactivex.Observable;
@@ -76,6 +84,8 @@ public class MeFragment extends Fragment implements View.OnClickListener, Adapte
     private static final int REQUEST_CODE = 1002;
     private static final int REQUEST_CODE_SCAN = 1003;
     private static final int REQUEST_CODE_PREVIEW = 101;
+    private String token;
+    private ApkModel apkModel;
     private static final String[] PERMISSIONS = new String[]{Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE};
 
     public static MeFragment newInstance() {
@@ -98,7 +108,7 @@ public class MeFragment extends Fragment implements View.OnClickListener, Adapte
 
     private void initAction() {
         SharedPreferenceUtil<String> preferenceUtil = new SharedPreferenceUtil<>();
-        String token = preferenceUtil.getObject(mActivity, Constants.CURRENT_TOKEN);
+        token = preferenceUtil.getObject(mActivity, Constants.CURRENT_TOKEN);
         getUserInfo(token);
     }
 
@@ -138,7 +148,7 @@ public class MeFragment extends Fragment implements View.OnClickListener, Adapte
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == 1001) {
             UpdateManager mUpdateManager = new UpdateManager(mActivity);
-            //mUpdateManager.checkUpdateInfo(apkInfo.getUrl(), apkInfo.getContent());
+            mUpdateManager.checkUpdateInfo(apkModel.getDownloadUrl(), apkModel.getContent());
         } else if (requestCode == REQUEST_CODE) {
             openScan();
         }
@@ -355,6 +365,7 @@ public class MeFragment extends Fragment implements View.OnClickListener, Adapte
                 break;
             case 3:
                 //检测更新
+                checkUpdate();
                 break;
             case 4:
                 //赞助开发者
@@ -363,6 +374,62 @@ public class MeFragment extends Fragment implements View.OnClickListener, Adapte
                 //退出登录
                 logout();
                 break;
+        }
+    }
+
+    private void checkUpdate() {
+        LoadingDialogHelper.show(mActivity, "检测更新中...");
+        String packageName = AppUtils.getAppPackageName();
+        Integer versionCode = AppUtils.getAppVersionCode();
+        RetrofitHelper retrofitHelper = RetrofitHelper.getInstance();
+        final Api api = retrofitHelper.initRetrofit(Constants.SERVER_URL);
+        Observable<Map> observable = api.apkUpdate(token, packageName, versionCode);
+        observable.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<Map>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+                    @Override
+                    public void onNext(Map map) {
+                        boolean handler = HandlerUtils.isHandler(map, mActivity);
+                        if (!handler) {
+                            Type type = new TypeToken<ApkModel>() {
+                            }.getType();
+                            Gson gson = new Gson();
+                            apkModel = gson.fromJson(Objects.requireNonNull(gson.toJson(map.get("data"))), type);
+                            if (apkModel != null) {
+                                showNotice(apkModel);
+                            } else {
+                                ToastUtils.showShort("获取更新数据异常");
+                            }
+                        }
+                    }
+
+                    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+                    @Override
+                    public void onError(Throwable e) {
+                        LoadingDialogHelper.dismiss();
+                        ToastUtils.showShort(Objects.requireNonNull(e.getMessage()));
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        LoadingDialogHelper.dismiss();
+                    }
+                });
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    private void showNotice(ApkModel apkModel) {
+        // 这里来检测版本是否需要更新
+        if (ActivityCompat.checkSelfPermission(mActivity, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(Objects.requireNonNull(getActivity()), new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1001);
+        } else {
+            UpdateManager mUpdateManager = new UpdateManager(mActivity);
+            mUpdateManager.checkUpdateInfo(apkModel.getDownloadUrl(), apkModel.getContent());
         }
     }
 

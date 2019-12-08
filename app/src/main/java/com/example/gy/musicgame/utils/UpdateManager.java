@@ -95,6 +95,7 @@ public class UpdateManager {
         final ColorDialog dialog = new ColorDialog(mContext);
         dialog.setTitle("发现新版本");
         dialog.setContentText(updateMsg);
+        dialog.setCanceledOnTouchOutside(false);
         dialog.setPositiveListener("立即下载", new ColorDialog.OnPositiveListener() {
             @Override
             public void onClick(ColorDialog colorDialog) {
