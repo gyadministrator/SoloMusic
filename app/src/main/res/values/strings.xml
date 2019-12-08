@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">爱猜歌</string>
+    <string name="app_name">Solo音乐</string>
     <string name="recommend_music">推荐歌单</string>
     <string name="new_music">最新音乐</string>
     <string name="search">搜索</string>

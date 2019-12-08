@@ -33,4 +33,9 @@
         <attr name="srcBack" format="reference" />
         <attr name="srcRight" format="reference" />
     </declare-styleable>
+
+    <style name="customEditText" parent="Theme.AppCompat.Light">
+        <item name="colorControlNormal">@color/hint_color</item>
+        <item name="colorControlActivated">@color/pressed</item>
+    </style>
 </resources>

@@ -1,8 +1,5 @@
 package com.example.gy.musicgame.fragment;
 
-import androidx.core.app.ActivityCompat;
-import androidx.lifecycle.ViewModelProviders;
-
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -10,13 +7,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-
-import android.text.TextUtils;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,6 +15,12 @@ import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProviders;
 
 import com.blankj.utilcode.util.AppUtils;
 import com.blankj.utilcode.util.CleanUtils;
@@ -58,7 +54,6 @@ import com.yzq.zxinglibrary.common.Constant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import io.reactivex.Observable;
@@ -105,9 +100,6 @@ public class MeFragment extends Fragment implements View.OnClickListener, Adapte
         SharedPreferenceUtil<String> preferenceUtil = new SharedPreferenceUtil<>();
         String token = preferenceUtil.getObject(mActivity, Constants.CURRENT_TOKEN);
         getUserInfo(token);
-        if (TextUtils.isEmpty(token)) {
-            goLogin();
-        }
     }
 
     private void openScan() {
@@ -191,7 +183,6 @@ public class MeFragment extends Fragment implements View.OnClickListener, Adapte
 
                     @Override
                     public void onError(Throwable e) {
-                        goLogin();
                     }
 
                     @Override
@@ -199,17 +190,6 @@ public class MeFragment extends Fragment implements View.OnClickListener, Adapte
 
                     }
                 });
-    }
-
-    /**
-     * 去登录
-     */
-    private void goLogin() {
-        String username = null;
-        if (UserManager.getUserInfoVo(mActivity) != null) {
-            username = UserManager.getUserInfoVo(mActivity).getUserName();
-        }
-        LoginActivity.startActivity(mActivity, username);
     }
 
     private void initData() throws Exception {

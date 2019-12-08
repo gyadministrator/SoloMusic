@@ -17,33 +17,43 @@
         android:id="@+id/et_mobile"
         android:layout_width="match_parent"
         android:layout_height="@dimen/btn_height"
-        android:background="@color/white"
+        android:layout_marginStart="@dimen/btn_margin"
+        android:layout_marginTop="@dimen/btn_margin"
+        android:layout_marginEnd="@dimen/btn_margin"
         android:hint="@string/mobile"
         android:inputType="phone"
         android:maxLength="11"
-        android:paddingStart="15dp"
-        android:paddingLeft="15dp"
+        android:textColorHint="@color/hint_color"
+        android:theme="@style/customEditText"
         tools:ignore="RtlSymmetry" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/btn_height"
         android:layout_marginTop="@dimen/btn_margin"
-        android:background="@color/white"
         android:orientation="horizontal">
 
         <EditText
             android:id="@+id/et_code"
             android:layout_width="0dp"
             android:layout_height="match_parent"
+            android:layout_marginStart="@dimen/btn_margin"
+            android:layout_marginLeft="@dimen/btn_margin"
             android:layout_weight="1"
-            android:background="@color/white"
             android:hint="@string/code"
             android:inputType="number"
             android:maxLength="4"
-            android:paddingStart="15dp"
-            android:paddingLeft="15dp"
+            android:textColorHint="@color/hint_color"
+            android:theme="@style/customEditText"
             tools:ignore="RtlSymmetry" />
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="30dp"
+            android:layout_gravity="center"
+            android:layout_marginStart="20dp"
+            android:layout_marginLeft="20dp"
+            android:background="@color/normal" />
 
         <TextView
             android:id="@+id/tv_code"

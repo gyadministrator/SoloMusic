@@ -17,36 +17,45 @@
         android:id="@+id/et_user"
         android:layout_width="match_parent"
         android:layout_height="@dimen/btn_height"
+        android:layout_marginStart="@dimen/btn_margin"
         android:layout_marginTop="@dimen/btn_margin"
-        android:background="@color/white"
+        android:layout_marginEnd="@dimen/btn_margin"
         android:hint="@string/user"
         android:inputType="text"
         android:paddingStart="15dp"
         android:paddingLeft="15dp"
+        android:textColorHint="@color/hint_color"
+        android:theme="@style/customEditText"
         tools:ignore="RtlSymmetry" />
 
     <EditText
         android:id="@+id/et_password"
         android:layout_width="match_parent"
         android:layout_height="@dimen/btn_height"
+        android:layout_marginStart="@dimen/btn_margin"
         android:layout_marginTop="@dimen/btn_margin"
-        android:background="@color/white"
+        android:layout_marginEnd="@dimen/btn_margin"
         android:hint="@string/password"
         android:inputType="textPassword"
         android:paddingStart="15dp"
         android:paddingLeft="15dp"
+        android:textColorHint="@color/hint_color"
+        android:theme="@style/customEditText"
         tools:ignore="RtlSymmetry" />
 
     <EditText
         android:id="@+id/et_sure_password"
         android:layout_width="match_parent"
         android:layout_height="@dimen/btn_height"
+        android:layout_marginStart="@dimen/btn_margin"
         android:layout_marginTop="@dimen/btn_margin"
-        android:background="@color/white"
+        android:layout_marginEnd="@dimen/btn_margin"
         android:hint="@string/sure_password"
         android:inputType="textPassword"
         android:paddingStart="15dp"
         android:paddingLeft="15dp"
+        android:textColorHint="@color/hint_color"
+        android:theme="@style/customEditText"
         tools:ignore="RtlSymmetry" />
 
     <TextView

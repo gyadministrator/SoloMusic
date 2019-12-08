@@ -3,12 +3,14 @@ package com.example.gy.musicgame.activity;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Build;
+import android.os.Process;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextPaint;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -16,6 +18,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 
+import com.blankj.utilcode.util.ActivityUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.example.gy.musicgame.R;
 import com.example.gy.musicgame.api.Api;
@@ -66,6 +69,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     public static void startActivity(Activity activity, String username) {
         Intent intent = new Intent(activity, LoginActivity.class);
         intent.putExtra("username", username);
+        //intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         activity.startActivity(intent);
         activity.finish();
     }
@@ -85,6 +89,17 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         if (!TextUtils.isEmpty(username)) {
             etUser.setText(username);
         }
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            ActivityUtils.finishAllActivities();
+            System.exit(0);
+            Process.killProcess(Process.myPid());
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
     }
 
     @Override
