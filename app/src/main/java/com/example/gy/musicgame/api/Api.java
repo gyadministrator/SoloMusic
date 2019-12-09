@@ -5,6 +5,9 @@ import com.example.gy.musicgame.model.LoginVo;
 import com.example.gy.musicgame.model.LrcModel;
 import com.example.gy.musicgame.model.MusicModel;
 import com.example.gy.musicgame.model.PlayMusicModel;
+import com.example.gy.musicgame.model.RecipeDetailModel;
+import com.example.gy.musicgame.model.RecipeSearchModel;
+import com.example.gy.musicgame.model.RecipeTypeModel;
 import com.example.gy.musicgame.model.RecommendMusicModel;
 import com.example.gy.musicgame.model.RegisterVo;
 import com.example.gy.musicgame.model.SearchMusicModel;
@@ -186,6 +189,30 @@ public interface Api {
     @GET("auth/changePassword")
     Observable<Map> changePassword(@Header("back-manager-token") String token, @Query("password") String password, @Query("newPassword") String newPassword);
 
+    /**
+     * 忘记密码
+     *
+     * @param mobile      手机号
+     * @param newPassword 新密码
+     * @return
+     */
     @GET("auth/forgetPassword")
     Observable<Map> forgetPassword(@Query("mobile") String mobile, @Query("newPassword") String newPassword);
+
+
+    /**
+     * 菜谱相关接口
+     *
+     * @param key
+     * @return
+     */
+    @GET("v1/cook/category/query")
+    Observable<RecipeTypeModel> getRecipeType(@Query("key") String key);
+
+    @GET("v1/cook/menu/search")
+    Observable<RecipeSearchModel> getRecipeSearchMenu(@Query("key") String key, @Query("cid") String cid, @Query("name") String name, @Query("page")
+            int page, @Query("size") int size);
+
+    @GET("v1/cook/menu/query")
+    Observable<RecipeDetailModel> getRecipeDetail(@Query("key") String key, @Query("id") String id);
 }

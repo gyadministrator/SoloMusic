@@ -6,6 +6,8 @@ MobSDK {
     appKey "29c9b0cece51d"
     appSecret "251072b5d3cce225be6516bfded12018"
 
+    googlePlay true
+
     SMSSDK {}
 
     PaySDK {
@@ -134,4 +136,9 @@ dependencies {
     implementation 'com.github.andyxialm:ColorDialog:1.0.0'
     implementation project(path: ':imagepicker')
     implementation project(path: ':zxinglibrary')
+    //刷新
+    implementation 'com.jcodecraeer:xrecyclerview:1.5.9'
+    //加载布局时默认显示
+    implementation 'com.github.sharish:ShimmerRecyclerView:v1.3'
+    implementation project(path: ':dropdownlibrary')
 }

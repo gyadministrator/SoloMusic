@@ -9,14 +9,14 @@ import com.example.gy.musicgame.R;
 import com.example.gy.musicgame.fragment.FriendFragment;
 import com.example.gy.musicgame.fragment.ListenFragment;
 import com.example.gy.musicgame.fragment.MeFragment;
-import com.example.gy.musicgame.fragment.RecordFragment;
+import com.example.gy.musicgame.fragment.RecipeFragment;
 import com.next.easynavigation.view.EasyNavigationBar;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends BaseActivity {
-    private String[] tabText = {"听歌", "最近", "歌友", "我的"};
+    private String[] tabText = {"听歌", "美食", "歌友", "我的"};
     //未选中icon
     private int[] normalIcon = {R.mipmap.listen, R.mipmap.record, R.mipmap.friend, R.mipmap.me};
     //选中时icon
@@ -34,7 +34,7 @@ public class MainActivity extends BaseActivity {
     protected void initData() {
         setSwipeBackEnable(false);
         fragments.add(ListenFragment.newInstance());
-        fragments.add(RecordFragment.newInstance());
+        fragments.add(RecipeFragment.newInstance());
         fragments.add(FriendFragment.newInstance());
         fragments.add(MeFragment.newInstance());
 
