@@ -7,6 +7,7 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.RequiresApi;
@@ -20,6 +21,7 @@ import com.example.gy.musicgame.helper.LoadingDialogHelper;
 import com.example.gy.musicgame.helper.RetrofitHelper;
 import com.example.gy.musicgame.model.RecipeDetailModel;
 import com.example.gy.musicgame.model.StepModel;
+import com.example.gy.musicgame.utils.ShareUtils;
 import com.example.gy.musicgame.view.TitleView;
 
 import org.json.JSONArray;
@@ -43,11 +45,13 @@ public class DetailActivity extends BaseActivity {
     private String name = "";
     private String material = "";
     private List<StepModel> list = new ArrayList<>();
+    private RelativeLayout rlNoData;
 
     @Override
     protected void initView() {
         titleView = fd(R.id.titleView);
         listView = fd(R.id.listView);
+        rlNoData = fd(R.id.rl_no_data);
     }
 
     @Override
@@ -89,6 +93,8 @@ public class DetailActivity extends BaseActivity {
 
     private void setData(RecipeDetailModel recipeDetailModel) {
         if (recipeDetailModel != null && recipeDetailModel.getRetCode().equals("200")) {
+            rlNoData.setVisibility(View.GONE);
+            listView.setVisibility(View.VISIBLE);
             if (recipeDetailModel.getResult() != null) {
                 if (recipeDetailModel.getResult().getRecipe() != null) {
                     name = recipeDetailModel.getResult().getRecipe().getTitle();
@@ -99,6 +105,9 @@ public class DetailActivity extends BaseActivity {
                     String method = recipeDetailModel.getResult().getRecipe().getMethod();
                     if (!TextUtils.isEmpty(method)) {
                         initJson(method);
+                    } else {
+                        listView.setVisibility(View.GONE);
+                        rlNoData.setVisibility(View.VISIBLE);
                     }
                 }
             }
@@ -111,6 +120,9 @@ public class DetailActivity extends BaseActivity {
                 listView.addHeaderView(view);
                 ListRecipeDetailAdapter listAdapter = new ListRecipeDetailAdapter(DetailActivity.this, list);
                 listView.setAdapter(listAdapter);
+            } else {
+                listView.setVisibility(View.GONE);
+                rlNoData.setVisibility(View.VISIBLE);
             }
         }
     }
@@ -120,11 +132,21 @@ public class DetailActivity extends BaseActivity {
             JSONArray jsonArray = new JSONArray(json);
             for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject jsonObject = (JSONObject) jsonArray.get(i);
-                String img = jsonObject.getString("img");
-                String step = jsonObject.getString("step");
+                String img = null;
+                String step = null;
+                if (jsonObject.has("img")) {
+                    img = jsonObject.getString("img");
+                }
+                if (jsonObject.has("step")) {
+                    step = jsonObject.getString("step");
+                }
                 StepModel s = new StepModel();
-                s.setImg(img);
-                s.setStep(step);
+                if (img != null) {
+                    s.setImg(img);
+                }
+                if (step != null) {
+                    s.setStep(step);
+                }
 
                 list.add(s);
             }
@@ -142,17 +164,17 @@ public class DetailActivity extends BaseActivity {
 
     @Override
     protected void initAction() {
-       /* titleView.setRightClickListener(new TitleView.OnRightClickListener() {
+        titleView.setRightClickListener(new TitleView.OnRightClickListener() {
             @Override
             public void clickRight(View view) {
-
+                ShareUtils.showShare(DetailActivity.this, name, material, "");
             }
 
             @Override
             public void clickLeft(View view) {
 
             }
-        });*/
+        });
     }
 
     @Override

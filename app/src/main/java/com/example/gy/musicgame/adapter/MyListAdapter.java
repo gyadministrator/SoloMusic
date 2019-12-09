@@ -2,6 +2,8 @@ package com.example.gy.musicgame.adapter;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.ColorMatrix;
+import android.graphics.ColorMatrixColorFilter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -61,7 +63,11 @@ public class MyListAdapter extends BaseAdapter {
             viewHolder = (ViewHolder) convertView.getTag();
         }
         ItemModel item = list.get(position);
-        viewHolder.iv_icon.setBackgroundResource(item.getIcon());
+        viewHolder.iv_icon.setImageResource(item.getIcon());
+        ColorMatrix matrix = new ColorMatrix();
+        matrix.setSaturation(0);//饱和度 0灰色 100过度彩色，50正常
+        ColorMatrixColorFilter filter = new ColorMatrixColorFilter(matrix);
+        viewHolder.iv_icon.setColorFilter(filter);
         viewHolder.tv_item_name.setText(item.getName());
         viewHolder.tv_data.setText(item.getData());
         return convertView;

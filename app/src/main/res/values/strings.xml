@@ -20,6 +20,7 @@
     <string name="collect">我的金币</string>
     <string name="scan">扫一扫</string>
     <string name="zan">赞助开发者</string>
+    <string name="share_app">分享APP</string>
     <string name="logout">退出登录</string>
     <string name="modify">修改</string>
     <string name="login">登录</string>
@@ -59,4 +60,5 @@
     <string name="my_music_list">我的歌单(0)</string>
     <string name="data_empty">暂无数据</string>
     <string name="detail">详情</string>
+    <string name="download_tip">赶快下载使用吧！</string>
 </resources>

@@ -2,6 +2,7 @@ package com.example.gy.musicgame.activity;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.text.TextUtils;
 import android.view.View;
@@ -114,7 +115,7 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
         }
     }
 
-    private void register(RegisterVo registerVo) {
+    private void register(final RegisterVo registerVo) {
         LoadingDialogHelper.show(mActivity, "注册中...");
         RetrofitHelper retrofitHelper = RetrofitHelper.getInstance();
         Api api = retrofitHelper.initRetrofit(Constants.SERVER_URL);
@@ -135,6 +136,8 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
                                 if (data.containsKey("token")) {
                                     String token = (String) data.get("token");
                                     if (!TextUtils.isEmpty(token)) {
+                                        //设置IM账号数据
+                                        setIMData(registerVo.getUsername(), registerVo.getPassword());
                                         SharedPreferenceUtil<String> preferenceUtil = new SharedPreferenceUtil<>();
                                         preferenceUtil.saveObject(token, mActivity, Constants.CURRENT_TOKEN);
                                         startActivity(new Intent(mActivity, MainActivity.class));
@@ -159,5 +162,13 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
                         LoadingDialogHelper.dismiss();
                     }
                 });
+    }
+
+    private void setIMData(String user, String password) {
+        SharedPreferences sharedPreferences = mActivity.getSharedPreferences("login", MODE_PRIVATE);
+        SharedPreferences.Editor edit = sharedPreferences.edit();
+        edit.putString("username", user);
+        edit.putString("password", password);
+        edit.apply();
     }
 }

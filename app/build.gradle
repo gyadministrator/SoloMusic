@@ -10,6 +10,31 @@ MobSDK {
 
     SMSSDK {}
 
+    //第三方登录
+    ShareSDK {
+        //平台配置信息
+        devInfo {
+            Wechat {//微信
+                appId "wx4868b35061f87885"
+                appSecret "64020361b8ec4c99936c0e3999a9f249"
+            }
+            QQ {//QQ
+                appId "101573654"
+                appKey "cc25df73eccb9c19b800e9cb3bc4c647"
+            }
+            QZone {
+                appId "101573654"
+                appKey "cc25df73eccb9c19b800e9cb3bc4c647"
+            }
+            SinaWeibo {
+                appKey "4226869023"
+                appSecret "f9adef54afbfac953193d4ea11edbe18"
+                callbackUri "https://shouji.baidu.com/software/25845640.html"
+                shareByAppClient false
+            }
+        }
+    }
+
     PaySDK {
         info {
             AliPay {}
@@ -141,4 +166,9 @@ dependencies {
     //加载布局时默认显示
     implementation 'com.github.sharish:ShimmerRecyclerView:v1.3'
     implementation project(path: ':dropdownlibrary')
+    //环信IM
+    //Optional compile for GCM (Google Cloud Messaging).
+    //noinspection GradleCompatible
+    implementation 'com.google.android.gms:play-services-gcm:17.0.0'
+    implementation 'com.hyphenate:hyphenate-sdk:3.3.0'
 }

@@ -142,6 +142,10 @@ public class SettingActivity extends BaseActivity implements AdapterView.OnItemC
                 startActivity(new Intent(mActivity, DevelopActivity.class));
                 break;
             case 5:
+                //分享APP
+                startActivity(new Intent(mActivity, ShareActivity.class));
+                break;
+            case 6:
                 //退出登录
                 logout();
                 break;
@@ -287,6 +291,7 @@ public class SettingActivity extends BaseActivity implements AdapterView.OnItemC
         itemList.add(new ItemModel(R.mipmap.clean, getString(R.string.setting), DataCleanManager.getTotalCacheSize(mActivity)));
         itemList.add(new ItemModel(R.mipmap.update, getString(R.string.update), "v" + AppUtils.getAppVersionName()));
         itemList.add(new ItemModel(R.mipmap.develop, getString(R.string.zan), null));
+        itemList.add(new ItemModel(R.mipmap.share, getString(R.string.share_app), null));
         itemList.add(new ItemModel(R.mipmap.exit, getString(R.string.logout), null));
         listAdapter = new MyListAdapter(itemList, mActivity);
         listView.setAdapter(listAdapter);

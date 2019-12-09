@@ -8,14 +8,34 @@
     tools:context=".activity.DetailActivity">
 
     <com.example.gy.musicgame.view.TitleView
+        android:id="@+id/titleView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:srcRight="@mipmap/exit"
+        app:srcRight="@mipmap/share"
         app:title="@string/detail" />
 
     <ListView
         android:id="@+id/listView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scrollbars="none" />
+        android:scrollbars="none"
+        android:visibility="visible" />
+
+    <RelativeLayout
+        android:id="@+id/rl_no_data"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_gravity="center"
+            android:layout_marginTop="@dimen/btn_height"
+            android:drawableTop="@mipmap/empty"
+            android:drawablePadding="6dp"
+            android:gravity="center"
+            android:text="@string/data_empty" />
+    </RelativeLayout>
 </LinearLayout>

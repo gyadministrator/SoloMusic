@@ -2,6 +2,7 @@ package com.example.gy.musicgame.activity;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Process;
 import android.text.SpannableStringBuilder;
@@ -143,7 +144,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         }
     }
 
-    private void login(final String user, String password) {
+    private void login(final String user, final String password) {
         LoadingDialogHelper.show(mActivity, "登录中...");
         RetrofitHelper retrofitHelper = RetrofitHelper.getInstance();
         Api api = retrofitHelper.initRetrofit(Constants.SERVER_URL);
@@ -167,6 +168,8 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                                 if (data.containsKey("token")) {
                                     String token = (String) data.get("token");
                                     if (!TextUtils.isEmpty(token)) {
+                                        //设置IM账号数据
+                                        setIMData(user, password);
                                         preferenceUtil.saveObject(token, mActivity, Constants.CURRENT_TOKEN);
                                         preferenceUtil.saveObject(user, mActivity, Constants.CURRENT_USER_NAME);
                                         startActivity(new Intent(mActivity, MainActivity.class));
@@ -191,6 +194,14 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                         LoadingDialogHelper.dismiss();
                     }
                 });
+    }
+
+    private void setIMData(String user, String password) {
+        SharedPreferences sharedPreferences = mActivity.getSharedPreferences("login", MODE_PRIVATE);
+        SharedPreferences.Editor edit = sharedPreferences.edit();
+        edit.putString("username", user);
+        edit.putString("password", password);
+        edit.apply();
     }
 
 
