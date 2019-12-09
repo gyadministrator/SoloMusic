@@ -48,4 +48,14 @@
     <string name="contact">联系QQ:1984629668</string>
     <string name="my_code">我的二维码</string>
     <string name="save_long_photo">长按二维码保存到相册</string>
+    <string name="set">设置</string>
+    <string name="local_music">本地歌曲</string>
+    <string name="my_download">我的下载</string>
+    <string name="recent_play">最近播放</string>
+    <string name="default_num">0</string>
+    <string name="my_love">我喜欢</string>
+    <string name="wifi">wifi随心听</string>
+    <string name="off">未开启</string>
+    <string name="my_music_list">我的歌单(0)</string>
+    <string name="data_empty">暂无数据</string>
 </resources>

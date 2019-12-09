@@ -6,27 +6,184 @@
     android:layout_height="match_parent"
     tools:context=".fragment.MeFragment">
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_height="wrap_content">
 
-        <com.example.gy.musicgame.view.TitleView
-            android:id="@+id/navigation"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:showBack="false"
-            app:showRight="false"
-            app:title="@string/bottom_me" />
+            android:orientation="vertical">
 
-        <ListView
-            android:id="@+id/listView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:divider="@color/white"
-            android:dividerHeight="10dp"
-            android:scrollbars="none" />
-    </LinearLayout>
+            <com.example.gy.musicgame.view.TitleView
+                android:id="@+id/titleView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:showBack="false"
+                app:showRight="true"
+                app:srcRight="@mipmap/setting"
+                app:title="@string/bottom_me" />
+
+            <include layout="@layout/my_header" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/btn_margin"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="@dimen/item_size"
+                    android:layout_height="@dimen/item_size"
+                    android:layout_weight="1"
+                    android:drawableTop="@mipmap/local"
+                    android:gravity="center"
+                    android:text="@string/local_music" />
+
+                <TextView
+                    android:layout_width="@dimen/item_size"
+                    android:layout_height="@dimen/item_size"
+                    android:layout_weight="1"
+                    android:drawableTop="@mipmap/my_download"
+                    android:gravity="center"
+                    android:text="@string/my_download" />
+
+                <TextView
+                    android:layout_width="@dimen/item_size"
+                    android:layout_height="@dimen/item_size"
+                    android:layout_weight="1"
+                    android:drawableTop="@mipmap/recent"
+                    android:gravity="center"
+                    android:text="@string/recent_play" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="@dimen/item_size"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="@string/default_num" />
+
+                <TextView
+                    android:layout_width="@dimen/item_size"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="@string/default_num" />
+
+                <TextView
+                    android:layout_width="@dimen/item_size"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="@string/default_num" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/btn_margin"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="@dimen/item_size"
+                    android:layout_height="@dimen/item_size"
+                    android:layout_weight="1"
+                    android:drawableTop="@mipmap/love"
+                    android:gravity="center"
+                    android:text="@string/my_love" />
+
+                <TextView
+                    android:layout_width="@dimen/item_size"
+                    android:layout_height="@dimen/item_size"
+                    android:layout_weight="1"
+                    android:drawableTop="@mipmap/wifi"
+                    android:gravity="center"
+                    android:text="@string/wifi" />
+
+                <TextView
+                    android:layout_width="@dimen/item_size"
+                    android:layout_height="@dimen/item_size"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:visibility="invisible" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="@dimen/item_size"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="@string/default_num" />
+
+                <TextView
+                    android:layout_width="@dimen/item_size"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="@string/off" />
+
+                <TextView
+                    android:layout_width="@dimen/item_size"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:visibility="invisible" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/btn_margin"
+                    android:layout_marginLeft="@dimen/btn_margin"
+                    android:layout_marginTop="@dimen/btn_margin"
+                    android:layout_marginEnd="@dimen/btn_margin"
+                    android:layout_weight="1"
+                    android:text="@string/my_music_list" />
+
+                <ImageView
+                    android:layout_width="@dimen/icon_size"
+                    android:layout_height="@dimen/icon_size"
+                    android:layout_marginTop="@dimen/btn_margin"
+                    android:layout_marginEnd="@dimen/btn_margin"
+                    android:layout_marginRight="@dimen/btn_margin"
+                    android:src="@mipmap/add" />
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:layout_marginStart="@dimen/btn_margin"
+                android:layout_marginLeft="@dimen/btn_margin"
+                android:layout_marginTop="15dp"
+                android:layout_marginEnd="@dimen/btn_margin"
+                android:background="@color/normal" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="@dimen/btn_margin"
+                android:drawableTop="@mipmap/empty"
+                android:text="@string/data_empty" />
+        </LinearLayout>
+
+    </ScrollView>
 
     <LinearLayout
         android:layout_width="match_parent"

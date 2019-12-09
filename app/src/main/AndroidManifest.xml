@@ -25,6 +25,9 @@
         android:theme="@style/AppTheme"
         tools:ignore="UnusedAttribute">
         <activity
+            android:name=".activity.SettingActivity"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".activity.CodeActivity"
             android:screenOrientation="portrait" />
         <activity
