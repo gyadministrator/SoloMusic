@@ -1,55 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context="com.example.gy.musicgame.activity.SearchActivity">
+    tools:context=".activity.SearchActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/mainColor"
-        android:orientation="horizontal">
+        android:orientation="vertical">
 
-        <EditText
-            android:id="@+id/et_search"
-            android:layout_width="0dp"
-            android:layout_height="60dp"
-            android:layout_weight="1"
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:background="@color/mainColor"
-            android:drawableTint="@color/white"
-            android:hint="你要搜索的内容..."
-            android:inputType="text"
-            android:paddingStart="15dp"
-            android:paddingLeft="15dp"
-            android:textColor="@color/white"
-            android:textColorHint="@color/white"
-            tools:ignore="HardcodedText,RtlSymmetry"
-            tools:targetApi="m" />
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/et_search"
+                android:layout_width="0dp"
+                android:layout_height="60dp"
+                android:layout_weight="1"
+                android:background="@color/mainColor"
+                android:drawableTint="@color/white"
+                android:hint="你要搜索的内容..."
+                android:inputType="text"
+                android:paddingStart="15dp"
+                android:paddingLeft="15dp"
+                android:textColor="@color/white"
+                android:textColorHint="@color/white"
+                tools:ignore="HardcodedText,RtlSymmetry"
+                tools:targetApi="m" />
+
+            <TextView
+                android:id="@+id/tv_search"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="15dp"
+                android:layout_marginRight="15dp"
+                android:text="@string/search"
+                android:textColor="@color/white"
+                android:textSize="16sp" />
+        </LinearLayout>
 
         <TextView
-            android:id="@+id/tv_search"
-            android:layout_width="wrap_content"
+            android:id="@+id/tv_tip"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="15dp"
-            android:layout_marginRight="15dp"
-            android:text="@string/search"
-            android:textColor="@color/white"
-            android:textSize="16sp" />
+            android:layout_marginStart="15dp"
+            android:layout_marginLeft="15dp"
+            android:text="@string/tip"
+            android:textSize="18sp" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/tv_tip"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="15dp"
-        android:layout_marginLeft="15dp"
-        android:text="@string/tip"
-        android:textSize="18sp" />
+        android:layout_height="match_parent"
+        android:gravity="bottom">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-</LinearLayout>
+        <com.example.gy.musicgame.view.BottomBarView
+            android:layout_width="match_parent"
+            android:layout_height="60dp" />
+    </LinearLayout>
+</FrameLayout>

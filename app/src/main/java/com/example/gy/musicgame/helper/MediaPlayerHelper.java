@@ -112,7 +112,6 @@ public class MediaPlayerHelper {
     public void start() {
         if (mMediaPlayer.isPlaying()) return;
         mMediaPlayer.start();
-        EventBus.getDefault().post(new CustomEvent());
     }
 
     /**

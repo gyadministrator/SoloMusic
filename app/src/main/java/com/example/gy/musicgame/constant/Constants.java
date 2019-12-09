@@ -18,7 +18,7 @@ public class Constants {
     public static final String METHOD_SINGER = "baidu.ting.artist.getInfo";
     public static final String METHOD_SINGER_LIST = "baidu.ting.artist.getSongList";
     public static final String SPLASH_URL = "http://cn.bing.com/";
-    public static final String SERVER_URL = "http://192.168.43.170:8002/api/front/";
+    public static final String SERVER_URL = "http://123.207.93.53:8002/api/front/";
 
     public static final String PLAY = "play";
 
@@ -35,4 +35,6 @@ public class Constants {
     public static final String CURRENT_USER_INFO = "current_user_info";
 
     public static final String CURRENT_USER_NAME = "current_user_name";
+
+    public static final String CURRENT_BOTTOM_VO = "current_bottom_vo";
 }

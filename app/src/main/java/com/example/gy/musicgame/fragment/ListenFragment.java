@@ -37,6 +37,7 @@ import com.example.gy.musicgame.utils.HandlerUtils;
 import com.example.gy.musicgame.utils.NotificationPermissionUtil;
 import com.example.gy.musicgame.utils.SharedPreferenceUtil;
 import com.example.gy.musicgame.utils.UserManager;
+import com.example.gy.musicgame.view.BottomBarView;
 import com.example.gy.musicgame.view.MainView;
 import com.example.gy.musicgame.view.RecyclerDecoration;
 import com.example.gy.musicgame.view.TitleView;
@@ -67,6 +68,7 @@ public class ListenFragment extends Fragment implements OnRefreshListener, Title
     private TitleView titleView;
     private Activity mActivity;
     private boolean isShow = true;
+    private BottomBarView bottomBarView;
 
     public static ListenFragment newInstance() {
         return new ListenFragment();
@@ -103,7 +105,7 @@ public class ListenFragment extends Fragment implements OnRefreshListener, Title
         String token = preferenceUtil.getObject(mActivity, Constants.CURRENT_TOKEN);
         if (TextUtils.isEmpty(token)) {
             goLogin();
-        }else {
+        } else {
             getUserInfo(token);
         }
     }
@@ -181,6 +183,7 @@ public class ListenFragment extends Fragment implements OnRefreshListener, Title
     }
 
     private void initView(View view) {
+        bottomBarView = view.findViewById(R.id.bottom_bar_view);
         rv_recommend = view.findViewById(R.id.rv_recommend);
         recyclerView = view.findViewById(R.id.recyclerView);
         refreshLayout = view.findViewById(R.id.refreshLayout);
@@ -252,5 +255,11 @@ public class ListenFragment extends Fragment implements OnRefreshListener, Title
     @Override
     public void success() {
         mShimmerRecyclerView.hideShimmerAdapter();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        bottomBarView.onDestroy();
     }
 }

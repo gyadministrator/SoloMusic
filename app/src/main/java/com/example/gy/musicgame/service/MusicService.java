@@ -75,7 +75,6 @@ public class MusicService extends Service {
                     NotificationUtils.sendCustomNotification(mContext, mMusic, bitmap, R.mipmap.stop);
                     mMediaPlayerHelper.start();
                 }
-                EventBus.getDefault().post(new CustomEvent());
             }
         }
         return super.onStartCommand(intent, flags, startId);
@@ -109,7 +108,8 @@ public class MusicService extends Service {
 
         /**
          * 根据图片的url路径获得Bitmap对象
-         *          *
+         * *
+         *
          * @param url 图片地址
          * @return
          */
