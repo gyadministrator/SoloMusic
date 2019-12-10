@@ -53,7 +53,7 @@ public class FriendFragment extends Fragment {
     }
 
     private void initAction() {
-        //loginIM();
+        loginIM();
     }
 
     private void initData() {
