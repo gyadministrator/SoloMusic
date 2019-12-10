@@ -18,6 +18,21 @@
             app:showBack="false"
             app:showRight="false"
             app:title="@string/info" />
+
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/tabLayout"
+            android:layout_width="300dp"
+            android:layout_height="@dimen/btn_height"
+            app:tabIndicatorColor="@color/pressed"
+            app:tabMinWidth="@dimen/btn_height"
+            app:tabIndicatorFullWidth="false"
+            app:tabSelectedTextColor="@color/pressed"
+            app:tabTextColor="@color/normal" />
+
+        <androidx.viewpager.widget.ViewPager
+            android:id="@+id/viewPager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
     </LinearLayout>
 
     <LinearLayout
