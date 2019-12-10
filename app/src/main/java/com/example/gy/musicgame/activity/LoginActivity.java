@@ -228,6 +228,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         @Override
         public void onClick(@NonNull View view) {
             ToastUtils.showShort("用户协议");
+            WebActivity.startActivity(mActivity, "http://www.baidu.com/");
         }
     }
 

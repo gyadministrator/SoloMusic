@@ -150,7 +150,7 @@ dependencies {
     implementation 'com.tencent.bugly:nativecrashreport:3.7.1'
     //noinspection GradleCompatible
     implementation 'com.android.support:design:28.0.0'
-    api 'com.just.agentweb:agentweb:4.0.3-beta'
+    api 'com.just.agentweb:agentweb:4.1.2'
     implementation 'com.github.forvv231:EasyNavigation:1.0.3'
     //右滑返回上一页
     implementation 'me.imid.swipebacklayout.lib:library:1.1.0'

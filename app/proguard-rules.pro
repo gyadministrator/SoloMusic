@@ -285,3 +285,11 @@
 #如果使用了实时音视频功能
 -keep class com.superrtc.** {*;}
 -dontwarn  com.superrtc.**
+
+#agentWeb
+-keep class com.just.agentweb.** {
+    *;
+}
+-dontwarn com.just.agentweb.**
+
+-keepclassmembers class com.example.gy.musicgame.plugin{ *; }

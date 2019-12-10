@@ -42,4 +42,6 @@ public class Constants {
     public static final String MOB_APP_SECRET = "251072b5d3cce225be6516bfded12018";
 
     public static final String RECIPE_URL = "https://apicloud.mob.com/";
+
+    public static final String PLUGIN_NAME = "NativePlugin";
 }
