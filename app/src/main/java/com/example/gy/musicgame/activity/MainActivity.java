@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment;
 
 import com.example.gy.musicgame.R;
 import com.example.gy.musicgame.fragment.FriendFragment;
+import com.example.gy.musicgame.fragment.InfoFragment;
 import com.example.gy.musicgame.fragment.ListenFragment;
 import com.example.gy.musicgame.fragment.MeFragment;
 import com.example.gy.musicgame.fragment.RecipeFragment;
@@ -16,11 +17,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends BaseActivity {
-    private String[] tabText = {"听歌", "美食", "歌友", "我的"};
+    private String[] tabText = {"听歌", "美食", "歌友", "消息", "我的"};
     //未选中icon
-    private int[] normalIcon = {R.mipmap.listen, R.mipmap.record, R.mipmap.friend, R.mipmap.me};
+    private int[] normalIcon = {R.mipmap.listen, R.mipmap.record, R.mipmap.friend, R.mipmap.info, R.mipmap.me};
     //选中时icon
-    private int[] selectIcon = {R.mipmap.listen_pressed, R.mipmap.record_pressed, R.mipmap.friend_pressed, R.mipmap.me_pressed};
+    private int[] selectIcon = {R.mipmap.listen_pressed, R.mipmap.record_pressed, R.mipmap.friend_pressed, R.mipmap.info_pressed, R.mipmap.me_pressed};
 
     private List<Fragment> fragments = new ArrayList<>();
     private EasyNavigationBar navigationBar;
@@ -36,6 +37,7 @@ public class MainActivity extends BaseActivity {
         fragments.add(ListenFragment.newInstance());
         fragments.add(RecipeFragment.newInstance());
         fragments.add(FriendFragment.newInstance());
+        fragments.add(InfoFragment.newInstance());
         fragments.add(MeFragment.newInstance());
 
         navigationBar.titleItems(tabText)

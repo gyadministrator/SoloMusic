@@ -13,6 +13,15 @@ public class UserModel implements Comparable<UserModel> {
     private String pinyin; // 姓名对应的拼音
     private String firstLetter; // 拼音的首字母
     private String image;
+    private boolean isBoot;
+
+    public boolean isBoot() {
+        return isBoot;
+    }
+
+    public void setBoot(boolean boot) {
+        isBoot = boot;
+    }
 
     public String getImage() {
         return image;

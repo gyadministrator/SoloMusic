@@ -41,7 +41,7 @@ public class SortAdapter extends BaseAdapter {
     @SuppressLint("InflateParams")
     public View getView(final int position, View view, ViewGroup arg2) {
         ViewHolder viewHolder;
-        final UserModel user = list.get(position);
+        UserModel user = list.get(position);
         if (view == null) {
             viewHolder = new ViewHolder();
             view = LayoutInflater.from(mContext).inflate(R.layout.friend_item, null);
@@ -52,9 +52,8 @@ public class SortAdapter extends BaseAdapter {
         } else {
             viewHolder = (ViewHolder) view.getTag();
         }
-
         //根据position获取首字母作为目录catalog
-        String catalog = list.get(position).getFirstLetter();
+        String catalog = user.getFirstLetter();
 
         //如果当前位置等于该分类首字母的Char的位置 ，则认为是第一次出现
         if (position == getPositionForSection(catalog)) {
@@ -64,9 +63,15 @@ public class SortAdapter extends BaseAdapter {
             viewHolder.catalog.setVisibility(View.GONE);
         }
 
-        viewHolder.name.setText(this.list.get(position).getName());
-        if (list.get(position) != null && !TextUtils.isEmpty(list.get(position).getImage())) {
-            Glide.with(mContext).load(list.get(position).getImage()).into(viewHolder.image);
+        viewHolder.name.setText(user.getName());
+        if (!TextUtils.isEmpty(user.getImage())) {
+            Glide.with(mContext).load(user.getImage()).into(viewHolder.image);
+        } else {
+            if (user.isBoot()) {
+                Glide.with(mContext).load(R.mipmap.reboot).into(viewHolder.image);
+            } else {
+                Glide.with(mContext).load(R.mipmap.default_user).into(viewHolder.image);
+            }
         }
         return view;
 
@@ -81,7 +86,7 @@ public class SortAdapter extends BaseAdapter {
     /**
      * 获取catalog首次出现位置
      */
-    public int getPositionForSection(String catalog) {
+    private int getPositionForSection(String catalog) {
         for (int i = 0; i < getCount(); i++) {
             String sortStr = list.get(i).getFirstLetter();
             if (catalog.equalsIgnoreCase(sortStr)) {

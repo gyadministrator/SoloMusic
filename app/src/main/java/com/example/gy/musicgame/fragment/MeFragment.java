@@ -62,7 +62,6 @@ import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 
-@RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
 public class MeFragment extends Fragment implements View.OnClickListener {
     private MeViewModel mViewModel;
     private Activity mActivity;
@@ -154,6 +153,7 @@ public class MeFragment extends Fragment implements View.OnClickListener {
         titleView = view.findViewById(R.id.titleView);
         bottomBarView = view.findViewById(R.id.bottom_bar_view);
         titleView.setRightClickListener(new TitleView.OnRightClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
             @Override
             public void clickRight(View view) {
                 SettingActivity.startActivity(mActivity, token);

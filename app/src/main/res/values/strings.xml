@@ -64,4 +64,5 @@
     <string name="new_friend">新的歌友</string>
     <string name="group">群聊</string>
     <string name="default_time">00:00</string>
+    <string name="info">消息</string>
 </resources>
