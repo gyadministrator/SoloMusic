@@ -1,5 +1,6 @@
 package com.example.gy.musicgame.view;
 
+import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -23,14 +24,13 @@ import androidx.annotation.RequiresApi;
 import com.blankj.utilcode.util.ToastUtils;
 import com.bumptech.glide.Glide;
 import com.example.gy.musicgame.R;
+import com.example.gy.musicgame.activity.LrcActivity;
+import com.example.gy.musicgame.constant.Constants;
 import com.example.gy.musicgame.helper.MediaPlayerHelper;
 import com.example.gy.musicgame.model.BottomBarVo;
 import com.example.gy.musicgame.model.MusicVo;
 import com.example.gy.musicgame.service.MusicService;
-
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
+import com.example.gy.musicgame.utils.SharedPreferenceUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -97,37 +97,35 @@ public class BottomBarView extends LinearLayout {
         mediaPlayerHelper = MediaPlayerHelper.getInstance(context);
         animation = AnimationUtils.loadAnimation(context, R.anim.play_music_anim);
         initEvent();
-        EventBus.getDefault().register(this);
     }
 
-    //处理eventBus事件
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onEvent(Object object) {
-        if (object instanceof MusicVo) {
-            final MusicVo musicVo = (MusicVo) object;
-            this.bottomBarVo = new BottomBarVo();
-            bottomBarVo.setAuthor(musicVo.getAuthor());
-            bottomBarVo.setImage(musicVo.getImageUrl());
-            bottomBarVo.setName(musicVo.getTitle());
-            bottomBarVo.setPath(musicVo.getPath());
-            mediaPlayerHelper.setPath(bottomBarVo.getPath());
+    public void play(MusicVo musicVo) {
+        mMusic = musicVo;
+        bottomBarVo = new BottomBarVo();
+        bottomBarVo.setAuthor(musicVo.getAuthor());
+        bottomBarVo.setImage(musicVo.getImageUrl());
+        bottomBarVo.setName(musicVo.getTitle());
+        bottomBarVo.setPath(musicVo.getPath());
+        bottomBarVo.setSongId(musicVo.getSongId());
+        mediaPlayerHelper.setPath(bottomBarVo.getPath());
 
-            mediaPlayerHelper.setOnMediaPlayerHelperListener(new MediaPlayerHelper.OnMediaPlayerHelperListener() {
-                @Override
-                public void onPrepared(MediaPlayer mediaPlayer) {
-                    ivIcon.startAnimation(animation);
-                    ivPlay.setImageResource(R.mipmap.stop);
-                    initData(bottomBarVo);
-                    mMusic = musicVo;
-                    startMusicService();
-                }
+        SharedPreferenceUtil<BottomBarVo> preferenceUtil = new SharedPreferenceUtil<>();
+        preferenceUtil.saveObject(bottomBarVo, mContext, Constants.CURRENT_BOTTOM_VO);
 
-                @Override
-                public void onCompletion(MediaPlayer mediaPlayer) {
+        mediaPlayerHelper.setOnMediaPlayerHelperListener(new MediaPlayerHelper.OnMediaPlayerHelperListener() {
+            @Override
+            public void onPrepared(MediaPlayer mediaPlayer) {
+                ivIcon.startAnimation(animation);
+                ivPlay.setImageResource(R.mipmap.stop);
+                initData(bottomBarVo);
+                startMusicService();
+            }
 
-                }
-            });
-        }
+            @Override
+            public void onCompletion(MediaPlayer mediaPlayer) {
+
+            }
+        });
     }
 
     /**
@@ -165,7 +163,16 @@ public class BottomBarView extends LinearLayout {
         llBottomBar.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                if (!mediaPlayerHelper.isPlaying()) {
+                    MusicVo musicVo = new MusicVo();
+                    musicVo.setPath(bottomBarVo.getPath());
+                    musicVo.setTitle(bottomBarVo.getName());
+                    musicVo.setSongId(bottomBarVo.getSongId());
+                    musicVo.setImageUrl(bottomBarVo.getImage());
+                    musicVo.setAuthor(bottomBarVo.getAuthor());
+                    play(musicVo);
+                }
+                LrcActivity.startActivity((Activity) mContext, bottomBarVo.getName(), bottomBarVo.getSongId(), bottomBarVo.getImage());
             }
         });
 
@@ -213,12 +220,14 @@ public class BottomBarView extends LinearLayout {
     }
 
     private void initData(BottomBarVo bottomBarVo) {
+        this.bottomBarVo = bottomBarVo;
         if (bottomBarVo != null) {
             path = bottomBarVo.getPath();
             if (!TextUtils.isEmpty(bottomBarVo.getImage())) {
                 Glide.with(mContext).load(bottomBarVo.getImage()).into(ivIcon);
                 if (mediaPlayerHelper.isPlaying()) {
                     ivIcon.startAnimation(animation);
+                    ivPlay.setImageResource(R.mipmap.stop);
                 }
             }
             if (!TextUtils.isEmpty(bottomBarVo.getName())) {
@@ -240,7 +249,6 @@ public class BottomBarView extends LinearLayout {
     }
 
     public void onDestroy() {
-        EventBus.getDefault().unregister(this);
         if (isBindService) {
             isBindService = false;
             mContext.unbindService(conn);

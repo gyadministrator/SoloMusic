@@ -63,4 +63,5 @@
     <string name="download_tip">赶快下载使用吧！</string>
     <string name="new_friend">新的歌友</string>
     <string name="group">群聊</string>
+    <string name="default_time">00:00</string>
 </resources>

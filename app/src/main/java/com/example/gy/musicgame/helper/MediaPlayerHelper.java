@@ -43,6 +43,10 @@ public class MediaPlayerHelper {
         mMediaPlayer = new MediaPlayer();
     }
 
+    public MediaPlayer getmMediaPlayer() {
+        return mMediaPlayer;
+    }
+
     /**
      * 1.setPath 当前需要播放的音乐
      * 2.start 播放音乐

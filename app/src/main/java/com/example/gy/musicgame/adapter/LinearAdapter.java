@@ -3,7 +3,9 @@ package com.example.gy.musicgame.adapter;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Build;
+import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,7 +20,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.blankj.utilcode.util.ToastUtils;
 import com.bumptech.glide.Glide;
-import com.example.gy.musicgame.R;;
+import com.example.gy.musicgame.R;
 import com.example.gy.musicgame.api.Api;
 import com.example.gy.musicgame.constant.Constants;
 import com.example.gy.musicgame.helper.LoadingDialogHelper;
@@ -26,9 +28,6 @@ import com.example.gy.musicgame.helper.RetrofitHelper;
 import com.example.gy.musicgame.model.MusicModel;
 import com.example.gy.musicgame.model.MusicVo;
 import com.example.gy.musicgame.model.PlayMusicModel;
-import com.example.gy.musicgame.model.RecommendMusicModel;
-
-import org.greenrobot.eventbus.EventBus;
 
 import java.util.List;
 import java.util.Map;
@@ -39,6 +38,8 @@ import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
+
+;
 
 /**
  * Description: CustomerMusic
@@ -131,7 +132,11 @@ public class LinearAdapter extends RecyclerView.Adapter<LinearAdapter.ViewHolder
                                 musicVo.setTitle(bean.getTitle());
                                 musicVo.setPath(file_link);
 
-                                EventBus.getDefault().post(musicVo);
+                                Intent intent = new Intent();
+                                Bundle bundle = new Bundle();
+                                bundle.putSerializable("bottomBar", musicVo);
+                                intent.putExtra("bottomBar", bundle);
+                                mContext.sendBroadcast(intent);
                             }
                         }
                     }

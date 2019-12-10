@@ -23,15 +23,22 @@ import androidx.lifecycle.ViewModelProviders;
 import com.blankj.utilcode.util.ToastUtils;
 import com.example.gy.musicgame.R;
 import com.example.gy.musicgame.activity.MainActivity;
+import com.example.gy.musicgame.constant.Constants;
 import com.example.gy.musicgame.friend.SideBar;
 import com.example.gy.musicgame.friend.SortAdapter;
+import com.example.gy.musicgame.model.BottomBarVo;
 import com.example.gy.musicgame.model.UserModel;
 import com.example.gy.musicgame.utils.LogUtils;
+import com.example.gy.musicgame.utils.SharedPreferenceUtil;
+import com.example.gy.musicgame.view.BottomBarView;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.hyphenate.EMCallBack;
 import com.hyphenate.EMError;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.exceptions.HyphenateException;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -50,6 +57,7 @@ public class FriendFragment extends Fragment {
     private MyReceiver myReceiver;
     private SortAdapter adapter;
     private RelativeLayout rlData;
+    private BottomBarView bottomBarView;
 
     @SuppressLint("HandlerLeak")
     private Handler mHandler = new Handler() {
@@ -103,6 +111,28 @@ public class FriendFragment extends Fragment {
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         mActivity = getActivity();
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (isVisibleToUser) {
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    setBottomBarData();
+                }
+            }, 1200);
+        }
+    }
+
+    private void setBottomBarData() {
+        SharedPreferenceUtil<BottomBarVo> preferenceUtil = new SharedPreferenceUtil<>();
+        String json = preferenceUtil.getObjectJson(mActivity, Constants.CURRENT_BOTTOM_VO);
+        Type type = new TypeToken<BottomBarVo>() {
+        }.getType();
+        BottomBarVo bottomBarVo = new Gson().fromJson(json, type);
+        bottomBarView.setBottomBarVo(bottomBarVo);
     }
 
     private void initAction() {
@@ -196,6 +226,7 @@ public class FriendFragment extends Fragment {
         listView = view.findViewById(R.id.listView);
         sideBar = view.findViewById(R.id.side_bar);
         rlData = view.findViewById(R.id.rl_data);
+        bottomBarView = view.findViewById(R.id.bottom_bar_view);
     }
 
     private void loginIM() {

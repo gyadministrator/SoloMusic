@@ -1,16 +1,27 @@
 package com.example.gy.musicgame.model;
 
+import java.io.Serializable;
+
 /**
  * Date:2019/12/9
  * TIME:10:53
  * author:fldserver
  * email:1984629668@qq.com
  **/
-public class BottomBarVo {
+public class BottomBarVo implements Serializable {
     private String image;
     private String name;
     private String author;
     private String path;
+    private String songId;
+
+    public String getSongId() {
+        return songId;
+    }
+
+    public void setSongId(String songId) {
+        this.songId = songId;
+    }
 
     public String getPath() {
         return path;

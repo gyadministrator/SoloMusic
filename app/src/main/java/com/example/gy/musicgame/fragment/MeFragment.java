@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,12 +30,14 @@ import com.example.gy.musicgame.api.Api;
 import com.example.gy.musicgame.constant.Constants;
 import com.example.gy.musicgame.helper.LoadingDialogHelper;
 import com.example.gy.musicgame.helper.RetrofitHelper;
+import com.example.gy.musicgame.model.BottomBarVo;
 import com.example.gy.musicgame.model.FileVo;
 import com.example.gy.musicgame.model.UserInfoVo;
 import com.example.gy.musicgame.utils.HandlerUtils;
 import com.example.gy.musicgame.utils.LogUtils;
 import com.example.gy.musicgame.utils.SharedPreferenceUtil;
 import com.example.gy.musicgame.utils.UserManager;
+import com.example.gy.musicgame.view.BottomBarView;
 import com.example.gy.musicgame.view.TitleView;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.gson.Gson;
@@ -70,6 +73,7 @@ public class MeFragment extends Fragment implements View.OnClickListener {
     private static final int REQUEST_CODE_PREVIEW = 101;
     private String token;
     private TitleView titleView;
+    private BottomBarView bottomBarView;
 
     public static MeFragment newInstance() {
         return new MeFragment();
@@ -148,6 +152,7 @@ public class MeFragment extends Fragment implements View.OnClickListener {
         tvName = view.findViewById(R.id.tv_name);
         ImageView iv_refresh = view.findViewById(R.id.iv_refresh);
         titleView = view.findViewById(R.id.titleView);
+        bottomBarView = view.findViewById(R.id.bottom_bar_view);
         titleView.setRightClickListener(new TitleView.OnRightClickListener() {
             @Override
             public void clickRight(View view) {
@@ -169,6 +174,28 @@ public class MeFragment extends Fragment implements View.OnClickListener {
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         mActivity = getActivity();
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (isVisibleToUser) {
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    setBottomBarData();
+                }
+            }, 1200);
+        }
+    }
+
+    private void setBottomBarData() {
+        SharedPreferenceUtil<BottomBarVo> preferenceUtil = new SharedPreferenceUtil<>();
+        String json = preferenceUtil.getObjectJson(mActivity, Constants.CURRENT_BOTTOM_VO);
+        Type type = new TypeToken<BottomBarVo>() {
+        }.getType();
+        BottomBarVo bottomBarVo = new Gson().fromJson(json, type);
+        bottomBarView.setBottomBarVo(bottomBarVo);
     }
 
     @Override

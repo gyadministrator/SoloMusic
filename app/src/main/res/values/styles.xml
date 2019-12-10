@@ -32,6 +32,7 @@
         <attr name="showRight" format="boolean" />
         <attr name="srcBack" format="reference" />
         <attr name="srcRight" format="reference" />
+        <attr name="bgColor" format="reference" />
     </declare-styleable>
 
     <style name="customEditText" parent="Theme.AppCompat.Light">

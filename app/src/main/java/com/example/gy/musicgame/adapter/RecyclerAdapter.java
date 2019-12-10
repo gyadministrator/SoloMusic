@@ -26,11 +26,8 @@ import com.example.gy.musicgame.model.PlayMusicModel;
 import com.example.gy.musicgame.model.RecommendMusicModel;
 import com.example.gy.musicgame.view.WidthEqualHeightImageView;
 
-import org.greenrobot.eventbus.EventBus;
-
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 import io.reactivex.Observable;
 import io.reactivex.Observer;
@@ -87,6 +84,16 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
         });
     }
 
+    public interface OnItemClickListener {
+        void play(MusicVo musicVo);
+    }
+
+    OnItemClickListener onItemClickListener;
+
+    public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
+        this.onItemClickListener = onItemClickListener;
+    }
+
     private void getSongPath(final RecommendMusicModel.ResultBean.ListBean bean) {
         LoadingDialogHelper.show((Activity) mContext, "获取播放源中...");
         RetrofitHelper retrofitHelper = RetrofitHelper.getInstance();
@@ -119,7 +126,9 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
                                 musicVo.setTitle(bean.getTitle());
                                 musicVo.setPath(file_link);
 
-                                EventBus.getDefault().post(musicVo);
+                                if (onItemClickListener != null) {
+                                    onItemClickListener.play(musicVo);
+                                }
                             }
                         }
                     }
@@ -128,7 +137,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
                     @Override
                     public void onError(Throwable e) {
                         LoadingDialogHelper.dismiss();
-                        ToastUtils.showShort(Objects.requireNonNull(e.getMessage()));
+                        ToastUtils.showShort("未获取到播放源");
                     }
 
                     @Override

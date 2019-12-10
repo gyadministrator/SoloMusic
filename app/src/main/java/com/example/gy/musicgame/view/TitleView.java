@@ -27,6 +27,8 @@ public class TitleView extends LinearLayout {
     private int srcBack;
     private int srcRight;
     private TextView tvTitle;
+    private LinearLayout ll;
+    private int bgColor;
 
     public TitleView(Context context) {
         this(context, null);
@@ -44,6 +46,7 @@ public class TitleView extends LinearLayout {
         showRight = typedArray.getBoolean(R.styleable.TitleView_showRight, true);
         srcBack = typedArray.getResourceId(R.styleable.TitleView_srcBack, 0);
         srcRight = typedArray.getResourceId(R.styleable.TitleView_srcRight, 0);
+        bgColor = typedArray.getResourceId(R.styleable.TitleView_bgColor, 0);
         typedArray.recycle();
         init(context);
     }
@@ -56,8 +59,12 @@ public class TitleView extends LinearLayout {
         View view = LayoutInflater.from(context).inflate(R.layout.title_view, this);
         ImageView iv_back = view.findViewById(R.id.iv_back);
         ImageView iv_right = findViewById(R.id.iv_right);
+        ll = findViewById(R.id.ll);
         tvTitle = findViewById(R.id.tv_title);
 
+        if (bgColor != 0) {
+            ll.setBackgroundColor(bgColor);
+        }
         if (!"".equals(title)) {
             tvTitle.setText(title);
         }

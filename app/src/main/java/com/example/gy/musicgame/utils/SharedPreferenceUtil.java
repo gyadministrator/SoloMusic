@@ -44,4 +44,9 @@ public class SharedPreferenceUtil<T> {
         }.getType();
         return gson.fromJson(json, type);
     }
+
+    public String getObjectJson(Context context, String name) {
+        SharedPreferences sp = context.getSharedPreferences(name, Context.MODE_PRIVATE);
+        return sp.getString(name, "");
+    }
 }

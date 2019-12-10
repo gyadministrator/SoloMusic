@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,6 +31,8 @@ import com.example.gy.musicgame.api.Api;
 import com.example.gy.musicgame.constant.Constants;
 import com.example.gy.musicgame.helper.LoadingDialogHelper;
 import com.example.gy.musicgame.helper.RetrofitHelper;
+import com.example.gy.musicgame.model.BottomBarVo;
+import com.example.gy.musicgame.model.MusicVo;
 import com.example.gy.musicgame.model.RecommendMusicModel;
 import com.example.gy.musicgame.model.UserInfoVo;
 import com.example.gy.musicgame.presenter.MainPresenter;
@@ -41,11 +44,14 @@ import com.example.gy.musicgame.view.BottomBarView;
 import com.example.gy.musicgame.view.MainView;
 import com.example.gy.musicgame.view.RecyclerDecoration;
 import com.example.gy.musicgame.view.TitleView;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.tencent.bugly.beta.Beta;
 
+import java.lang.reflect.Type;
 import java.util.Map;
 
 import io.reactivex.Observable;
@@ -195,6 +201,29 @@ public class ListenFragment extends Fragment implements OnRefreshListener, Title
     }
 
     @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (isVisibleToUser) {
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    setBottomBarData();
+                }
+            }, 1200);
+        }
+    }
+
+    private void setBottomBarData() {
+        SharedPreferenceUtil<BottomBarVo> preferenceUtil = new SharedPreferenceUtil<>();
+        String json = preferenceUtil.getObjectJson(mActivity, Constants.CURRENT_BOTTOM_VO);
+        Type type = new TypeToken<BottomBarVo>() {
+        }.getType();
+        BottomBarVo bottomBarVo = new Gson().fromJson(json, type);
+        bottomBarView.setBottomBarVo(bottomBarVo);
+    }
+
+
+    @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mViewModel = ViewModelProviders.of(this).get(ListenViewModel.class);
@@ -232,6 +261,12 @@ public class ListenFragment extends Fragment implements OnRefreshListener, Title
         rv_recommend.setNestedScrollingEnabled(false);
         recyclerAdapter = new RecyclerAdapter(mActivity, result.getResult().getList());
         rv_recommend.setAdapter(recyclerAdapter);
+        recyclerAdapter.setOnItemClickListener(new RecyclerAdapter.OnItemClickListener() {
+            @Override
+            public void play(MusicVo musicVo) {
+                bottomBarView.play(musicVo);
+            }
+        });
     }
 
     @Override
