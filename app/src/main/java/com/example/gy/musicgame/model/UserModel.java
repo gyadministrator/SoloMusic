@@ -12,6 +12,15 @@ public class UserModel implements Comparable<UserModel> {
     private String name; // 姓名
     private String pinyin; // 姓名对应的拼音
     private String firstLetter; // 拼音的首字母
+    private String image;
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
 
     public UserModel() {
     }

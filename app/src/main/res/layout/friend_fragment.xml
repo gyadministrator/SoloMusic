@@ -20,14 +20,18 @@
             app:srcRight="@mipmap/add_white"
             app:title="@string/bottom_friend" />
 
+
         <RelativeLayout
+            android:id="@+id/rl_data"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:visibility="visible">
 
             <ListView
                 android:id="@+id/listView"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent"
+                android:scrollbars="none" />
 
             <com.example.gy.musicgame.friend.SideBar
                 android:id="@+id/side_bar"

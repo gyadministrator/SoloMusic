@@ -2,13 +2,18 @@ package com.example.gy.musicgame.fragment;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -17,6 +22,7 @@ import androidx.lifecycle.ViewModelProviders;
 
 import com.blankj.utilcode.util.ToastUtils;
 import com.example.gy.musicgame.R;
+import com.example.gy.musicgame.activity.MainActivity;
 import com.example.gy.musicgame.friend.SideBar;
 import com.example.gy.musicgame.friend.SortAdapter;
 import com.example.gy.musicgame.model.UserModel;
@@ -28,6 +34,7 @@ import com.hyphenate.exceptions.HyphenateException;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -38,6 +45,45 @@ public class FriendFragment extends Fragment {
     private ListView listView;
     private SideBar sideBar;
     private ArrayList<UserModel> list;
+    private static final String TAG = "FriendFragment";
+    private List<String> friendList;
+    private MyReceiver myReceiver;
+    private SortAdapter adapter;
+    private RelativeLayout rlData;
+
+    @SuppressLint("HandlerLeak")
+    private Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            if (msg.what == 0) {
+                if (friendList != null && friendList.size() > 0) {
+                    setData();
+                    //设置未读消息
+                    ((MainActivity) mActivity).setMsgPoint(2, 6);
+                } else {
+                    setEmpty();
+                }
+            }
+        }
+    };
+
+    private void setEmpty() {
+        @SuppressLint("InflateParams") View header = LayoutInflater.from(mActivity).inflate(R.layout.friend_header, null);
+        listView.addHeaderView(header);
+        @SuppressLint("InflateParams") View footer = LayoutInflater.from(mActivity).inflate(R.layout.empty_data, null);
+        listView.addView(footer);
+    }
+
+
+    private void setData() {
+        if (list.size() == 0) setEmpty();
+        Collections.sort(list); // 对list进行排序，需要让User实现Comparable接口重写compareTo方法
+        adapter = new SortAdapter(mActivity, list);
+        listView.setAdapter(adapter);
+        @SuppressLint("InflateParams") View view = LayoutInflater.from(mActivity).inflate(R.layout.friend_header, null);
+        listView.addHeaderView(view);
+    }
 
     public static FriendFragment newInstance() {
         return new FriendFragment();
@@ -64,7 +110,7 @@ public class FriendFragment extends Fragment {
     }
 
     private void initData() {
-        initFriendData();
+        //initFriendData();
         sideBar.setOnStrSelectCallBack(new SideBar.ISideBarSelectCallBack() {
             @Override
             public void onSelectStr(int index, String selectStr) {
@@ -76,6 +122,24 @@ public class FriendFragment extends Fragment {
                 }
             }
         });
+    }
+
+    private void getContactList() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    friendList = EMClient.getInstance().contactManager().getAllContactsFromServer();
+                    mHandler.sendEmptyMessage(0);
+                    LogUtils.d(TAG, "getContactList: " + friendList.size());
+                } catch (HyphenateException e) {
+                    e.printStackTrace();
+                    //ToastUtils.showToast("获取好友列表失败");
+                    LogUtils.d(TAG, "getContactList: 获取好友列表失败" + e.getErrorCode() + e.getMessage());
+                    setEmpty();
+                }
+            }
+        }).start();
     }
 
     private void initFriendData() {
@@ -122,7 +186,7 @@ public class FriendFragment extends Fragment {
         list.add(new UserModel("_(:з」∠)_"));
         list.add(new UserModel("……%￥#￥%#"));
         Collections.sort(list); // 对list进行排序，需要让User实现Comparable接口重写compareTo方法
-        SortAdapter adapter = new SortAdapter(mActivity, list);
+        adapter = new SortAdapter(mActivity, list);
         listView.setAdapter(adapter);
         @SuppressLint("InflateParams") View view = LayoutInflater.from(mActivity).inflate(R.layout.friend_header, null);
         listView.addHeaderView(view);
@@ -131,6 +195,7 @@ public class FriendFragment extends Fragment {
     private void initView(View view) {
         listView = view.findViewById(R.id.listView);
         sideBar = view.findViewById(R.id.side_bar);
+        rlData = view.findViewById(R.id.rl_data);
     }
 
     private void loginIM() {
@@ -181,6 +246,22 @@ public class FriendFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
         mViewModel = ViewModelProviders.of(this).get(FriendViewModel.class);
         // TODO: Use the ViewModel
+    }
+
+    private class MyReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            if (action != null && action.equals("accept")) {
+                getContactList();
+            }
+            if (action != null && action.equals("deleted")) {
+                if (adapter != null) {
+                    adapter.notifyDataSetChanged();
+                }
+            }
+        }
     }
 
 }

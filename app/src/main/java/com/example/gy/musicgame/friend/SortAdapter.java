@@ -2,18 +2,21 @@ package com.example.gy.musicgame.friend;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.example.gy.musicgame.R;
 import com.example.gy.musicgame.model.UserModel;
 
 import java.util.List;
 
-public class SortAdapter extends BaseAdapter{
+public class SortAdapter extends BaseAdapter {
 
     private List<UserModel> list;
     private Context mContext;
@@ -42,6 +45,7 @@ public class SortAdapter extends BaseAdapter{
         if (view == null) {
             viewHolder = new ViewHolder();
             view = LayoutInflater.from(mContext).inflate(R.layout.friend_item, null);
+            viewHolder.image = view.findViewById(R.id.iv_image);
             viewHolder.name = view.findViewById(R.id.name);
             viewHolder.catalog = view.findViewById(R.id.catalog);
             view.setTag(viewHolder);
@@ -53,15 +57,17 @@ public class SortAdapter extends BaseAdapter{
         String catalog = list.get(position).getFirstLetter();
 
         //如果当前位置等于该分类首字母的Char的位置 ，则认为是第一次出现
-        if(position == getPositionForSection(catalog)){
+        if (position == getPositionForSection(catalog)) {
             viewHolder.catalog.setVisibility(View.VISIBLE);
             viewHolder.catalog.setText(user.getFirstLetter().toUpperCase());
-        }else{
+        } else {
             viewHolder.catalog.setVisibility(View.GONE);
         }
 
         viewHolder.name.setText(this.list.get(position).getName());
-
+        if (list.get(position) != null && !TextUtils.isEmpty(list.get(position).getImage())) {
+            Glide.with(mContext).load(list.get(position).getImage()).into(viewHolder.image);
+        }
         return view;
 
     }
@@ -69,6 +75,7 @@ public class SortAdapter extends BaseAdapter{
     final static class ViewHolder {
         TextView catalog;
         TextView name;
+        ImageView image;
     }
 
     /**

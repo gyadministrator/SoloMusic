@@ -53,6 +53,12 @@ public class MainActivity extends BaseActivity {
         navigationBar.setHintPoint(3, true);*/
     }
 
+    public void setMsgPoint(int position, int number) {
+        if (navigationBar != null) {
+            navigationBar.setMsgPointCount(position, number);
+        }
+    }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
