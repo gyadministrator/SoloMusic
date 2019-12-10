@@ -185,7 +185,7 @@ public class ListenFragment extends Fragment implements OnRefreshListener, Title
     }
 
     private void checkUpdate() {
-        Beta.checkUpgrade();
+        //Beta.checkUpgrade();
     }
 
     private void initView(View view) {

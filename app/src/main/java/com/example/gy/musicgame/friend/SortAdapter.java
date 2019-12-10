@@ -1,7 +1,9 @@
 package com.example.gy.musicgame.friend;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
+import android.os.Build;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,11 +12,30 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.RequiresApi;
+
+import com.blankj.utilcode.util.ToastUtils;
 import com.bumptech.glide.Glide;
 import com.example.gy.musicgame.R;
+import com.example.gy.musicgame.api.Api;
+import com.example.gy.musicgame.constant.Constants;
+import com.example.gy.musicgame.helper.RetrofitHelper;
+import com.example.gy.musicgame.model.IMVo;
 import com.example.gy.musicgame.model.UserModel;
+import com.example.gy.musicgame.utils.HandlerUtils;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
+import io.reactivex.Observable;
+import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 
 public class SortAdapter extends BaseAdapter {
 
@@ -73,8 +94,51 @@ public class SortAdapter extends BaseAdapter {
                 Glide.with(mContext).load(R.mipmap.default_user).into(viewHolder.image);
             }
         }
+        requestImage(viewHolder.image, user.getName());
         return view;
 
+    }
+
+    private void requestImage(final ImageView image, final String name) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                RetrofitHelper retrofitHelper = RetrofitHelper.getInstance();
+                Api api = retrofitHelper.initRetrofit(Constants.SERVER_URL);
+                Observable<Map> observable = api.queryByAccount(name);
+                observable.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(new Observer<Map>() {
+                            @Override
+                            public void onSubscribe(Disposable d) {
+
+                            }
+
+                            @Override
+                            public void onNext(Map map) {
+                                Gson gson = new Gson();
+                                String json = gson.toJson(map.get("data"));
+                                Type type = new TypeToken<IMVo>() {
+                                }.getType();
+                                IMVo imVo = gson.fromJson(json, type);
+
+                                if (imVo != null && !TextUtils.isEmpty(imVo.getAvatar())) {
+                                    Glide.with(mContext).load(imVo.getAvatar()).into(image);
+                                }
+                            }
+
+                            @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+                            @Override
+                            public void onError(Throwable e) {
+                                ToastUtils.showShort(Objects.requireNonNull(e.getMessage()));
+                            }
+
+                            @Override
+                            public void onComplete() {
+
+                            }
+                        });
+            }
+        }).start();
     }
 
     final static class ViewHolder {

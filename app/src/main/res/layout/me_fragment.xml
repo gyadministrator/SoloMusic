@@ -32,29 +32,71 @@
                 android:layout_marginTop="@dimen/btn_margin"
                 android:orientation="horizontal">
 
-                <TextView
-                    android:layout_width="@dimen/item_size"
-                    android:layout_height="@dimen/item_size"
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
                     android:layout_weight="1"
-                    android:drawableTop="@mipmap/local"
                     android:gravity="center"
-                    android:text="@string/local_music" />
+                    android:orientation="vertical">
 
-                <TextView
-                    android:layout_width="@dimen/item_size"
-                    android:layout_height="@dimen/item_size"
-                    android:layout_weight="1"
-                    android:drawableTop="@mipmap/my_download"
-                    android:gravity="center"
-                    android:text="@string/my_download" />
+                    <ImageView
+                        android:layout_width="@dimen/icon_size"
+                        android:layout_height="@dimen/icon_size"
+                        android:layout_gravity="center"
+                        android:src="@mipmap/local" />
 
-                <TextView
-                    android:layout_width="@dimen/item_size"
-                    android:layout_height="@dimen/item_size"
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:gravity="center"
+                        android:text="@string/local_music" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
                     android:layout_weight="1"
-                    android:drawableTop="@mipmap/recent"
                     android:gravity="center"
-                    android:text="@string/recent_play" />
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:layout_width="@dimen/icon_size"
+                        android:layout_height="@dimen/icon_size"
+                        android:layout_gravity="center"
+                        android:src="@mipmap/my_download" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:gravity="center"
+                        android:text="@string/my_download" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:layout_width="@dimen/icon_size"
+                        android:layout_height="@dimen/icon_size"
+                        android:layout_gravity="center"
+                        android:src="@mipmap/recent" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:gravity="center"
+                        android:text="@string/recent_play" />
+                </LinearLayout>
             </LinearLayout>
 
             <LinearLayout
@@ -90,28 +132,70 @@
                 android:layout_marginTop="@dimen/btn_margin"
                 android:orientation="horizontal">
 
-                <TextView
-                    android:layout_width="@dimen/item_size"
-                    android:layout_height="@dimen/item_size"
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
                     android:layout_weight="1"
-                    android:drawableTop="@mipmap/love"
                     android:gravity="center"
-                    android:text="@string/my_love" />
+                    android:orientation="vertical">
 
-                <TextView
-                    android:layout_width="@dimen/item_size"
-                    android:layout_height="@dimen/item_size"
-                    android:layout_weight="1"
-                    android:drawableTop="@mipmap/wifi"
-                    android:gravity="center"
-                    android:text="@string/wifi" />
+                    <ImageView
+                        android:layout_width="@dimen/icon_size"
+                        android:layout_height="@dimen/icon_size"
+                        android:layout_gravity="center"
+                        android:src="@mipmap/love" />
 
-                <TextView
-                    android:layout_width="@dimen/item_size"
-                    android:layout_height="@dimen/item_size"
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:gravity="center"
+                        android:text="@string/my_love" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
                     android:layout_weight="1"
                     android:gravity="center"
-                    android:visibility="invisible" />
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:layout_width="@dimen/icon_size"
+                        android:layout_height="@dimen/icon_size"
+                        android:layout_gravity="center"
+                        android:src="@mipmap/wifi" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:gravity="center"
+                        android:text="@string/wifi" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:visibility="invisible">
+
+                    <ImageView
+                        android:layout_width="@dimen/icon_size"
+                        android:layout_height="@dimen/icon_size"
+                        android:layout_gravity="center" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:gravity="center" />
+                </LinearLayout>
             </LinearLayout>
 
             <LinearLayout
@@ -179,7 +263,6 @@
                 android:layout_height="match_parent"
                 android:layout_gravity="center"
                 android:layout_marginTop="@dimen/btn_margin"
-                android:drawableTop="@mipmap/empty"
                 android:drawablePadding="6dp"
                 android:gravity="center"
                 android:text="@string/data_empty" />

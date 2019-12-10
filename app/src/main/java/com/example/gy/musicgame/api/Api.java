@@ -215,4 +215,14 @@ public interface Api {
 
     @GET("v1/cook/menu/query")
     Observable<RecipeDetailModel> getRecipeDetail(@Query("key") String key, @Query("id") String id);
+
+
+    /**
+     * 查找账户
+     *
+     * @param account 账户
+     * @return
+     */
+    @GET("auth/queryByAccount")
+    Observable<Map> queryByAccount(@Query("account") String account);
 }

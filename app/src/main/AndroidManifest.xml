@@ -42,7 +42,12 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="UnusedAttribute">
-        <activity android:name=".activity.LrcActivity"></activity>
+        <activity
+            android:name=".activity.SearchFriendActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.LrcActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".activity.WebActivity"
             android:configChanges="orientation|screenSize"

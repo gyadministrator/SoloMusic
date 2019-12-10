@@ -25,6 +25,7 @@ import androidx.core.content.FileProvider;
 import com.example.gy.musicgame.R;
 import com.example.gy.musicgame.helper.DialogHelper;
 import com.example.gy.musicgame.helper.LoadingDialogHelper;
+import com.hb.dialog.dialog.ConfirmDialog;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -32,8 +33,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-
-import cn.refactor.lib.colordialog.ColorDialog;
 
 public class UpdateManager {
     private Context mContext;
@@ -92,22 +91,22 @@ public class UpdateManager {
 
     private void showNoticeDialog(final String apkPath, String updateMsg) {
         LoadingDialogHelper.dismiss();
-        final ColorDialog dialog = new ColorDialog(mContext);
-        dialog.setTitle("发现新版本");
-        dialog.setContentText(updateMsg);
-        dialog.setCanceledOnTouchOutside(false);
-        dialog.setPositiveListener("立即下载", new ColorDialog.OnPositiveListener() {
+        final ConfirmDialog confirmDialog = new ConfirmDialog(mContext);
+        confirmDialog.setMsg(updateMsg);
+        confirmDialog.setClickListener(new ConfirmDialog.OnBtnClickListener() {
             @Override
-            public void onClick(ColorDialog colorDialog) {
-                dialog.dismiss();
+            public void ok() {
+                confirmDialog.dismiss();
                 showDownloadDialog(apkPath);
             }
-        }).setNegativeListener("以后再说", new ColorDialog.OnNegativeListener() {
+
             @Override
-            public void onClick(ColorDialog colorDialog) {
-                dialog.dismiss();
+            public void cancel() {
+                confirmDialog.dismiss();
             }
-        }).show();
+        });
+        confirmDialog.setCanceledOnTouchOutside(false);
+        confirmDialog.show();
     }
 
     @SuppressLint("CutPasteId")

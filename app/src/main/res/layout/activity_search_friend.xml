@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".activity.SearchFriendActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/mainColor"
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/et_search"
+                android:layout_width="0dp"
+                android:layout_height="60dp"
+                android:layout_weight="1"
+                android:background="@color/mainColor"
+                android:drawableTint="@color/white"
+                android:hint="你要搜索的内容..."
+                android:inputType="text"
+                android:paddingStart="15dp"
+                android:paddingLeft="15dp"
+                android:textColor="@color/white"
+                android:textColorHint="@color/white"
+                tools:ignore="HardcodedText,RtlSymmetry"
+                tools:targetApi="m" />
+
+            <TextView
+                android:id="@+id/tv_search"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="15dp"
+                android:layout_marginRight="15dp"
+                android:text="@string/search"
+                android:textColor="@color/white"
+                android:textSize="16sp" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tv_tip"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="15dp"
+            android:layout_marginLeft="15dp"
+            android:text="@string/tip_friend"
+            android:textSize="18sp" />
+
+        <LinearLayout
+            android:id="@+id/ll_result"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/btn_height"
+            android:layout_gravity="center"
+            android:layout_margin="@dimen/btn_margin"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <ImageView
+                android:id="@+id/iv_image"
+                android:layout_width="@dimen/icon_size"
+                android:layout_height="@dimen/icon_size"
+                android:scaleType="fitXY"
+                android:src="@mipmap/default_user" />
+
+            <TextView
+                android:id="@+id/tv_name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginStart="@dimen/btn_margin"
+                android:layout_marginLeft="@dimen/btn_margin"
+                android:layout_weight="1"
+                android:text="admin"
+                android:textSize="@dimen/btn_size"
+                tools:ignore="HardcodedText" />
+
+            <ImageView
+                android:id="@+id/iv_add"
+                android:layout_width="@dimen/icon_size"
+                android:layout_height="@dimen/icon_size"
+                android:layout_marginEnd="@dimen/btn_margin"
+                android:layout_marginRight="@dimen/btn_margin"
+                android:src="@mipmap/add" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tv_result"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:layout_marginTop="@dimen/btn_height"
+            android:gravity="center"
+            android:text="无搜索结果"
+            android:textSize="@dimen/btn_size"
+            android:visibility="gone"
+            tools:ignore="HardcodedText" />
+    </LinearLayout>
+</LinearLayout>

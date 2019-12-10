@@ -22,6 +22,7 @@ import androidx.lifecycle.ViewModelProviders;
 import com.blankj.utilcode.util.ToastUtils;
 import com.example.gy.musicgame.R;
 import com.example.gy.musicgame.activity.MainActivity;
+import com.example.gy.musicgame.activity.SearchFriendActivity;
 import com.example.gy.musicgame.constant.Constants;
 import com.example.gy.musicgame.friend.SideBar;
 import com.example.gy.musicgame.friend.SortAdapter;
@@ -30,6 +31,7 @@ import com.example.gy.musicgame.model.UserModel;
 import com.example.gy.musicgame.utils.LogUtils;
 import com.example.gy.musicgame.utils.SharedPreferenceUtil;
 import com.example.gy.musicgame.view.BottomBarView;
+import com.example.gy.musicgame.view.TitleView;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.hyphenate.EMCallBack;
@@ -54,6 +56,7 @@ public class FriendFragment extends Fragment {
     private static final String TAG = "FriendFragment";
     private List<String> friendList;
     private MyReceiver myReceiver;
+    private TitleView titleView;
     private SortAdapter adapter;
     private BottomBarView bottomBarView;
 
@@ -178,6 +181,18 @@ public class FriendFragment extends Fragment {
         listView = view.findViewById(R.id.listView);
         sideBar = view.findViewById(R.id.side_bar);
         bottomBarView = view.findViewById(R.id.bottom_bar_view);
+        titleView = view.findViewById(R.id.titleView);
+        titleView.setRightClickListener(new TitleView.OnRightClickListener() {
+            @Override
+            public void clickRight(View view) {
+                mActivity.startActivity(new Intent(mActivity, SearchFriendActivity.class));
+            }
+
+            @Override
+            public void clickLeft(View view) {
+
+            }
+        });
     }
 
     private void loginIM() {
