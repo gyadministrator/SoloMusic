@@ -61,4 +61,6 @@
     <string name="data_empty">暂无数据</string>
     <string name="detail">详情</string>
     <string name="download_tip">赶快下载使用吧！</string>
+    <string name="new_friend">新的歌友</string>
+    <string name="group">群聊</string>
 </resources>

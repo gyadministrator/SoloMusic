@@ -171,4 +171,6 @@ dependencies {
     //noinspection GradleCompatible
     implementation 'com.google.android.gms:play-services-gcm:17.0.0'
     implementation 'com.hyphenate:hyphenate-sdk:3.3.0'
+    //拼音
+    implementation 'com.belerweb:pinyin4j:2.5.1'
 }
