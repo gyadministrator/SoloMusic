@@ -5,22 +5,25 @@ import android.annotation.SuppressLint;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 
 import com.example.gy.musicgame.R;
+import com.example.gy.musicgame.helper.DialogHelper;
+import com.example.gy.musicgame.listener.SheetDialogListener;
 import com.example.gy.musicgame.utils.ImgUtils;
-import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.yzq.zxinglibrary.encode.CodeCreator;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class CodeActivity extends BaseActivity implements View.OnLongClickListener {
     private ImageView ivCode;
     private Bitmap bitmap;
+    @SuppressLint("InlinedApi")
     private final String[] PERMISSIONS = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE};
     private final int REQUEST_CODE = 1001;
     private String name = "code";
@@ -51,37 +54,22 @@ public class CodeActivity extends BaseActivity implements View.OnLongClickListen
     @Override
     public boolean onLongClick(View view) {
         //长按保存图片
-        showBottom();
-        return true;
-    }
-
-    private void showBottom() {
-        final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(this);
-        bottomSheetDialog.setCancelable(true);
-        bottomSheetDialog.setCanceledOnTouchOutside(true);
-        @SuppressLint("InflateParams") View view = LayoutInflater.from(this).inflate(R.layout.activity_save_code, null);
-        bottomSheetDialog.setContentView(view);
-        bottomSheetDialog.show();
-        TextView tv_save = view.findViewById(R.id.tv_save);
-        TextView tv_cancel = view.findViewById(R.id.tv_cancel);
-        tv_cancel.setOnClickListener(new View.OnClickListener() {
+        List<String> items = new ArrayList<>();
+        items.add("保存到相册");
+        DialogHelper.getInstance().showBottomDialog(mActivity, items, new SheetDialogListener() {
             @Override
-            public void onClick(View v) {
-                bottomSheetDialog.dismiss();
-            }
-        });
-        tv_save.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                bottomSheetDialog.dismiss();
-                if (ActivityCompat.checkSelfPermission(CodeActivity.this, PERMISSIONS[0]) != PackageManager.PERMISSION_GRANTED ||
-                        ActivityCompat.checkSelfPermission(CodeActivity.this, PERMISSIONS[1]) != PackageManager.PERMISSION_GRANTED) {
-                    ActivityCompat.requestPermissions(CodeActivity.this, PERMISSIONS, REQUEST_CODE);
-                } else {
-                    ImgUtils.saveImageToGallery(CodeActivity.this, bitmap, name);
+            public void selectPosition(int position) {
+                if (position == 0) {
+                    if (ActivityCompat.checkSelfPermission(mActivity, PERMISSIONS[0]) != PackageManager.PERMISSION_GRANTED ||
+                            ActivityCompat.checkSelfPermission(mActivity, PERMISSIONS[1]) != PackageManager.PERMISSION_GRANTED) {
+                        ActivityCompat.requestPermissions(mActivity, PERMISSIONS, REQUEST_CODE);
+                    } else {
+                        ImgUtils.saveImageToGallery(mActivity, bitmap, name);
+                    }
                 }
             }
         });
+        return true;
     }
 
     @Override

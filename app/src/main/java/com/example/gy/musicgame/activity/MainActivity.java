@@ -1,8 +1,13 @@
 package com.example.gy.musicgame.activity;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.os.Build;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 
 import com.example.gy.musicgame.R;
@@ -16,7 +21,9 @@ import com.next.easynavigation.view.EasyNavigationBar;
 import java.util.ArrayList;
 import java.util.List;
 
+@RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
 public class MainActivity extends BaseActivity {
+    private static final int REQUEST_CODE = 1002;
     private String[] tabText = {"听歌", "美食", "歌友", "消息", "我的"};
     //未选中icon
     private int[] normalIcon = {R.mipmap.listen, R.mipmap.record, R.mipmap.friend, R.mipmap.info, R.mipmap.me};
@@ -25,6 +32,8 @@ public class MainActivity extends BaseActivity {
 
     private List<Fragment> fragments = new ArrayList<>();
     private EasyNavigationBar navigationBar;
+    private final String[] PERMISSIONS = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE
+            , Manifest.permission.CAMERA};
 
     @Override
     protected void initView() {
@@ -51,13 +60,37 @@ public class MainActivity extends BaseActivity {
                 .fragmentManager(getSupportFragmentManager())
                 .build();
 
-       /* navigationBar.setMsgPointCount(0, 12);
-        navigationBar.setHintPoint(3, true);*/
+        requestPermission();
     }
 
+    private void requestPermission() {
+        for (String permission : PERMISSIONS) {
+            if (ActivityCompat.checkSelfPermission(mActivity, permission) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(mActivity, PERMISSIONS, REQUEST_CODE);
+            }
+        }
+    }
+
+    /**
+     * 设置消息
+     *
+     * @param position tab位置
+     * @param number   数量
+     */
     public void setMsgPoint(int position, int number) {
         if (navigationBar != null) {
             navigationBar.setMsgPointCount(position, number);
+        }
+    }
+
+    /**
+     * 设置消息圆点
+     *
+     * @param position tab位置
+     */
+    public void setHintPoint(int position) {
+        if (navigationBar != null) {
+            navigationBar.setHintPoint(position, true);
         }
     }
 
