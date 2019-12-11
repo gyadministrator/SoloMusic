@@ -1,6 +1,5 @@
 package com.example.gy.musicgame.fragment;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -42,7 +41,6 @@ import com.example.gy.musicgame.utils.UserManager;
 import com.example.gy.musicgame.view.BottomBarView;
 import com.example.gy.musicgame.view.GlideImageLoader;
 import com.example.gy.musicgame.view.TitleView;
-import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.lzy.imagepicker.ImagePicker;
@@ -242,7 +240,6 @@ public class MeFragment extends Fragment implements View.OnClickListener {
                 initAction();
                 break;
             case R.id.iv_user:
-                //showBottom();
                 List<String> items = new ArrayList<>();
                 items.add("拍照");
                 items.add("相册");
@@ -263,41 +260,6 @@ public class MeFragment extends Fragment implements View.OnClickListener {
                 });
                 break;
         }
-    }
-
-    private void showBottom() {
-        final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(mActivity);
-        bottomSheetDialog.setCanceledOnTouchOutside(true);
-        bottomSheetDialog.setCancelable(true);
-        @SuppressLint("InflateParams") View view = LayoutInflater.from(mActivity).inflate(R.layout.me_picture_selector, null);
-        bottomSheetDialog.setContentView(view);
-        bottomSheetDialog.show();
-        TextView tv_take_photo = view.findViewById(R.id.tv_take_photo);
-        TextView tv_select_album = view.findViewById(R.id.tv_select_album);
-        TextView tv_cancel = view.findViewById(R.id.tv_cancel);
-        tv_cancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                bottomSheetDialog.dismiss();
-            }
-        });
-        tv_take_photo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                bottomSheetDialog.dismiss();
-                //拍照
-                takePhoto();
-            }
-        });
-
-        tv_select_album.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                bottomSheetDialog.dismiss();
-                //相册
-                selectAlbum();
-            }
-        });
     }
 
     private void selectAlbum() {
