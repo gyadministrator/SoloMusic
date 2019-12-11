@@ -39,4 +39,13 @@
         <item name="colorControlNormal">@color/hint_color</item>
         <item name="colorControlActivated">@color/pressed</item>
     </style>
+
+    <!--设置TabLayout字体大小-->
+    <style name="TabLayoutTextSize">
+        <item name="android:textSize">18sp</item>
+    </style>
+    <!--设置TabLayout字体加粗-->
+    <style name="TabLayoutTextStyle">
+        <item name="android:textStyle">bold</item>
+    </style>
 </resources>

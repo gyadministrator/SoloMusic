@@ -74,7 +74,7 @@ public class SortAdapter extends BaseAdapter {
         } else {
             viewHolder = (ViewHolder) view.getTag();
         }
-        if (position == 0 || position == list.size() - 1) {
+        if (list.size() == 1 || position == list.size() - 1) {
             viewHolder.view.setVisibility(View.GONE);
         }
         //根据position获取首字母作为目录catalog

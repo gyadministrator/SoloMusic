@@ -11,22 +11,18 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <com.example.gy.musicgame.view.TitleView
-            android:id="@+id/titleView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:showBack="false"
-            app:showRight="false"
-            app:title="@string/info" />
-
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/tabLayout"
-            android:layout_width="300dp"
+            android:layout_width="match_parent"
             android:layout_height="@dimen/btn_height"
-            app:tabIndicatorColor="@color/pressed"
-            app:tabMinWidth="@dimen/btn_height"
+            android:background="@color/mainColor"
+            app:tabGravity="center"
+            app:tabIndicatorColor="@color/white"
             app:tabIndicatorFullWidth="false"
-            app:tabSelectedTextColor="@color/pressed"
+            app:tabMode="fixed"
+            app:tabPaddingStart="@dimen/dp_12"
+            app:tabSelectedTextColor="@color/white"
+            app:tabTextAppearance="@style/TabLayoutTextSize"
             app:tabTextColor="@color/normal" />
 
         <androidx.viewpager.widget.ViewPager

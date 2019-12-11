@@ -6,8 +6,21 @@
     tools:context=".fragment.info.NoticeFragment">
 
     <TextView
+        android:id="@+id/tv_notice"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="通知" />
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:text="暂无通知"
+        android:textSize="@dimen/btn_size"
+        android:visibility="gone"
+        tools:ignore="HardcodedText" />
+
+    <ListView
+        android:id="@+id/listView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:divider="@color/transparent"
+        android:scrollbars="none" />
 
 </FrameLayout>

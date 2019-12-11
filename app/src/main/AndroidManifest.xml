@@ -43,6 +43,9 @@
         android:theme="@style/AppTheme"
         tools:ignore="UnusedAttribute">
         <activity
+            android:name=".activity.NoticeDetailActivity"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".activity.SearchFriendActivity"
             android:screenOrientation="portrait" />
         <activity

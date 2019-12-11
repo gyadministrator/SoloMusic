@@ -1,20 +1,18 @@
 package com.example.gy.musicgame.fragment;
 
-import androidx.lifecycle.ViewModelProviders;
-
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.viewpager.widget.ViewPager;
-
 import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.viewpager.widget.ViewPager;
 
 import com.example.gy.musicgame.R;
 import com.example.gy.musicgame.adapter.MyPagerAdapter;
@@ -24,7 +22,6 @@ import com.example.gy.musicgame.fragment.info.NoticeFragment;
 import com.example.gy.musicgame.model.BottomBarVo;
 import com.example.gy.musicgame.utils.SharedPreferenceUtil;
 import com.example.gy.musicgame.view.BottomBarView;
-import com.example.gy.musicgame.view.TitleView;
 import com.google.android.material.tabs.TabLayout;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -37,7 +34,6 @@ public class InfoFragment extends Fragment {
 
     private InfoViewModel mViewModel;
     private Activity mActivity;
-    private TitleView titleView;
     private BottomBarView bottomBarView;
     private ViewPager viewPager;
     private TabLayout tabLayout;
@@ -72,7 +68,6 @@ public class InfoFragment extends Fragment {
     }
 
     private void initView(View view) {
-        titleView = view.findViewById(R.id.titleView);
         bottomBarView = view.findViewById(R.id.bottom_bar_view);
         viewPager = view.findViewById(R.id.viewPager);
         tabLayout = view.findViewById(R.id.tabLayout);
