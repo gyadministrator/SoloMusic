@@ -40,6 +40,7 @@ public class MainActivity extends BaseActivity {
 
     private List<Fragment> fragments = new ArrayList<>();
     private EasyNavigationBar navigationBar;
+    private boolean isFront = false;
     private BottomBarView bottomBarView;
     private final String[] PERMISSIONS = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE
             , Manifest.permission.CAMERA};
@@ -54,11 +55,6 @@ public class MainActivity extends BaseActivity {
         return bottomBarView;
     }
 
-    @Override
-    protected void onRestart() {
-        super.onRestart();
-        setBottomBarData();
-    }
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
@@ -82,6 +78,20 @@ public class MainActivity extends BaseActivity {
                 .build();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (isFront) {
+            setBottomBarData();
+            isFront = false;
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        isFront = true;
+    }
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     private void checkPermission() {
