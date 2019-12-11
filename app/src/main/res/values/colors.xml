@@ -13,4 +13,5 @@
     <color name="bottom_color">#F5B4F5</color>
     <color name="hint_color">#C7C7C7</color>
     <color name="dark_transparent">#24000000</color>
+    <color name="update_theme_color">#FFFFAC5D</color>
 </resources>

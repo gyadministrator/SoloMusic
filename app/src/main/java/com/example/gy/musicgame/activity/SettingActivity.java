@@ -197,7 +197,7 @@ public class SettingActivity extends BaseActivity implements AdapterView.OnItemC
             ActivityCompat.requestPermissions(mActivity, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1001);
         } else {
             UpdateManager mUpdateManager = new UpdateManager(mActivity);
-            mUpdateManager.checkUpdateInfo(apkModel.getDownloadUrl(), apkModel.getContent());
+            mUpdateManager.checkUpdateInfo(apkModel);
         }
     }
 
@@ -296,7 +296,7 @@ public class SettingActivity extends BaseActivity implements AdapterView.OnItemC
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == 1001) {
             UpdateManager mUpdateManager = new UpdateManager(mActivity);
-            mUpdateManager.checkUpdateInfo(apkModel.getDownloadUrl(), apkModel.getContent());
+            mUpdateManager.checkUpdateInfo(apkModel);
         } else if (requestCode == REQUEST_CODE) {
             openScan();
         }

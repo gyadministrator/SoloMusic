@@ -5,16 +5,14 @@ package com.example.gy.musicgame.utils;
  */
 
 import android.annotation.SuppressLint;
-import android.app.AlertDialog.Builder;
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
+import android.os.Process;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ProgressBar;
@@ -22,9 +20,10 @@ import android.widget.TextView;
 
 import androidx.core.content.FileProvider;
 
+import com.blankj.utilcode.util.ActivityUtils;
 import com.example.gy.musicgame.R;
-import com.example.gy.musicgame.helper.DialogHelper;
 import com.example.gy.musicgame.helper.LoadingDialogHelper;
+import com.example.gy.musicgame.model.ApkModel;
 import com.hb.dialog.dialog.ConfirmDialog;
 
 import java.io.File;
@@ -85,51 +84,70 @@ public class UpdateManager {
     }
 
     // 外部接口让主Activity调用
-    public void checkUpdateInfo(String apkPath, String updateMsg) {
-        showNoticeDialog(apkPath, updateMsg);
+    public void checkUpdateInfo(ApkModel apkModel) {
+        showNoticeDialog(apkModel);
     }
 
-    private void showNoticeDialog(final String apkPath, String updateMsg) {
+    private void showNoticeDialog(final ApkModel apkModel) {
         LoadingDialogHelper.dismiss();
         final ConfirmDialog confirmDialog = new ConfirmDialog(mContext);
-        confirmDialog.setMsg(updateMsg);
-        confirmDialog.setClickListener(new ConfirmDialog.OnBtnClickListener() {
+        @SuppressLint("InflateParams") View view = LayoutInflater.from(mContext).inflate(R.layout.update_notice, null);
+        TextView tvVersion = view.findViewById(R.id.tv_version);
+        TextView tvContent = view.findViewById(R.id.tv_content);
+        TextView tvSure = view.findViewById(R.id.tv_sure);
+        TextView tvCancel = view.findViewById(R.id.tv_cancel);
+        TextView tvTime = view.findViewById(R.id.tv_time);
+        TextView tvUpdate = view.findViewById(R.id.tv_update);
+        confirmDialog.setContentView(view);
+        tvVersion.setText(apkModel.getApkVersion());
+        tvTime.setText(apkModel.getAddTime());
+        tvContent.setText(apkModel.getContent());
+        if (apkModel.getIsUpdate() == 1) {
+            tvUpdate.setVisibility(View.VISIBLE);
+        }
+        tvCancel.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void ok() {
+            public void onClick(View v) {
                 confirmDialog.dismiss();
-                showDownloadDialog(apkPath);
+                if (apkModel.getIsUpdate() == 1) {
+                    //强制更新
+                    ActivityUtils.finishAllActivities();
+                    System.exit(0);
+                    Process.killProcess(Process.myPid());
+                }
             }
-
+        });
+        tvSure.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void cancel() {
+            public void onClick(View v) {
                 confirmDialog.dismiss();
+                showDownloadDialog(apkModel.getDownloadUrl());
             }
         });
         confirmDialog.setCanceledOnTouchOutside(false);
+        confirmDialog.setCancelable(false);
         confirmDialog.show();
     }
 
     @SuppressLint("CutPasteId")
     private void showDownloadDialog(String apkPath) {
-        Builder builder = new Builder(mContext);
-        builder.setTitle("新版本更新");
-
+        final ConfirmDialog confirmDialog = new ConfirmDialog(mContext);
         final LayoutInflater inflater = LayoutInflater.from(mContext);
         @SuppressLint("InflateParams") View v = inflater.inflate(R.layout.download_progress, null);
         progress_tv = v.findViewById(R.id.progress_tv);
         mProgress = v.findViewById(R.id.progress);
-        builder.setView(v);
-        builder.setCancelable(false);
-        builder.setNegativeButton("取消", new OnClickListener() {
+        TextView tvCancel = v.findViewById(R.id.tv_cancel);
+        confirmDialog.setContentView(v);
+        tvCancel.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
+            public void onClick(View v) {
+                confirmDialog.dismiss();
                 interceptFlag = true;
             }
         });
-        downloadDialog = builder.create();
-        downloadDialog.show();
-
+        confirmDialog.setCanceledOnTouchOutside(false);
+        confirmDialog.setCancelable(false);
+        confirmDialog.show();
         downloadApk(apkPath);
     }
 

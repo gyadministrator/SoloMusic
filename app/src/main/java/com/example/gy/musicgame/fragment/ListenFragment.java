@@ -1,8 +1,10 @@
 package com.example.gy.musicgame.fragment;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -14,12 +16,14 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.blankj.utilcode.util.AppUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.cooltechworks.views.shimmer.ShimmerRecyclerView;
 import com.example.gy.musicgame.R;
@@ -31,6 +35,7 @@ import com.example.gy.musicgame.api.Api;
 import com.example.gy.musicgame.constant.Constants;
 import com.example.gy.musicgame.helper.LoadingDialogHelper;
 import com.example.gy.musicgame.helper.RetrofitHelper;
+import com.example.gy.musicgame.model.ApkModel;
 import com.example.gy.musicgame.model.BottomBarVo;
 import com.example.gy.musicgame.model.MusicVo;
 import com.example.gy.musicgame.model.RecommendMusicModel;
@@ -39,6 +44,7 @@ import com.example.gy.musicgame.presenter.MainPresenter;
 import com.example.gy.musicgame.utils.HandlerUtils;
 import com.example.gy.musicgame.utils.NotificationPermissionUtil;
 import com.example.gy.musicgame.utils.SharedPreferenceUtil;
+import com.example.gy.musicgame.utils.UpdateManager;
 import com.example.gy.musicgame.utils.UserManager;
 import com.example.gy.musicgame.view.BottomBarView;
 import com.example.gy.musicgame.view.MainView;
@@ -53,6 +59,7 @@ import com.tencent.bugly.beta.Beta;
 
 import java.lang.reflect.Type;
 import java.util.Map;
+import java.util.Objects;
 
 import io.reactivex.Observable;
 import io.reactivex.Observer;
@@ -75,6 +82,9 @@ public class ListenFragment extends Fragment implements OnRefreshListener, Title
     private Activity mActivity;
     private boolean isShow = true;
     private BottomBarView bottomBarView;
+    private String token;
+    private ApkModel apkModel;
+    private boolean isRefresh = false;
 
     public static ListenFragment newInstance() {
         return new ListenFragment();
@@ -108,11 +118,23 @@ public class ListenFragment extends Fragment implements OnRefreshListener, Title
         recyclerView.setAdapter(mainAdapter);
 
         SharedPreferenceUtil<String> preferenceUtil = new SharedPreferenceUtil<>();
-        String token = preferenceUtil.getObject(mActivity, Constants.CURRENT_TOKEN);
+        token = preferenceUtil.getObject(mActivity, Constants.CURRENT_TOKEN);
         if (TextUtils.isEmpty(token)) {
             goLogin();
         } else {
+            if (!isRefresh) {
+                checkUpdate();
+            }
             getUserInfo(token);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == 1001) {
+            UpdateManager mUpdateManager = new UpdateManager(mActivity);
+            mUpdateManager.checkUpdateInfo(apkModel);
         }
     }
 
@@ -174,8 +196,6 @@ public class ListenFragment extends Fragment implements OnRefreshListener, Title
     private void initData() {
         //检测通知栏权限
         checkPermission();
-        //检测版本更新
-        checkUpdate();
         gridShimmerRecyclerView.showShimmerAdapter();
     }
 
@@ -184,9 +204,6 @@ public class ListenFragment extends Fragment implements OnRefreshListener, Title
         NotificationPermissionUtil.checkNotificationEnable(mActivity);
     }
 
-    private void checkUpdate() {
-        //Beta.checkUpgrade();
-    }
 
     private void initView(View view) {
         bottomBarView = view.findViewById(R.id.bottom_bar_view);
@@ -213,6 +230,60 @@ public class ListenFragment extends Fragment implements OnRefreshListener, Title
         }
     }
 
+    private void checkUpdate() {
+        String packageName = AppUtils.getAppPackageName();
+        Integer versionCode = AppUtils.getAppVersionCode();
+        RetrofitHelper retrofitHelper = RetrofitHelper.getInstance();
+        final Api api = retrofitHelper.initRetrofit(Constants.SERVER_URL);
+        Observable<Map> observable = api.apkUpdate(token, packageName, versionCode);
+        observable.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<Map>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+                    @Override
+                    public void onNext(Map map) {
+                        boolean handler = HandlerUtils.isHandler(map, mActivity);
+                        if (!handler) {
+                            Type type = new TypeToken<ApkModel>() {
+                            }.getType();
+                            Gson gson = new Gson();
+                            apkModel = gson.fromJson(Objects.requireNonNull(gson.toJson(map.get("data"))), type);
+                            if (apkModel != null) {
+                                showNotice(apkModel);
+                            } else {
+                                ToastUtils.showShort("获取更新数据异常");
+                            }
+                        }
+                    }
+
+                    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+                    @Override
+                    public void onError(Throwable e) {
+                        Beta.checkUpgrade();
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    private void showNotice(ApkModel apkModel) {
+        // 这里来检测版本是否需要更新
+        if (ActivityCompat.checkSelfPermission(mActivity, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(mActivity, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1001);
+        } else {
+            UpdateManager mUpdateManager = new UpdateManager(mActivity);
+            mUpdateManager.checkUpdateInfo(apkModel);
+        }
+    }
+
     private void setBottomBarData() {
         SharedPreferenceUtil<BottomBarVo> preferenceUtil = new SharedPreferenceUtil<>();
         String json = preferenceUtil.getObjectJson(mActivity, Constants.CURRENT_BOTTOM_VO);
@@ -232,6 +303,7 @@ public class ListenFragment extends Fragment implements OnRefreshListener, Title
 
     @Override
     public void onRefresh(@NonNull RefreshLayout refreshLayout) {
+        isRefresh = true;
         isShow = false;
         initAction();
         gridShimmerRecyclerView.showShimmerAdapter();

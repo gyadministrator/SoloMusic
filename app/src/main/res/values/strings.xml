@@ -66,4 +66,5 @@
     <string name="group">群聊</string>
     <string name="default_time">00:00</string>
     <string name="info">消息</string>
+    <string name="force_update_tip">此次版本需要强制升级，部分功能才可正常使用，如不立即更新，则将退出APP</string>
 </resources>
