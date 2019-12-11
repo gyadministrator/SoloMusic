@@ -39,18 +39,21 @@ public class DialogHelper {
         myAlertDialog.setPositiveButton("确认", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                myAlertDialog.dismiss();
-                listener.clickSure();
+                if (listener != null) {
+                    listener.clickSure();
+                }
             }
         });
         myAlertDialog.setNegativeButton("取消", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                myAlertDialog.dismiss();
-                listener.clickCancel();
+                if (listener != null) {
+                    listener.clickCancel();
+                }
             }
         });
         myAlertDialog.setCanceledOnTouchOutside(false);
+        myAlertDialog.setCancelable(false);
         myAlertDialog.show();
     }
 
@@ -61,16 +64,17 @@ public class DialogHelper {
         myAlertInputDialog.setPositiveButton("确认", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dialogListener.sure(myAlertInputDialog.getResult());
-                myAlertInputDialog.dismiss();
+                if (dialogListener != null) {
+                    dialogListener.sure(myAlertInputDialog.getResult());
+                }
             }
         }).setNegativeButton("取消", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                myAlertInputDialog.dismiss();
             }
         });
         myAlertInputDialog.setCanceledOnTouchOutside(false);
+        myAlertInputDialog.setCancelable(false);
         myAlertInputDialog.show();
 
     }
