@@ -37,7 +37,7 @@ public class NotificationPermissionUtil {
 
     }
 
-    private static void openPermission(final Context context) {
+    public static void openPermission(final Context context) {
         ConfirmDialog confirmDialog = new ConfirmDialog(context);
         confirmDialog.setLogoImg(R.mipmap.logo).setMsg("通知权限没有开启," +
                 "开启后才能在通知栏显示当前音乐播放的信息,你要开启吗?");

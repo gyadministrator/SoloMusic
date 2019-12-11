@@ -103,13 +103,14 @@ public class ListenFragment extends Fragment implements OnRefreshListener, Title
         mActivity = getActivity();
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     private void initAction() {
         mainPresenter = new MainPresenter<MainView>(this);
         mainPresenter.getRecommendList();
         mShimmerRecyclerView.showShimmerAdapter();
         recyclerView.setLayoutManager(new LinearLayoutManager(mActivity));
         recyclerView.setNestedScrollingEnabled(false);
-        mainAdapter = new MainAdapter(mActivity, recyclerView, mainPresenter.getTitles(), mainPresenter.getTypes());
+        mainAdapter = new MainAdapter(mActivity, recyclerView, mainPresenter.getTitles(), mainPresenter.getTypes(), ((MainActivity) mActivity).getBottomBarView());
         mainAdapter.setOnMainAdapterListener(this);
         recyclerView.setAdapter(mainAdapter);
 

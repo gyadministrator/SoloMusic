@@ -30,7 +30,6 @@ import com.example.gy.musicgame.model.PlayMusicModel;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 import io.reactivex.Observable;
 import io.reactivex.Observer;
@@ -54,7 +53,7 @@ public class LinearAdapter extends RecyclerView.Adapter<LinearAdapter.ViewHolder
     private boolean isFlag;
     private OnItemClickListener onItemClickListener;
 
-    public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
+    void setOnItemClickListener(OnItemClickListener onItemClickListener) {
         this.onItemClickListener = onItemClickListener;
     }
 
@@ -147,7 +146,7 @@ public class LinearAdapter extends RecyclerView.Adapter<LinearAdapter.ViewHolder
                     @Override
                     public void onError(Throwable e) {
                         LoadingDialogHelper.dismiss();
-                        ToastUtils.showShort(Objects.requireNonNull(e.getMessage()));
+                        ToastUtils.showShort("未获取到播放源");
                     }
 
                     @Override

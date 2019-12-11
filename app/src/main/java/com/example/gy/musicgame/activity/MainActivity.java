@@ -50,6 +50,16 @@ public class MainActivity extends BaseActivity {
         bottomBarView = fd(R.id.bottom_bar_view);
     }
 
+    public BottomBarView getBottomBarView() {
+        return bottomBarView;
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        setBottomBarData();
+    }
+
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     protected void initData() {
@@ -95,6 +105,7 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void musicStop() {
         super.musicStop();
+        bottomBarView.close();
     }
 
     private void setBottomBarData() {

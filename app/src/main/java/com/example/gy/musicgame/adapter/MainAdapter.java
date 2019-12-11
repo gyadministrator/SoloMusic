@@ -17,7 +17,10 @@ import com.example.gy.musicgame.R;
 import com.example.gy.musicgame.activity.AlbumActivity;
 import com.example.gy.musicgame.constant.Constants;
 import com.example.gy.musicgame.helper.RetrofitHelper;
+import com.example.gy.musicgame.listener.OnItemClickListener;
+import com.example.gy.musicgame.model.BottomBarVo;
 import com.example.gy.musicgame.model.MusicModel;
+import com.example.gy.musicgame.view.BottomBarView;
 
 import java.util.List;
 import java.util.Map;
@@ -41,6 +44,7 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
     private RecyclerView mRecyclerView;
     private boolean isCalculationRvHeight;
     private View mItemView;
+    private BottomBarView bottomBarView;
 
     public interface OnMainAdapterListener {
         void success();
@@ -52,11 +56,12 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
         this.onMainAdapterListener = onMainAdapterListener;
     }
 
-    public MainAdapter(Context context, RecyclerView recyclerView, List<String> title, List<Integer> type) {
+    public MainAdapter(Context context, RecyclerView recyclerView, List<String> title, List<Integer> type, BottomBarView bottomBarView) {
         mContext = context;
         mTitle = title;
         mType = type;
         mRecyclerView = recyclerView;
+        this.bottomBarView = bottomBarView;
     }
 
     @NonNull
@@ -112,6 +117,15 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
                         linerAdapter = new LinearAdapter(mContext, holder.recyclerView);
                         linerAdapter.setList(musicModel.getSong_list(), true);
                         holder.recyclerView.setAdapter(linerAdapter);
+
+                        linerAdapter.setOnItemClickListener(new OnItemClickListener() {
+                            @Override
+                            public void play(BottomBarVo bottomBarVo) {
+                                if (bottomBarView != null) {
+                                    bottomBarView.play(bottomBarVo);
+                                }
+                            }
+                        });
                     }
 
                     @Override
