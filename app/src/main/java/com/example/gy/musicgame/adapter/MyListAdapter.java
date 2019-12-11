@@ -64,10 +64,10 @@ public class MyListAdapter extends BaseAdapter {
         }
         ItemModel item = list.get(position);
         viewHolder.iv_icon.setImageResource(item.getIcon());
-        ColorMatrix matrix = new ColorMatrix();
+       /* ColorMatrix matrix = new ColorMatrix();
         matrix.setSaturation(0);//饱和度 0灰色 100过度彩色，50正常
         ColorMatrixColorFilter filter = new ColorMatrixColorFilter(matrix);
-        viewHolder.iv_icon.setColorFilter(filter);
+        viewHolder.iv_icon.setColorFilter(filter);*/
         viewHolder.tv_item_name.setText(item.getName());
         viewHolder.tv_data.setText(item.getData());
         return convertView;

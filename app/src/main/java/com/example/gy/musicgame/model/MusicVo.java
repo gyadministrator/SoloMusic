@@ -13,6 +13,15 @@ public class MusicVo implements Serializable {
     private String title;
     private String author;
     private String songId;
+    private String tingUid;
+
+    public String getTingUid() {
+        return tingUid;
+    }
+
+    public void setTingUid(String tingUid) {
+        this.tingUid = tingUid;
+    }
 
     public String getSongId() {
         return songId;

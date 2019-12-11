@@ -6,6 +6,7 @@ import android.media.Image;
 import android.media.MediaPlayer;
 import android.os.Build;
 import android.text.TextUtils;
+import android.view.View;
 import android.widget.ImageView;
 
 import androidx.annotation.RequiresApi;
@@ -16,10 +17,13 @@ import com.bumptech.glide.request.RequestOptions;
 import com.example.gy.musicgame.R;
 import com.example.gy.musicgame.api.Api;
 import com.example.gy.musicgame.constant.Constants;
+import com.example.gy.musicgame.helper.DialogHelper;
 import com.example.gy.musicgame.helper.LoadingDialogHelper;
 import com.example.gy.musicgame.helper.MediaPlayerHelper;
 import com.example.gy.musicgame.helper.RetrofitHelper;
+import com.example.gy.musicgame.listener.SheetDialogListener;
 import com.example.gy.musicgame.model.LrcModel;
+import com.example.gy.musicgame.model.SingerInfoModel;
 import com.example.gy.musicgame.view.ILrcBuilder;
 import com.example.gy.musicgame.view.ILrcViewListener;
 import com.example.gy.musicgame.view.TitleView;
@@ -28,6 +32,7 @@ import com.example.gy.musicgame.view.impl.LrcRow;
 import com.example.gy.musicgame.view.impl.LrcView;
 import com.gyf.barlibrary.ImmersionBar;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -49,6 +54,8 @@ public class LrcActivity extends BaseActivity {
     private ImageView ivBg;
     private ImmersionBar immersionBar;
     private TitleView titleView;
+    private String tingUid;
+    private String url;
     private MediaPlayerHelper mediaPlayerHelper;
     //更新歌词的定时器
     private Timer mTimer;
@@ -60,6 +67,40 @@ public class LrcActivity extends BaseActivity {
         mLrcView = fd(R.id.lrcView);
         ivBg = fd(R.id.iv_bg);
         titleView = fd(R.id.titleView);
+
+        titleView.setRightClickListener(new TitleView.OnRightClickListener() {
+            @Override
+            public void clickRight(View view) {
+                List<String> items = new ArrayList<>();
+                items.add("查看歌手");
+                items.add("收藏音乐");
+                DialogHelper.getInstance().showBottomDialog(mActivity, items, new SheetDialogListener() {
+                    @Override
+                    public void selectPosition(int position) {
+                        if (position == 0) {
+                            //查看歌手
+                            findSingerInFo();
+                        } else if (position == 1) {
+                            //收藏音乐
+                            collectMusic();
+                        }
+                    }
+                });
+            }
+
+            @Override
+            public void clickLeft(View view) {
+
+            }
+        });
+    }
+
+    private void collectMusic() {
+
+    }
+
+    private void findSingerInFo() {
+        WebActivity.startActivity(mActivity, url);
     }
 
     @Override
@@ -139,6 +180,7 @@ public class LrcActivity extends BaseActivity {
         songId = intent.getStringExtra("songId");
         title = intent.getStringExtra("title");
         pic = intent.getStringExtra("pic");
+        tingUid = intent.getStringExtra("tingUid");
         titleView.setTitle(title);
 
         Glide.with(this).load(pic)
@@ -146,17 +188,53 @@ public class LrcActivity extends BaseActivity {
                 .into(ivBg);
     }
 
-    public static void startActivity(Activity activity, String title, String songId, String pic) {
+    public static void startActivity(Activity activity, String title, String songId, String pic, String tingUid) {
         Intent intent = new Intent(activity, LrcActivity.class);
         intent.putExtra("songId", songId);
         intent.putExtra("title", title);
         intent.putExtra("pic", pic);
+        intent.putExtra("tingUid", tingUid);
         activity.startActivity(intent);
     }
 
     @Override
     protected void initAction() {
         getLrc(songId);
+        getSingerInfo();
+    }
+
+    private void getSingerInfo() {
+        RetrofitHelper retrofitHelper = RetrofitHelper.getInstance();
+        Api api = retrofitHelper.initRetrofit(Constants.BASE_URL);
+        Map<String, Object> params = retrofitHelper.getmParams();
+        params.put("method", Constants.METHOD_SINGER);
+        params.put("tinguid", tingUid);
+        Observable<SingerInfoModel> observable = api.getInfo(params);
+        observable.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<SingerInfoModel>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(SingerInfoModel singerInfoModel) {
+                        if (singerInfoModel != null) {
+                            url = singerInfoModel.getUrl();
+                        }
+                    }
+
+                    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+                    @Override
+                    public void onError(Throwable e) {
+                        ToastUtils.showShort(Objects.requireNonNull(e.getMessage()));
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
     }
 
     private void getLrc(String songId) {

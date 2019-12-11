@@ -109,6 +109,7 @@ public class WebActivity extends BaseActivity implements OnRefreshListener {
             super.onPageFinished(view, url);
             title = view.getTitle();
             titleView.setTitle(view.getTitle());
+            refreshLayout.finishRefresh(1500);
         }
     };
     private WebChromeClient mWebChromeClient = new WebChromeClient() {

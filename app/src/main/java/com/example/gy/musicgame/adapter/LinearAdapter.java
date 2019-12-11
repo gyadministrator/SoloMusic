@@ -131,6 +131,7 @@ public class LinearAdapter extends RecyclerView.Adapter<LinearAdapter.ViewHolder
                                 musicVo.setSongId(bean.getSong_id());
                                 musicVo.setTitle(bean.getTitle());
                                 musicVo.setPath(file_link);
+                                musicVo.setTingUid(bean.getTing_uid());
 
                                 Intent intent = new Intent();
                                 Bundle bundle = new Bundle();

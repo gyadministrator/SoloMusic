@@ -125,6 +125,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
                                 musicVo.setSongId(bean.getSong_id());
                                 musicVo.setTitle(bean.getTitle());
                                 musicVo.setPath(file_link);
+                                musicVo.setTingUid(bean.getTing_uid());
 
                                 if (onItemClickListener != null) {
                                     onItemClickListener.play(musicVo);

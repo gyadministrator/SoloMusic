@@ -14,6 +14,15 @@ public class BottomBarVo implements Serializable {
     private String author;
     private String path;
     private String songId;
+    private String tingUid;
+
+    public String getTingUid() {
+        return tingUid;
+    }
+
+    public void setTingUid(String tingUid) {
+        this.tingUid = tingUid;
+    }
 
     public String getSongId() {
         return songId;

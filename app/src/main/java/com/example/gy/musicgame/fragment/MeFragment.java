@@ -3,6 +3,7 @@ package com.example.gy.musicgame.fragment;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -11,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -24,12 +26,14 @@ import com.bumptech.glide.Glide;
 import com.example.gy.musicgame.R;
 import com.example.gy.musicgame.activity.ChangePasswordActivity;
 import com.example.gy.musicgame.activity.CodeActivity;
+import com.example.gy.musicgame.activity.LocalMusicActivity;
 import com.example.gy.musicgame.activity.SettingActivity;
 import com.example.gy.musicgame.api.Api;
 import com.example.gy.musicgame.constant.Constants;
 import com.example.gy.musicgame.helper.DialogHelper;
 import com.example.gy.musicgame.helper.LoadingDialogHelper;
 import com.example.gy.musicgame.helper.RetrofitHelper;
+import com.example.gy.musicgame.listener.InputDialogListener;
 import com.example.gy.musicgame.listener.SheetDialogListener;
 import com.example.gy.musicgame.model.BottomBarVo;
 import com.example.gy.musicgame.model.FileVo;
@@ -65,6 +69,8 @@ import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 
+import static android.content.Context.MODE_PRIVATE;
+
 public class MeFragment extends Fragment implements View.OnClickListener {
     private MeViewModel mViewModel;
     private Activity mActivity;
@@ -76,6 +82,10 @@ public class MeFragment extends Fragment implements View.OnClickListener {
     private String token;
     private TitleView titleView;
     private BottomBarView bottomBarView;
+    private SharedPreferences preferences;
+    private LinearLayout llLocalMusic;
+    private TextView tvLocalMusic;
+    private ImageView ivAdd;
 
     public static MeFragment newInstance() {
         return new MeFragment();
@@ -93,6 +103,9 @@ public class MeFragment extends Fragment implements View.OnClickListener {
 
     private void initData() {
         initImagePicker();
+        preferences = mActivity.getSharedPreferences("myFragment", MODE_PRIVATE);
+        int localMusicSize = preferences.getInt("localMusicSize", 0);
+        tvLocalMusic.setText(String.valueOf(localMusicSize));
     }
 
     private void initAction() {
@@ -174,6 +187,11 @@ public class MeFragment extends Fragment implements View.OnClickListener {
         ImageView iv_refresh = view.findViewById(R.id.iv_refresh);
         titleView = view.findViewById(R.id.titleView);
         bottomBarView = view.findViewById(R.id.bottom_bar_view);
+        llLocalMusic = view.findViewById(R.id.ll_local_music);
+        tvLocalMusic = view.findViewById(R.id.tv_local_music);
+        ivAdd = view.findViewById(R.id.iv_add);
+        ivAdd.setOnClickListener(this);
+        llLocalMusic.setOnClickListener(this);
         titleView.setRightClickListener(new TitleView.OnRightClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
             @Override
@@ -256,6 +274,18 @@ public class MeFragment extends Fragment implements View.OnClickListener {
                                 selectAlbum();
                                 break;
                         }
+                    }
+                });
+                break;
+            case R.id.ll_local_music:
+                //本地音乐
+                startActivity(new Intent(mActivity, LocalMusicActivity.class));
+                break;
+            case R.id.iv_add:
+                DialogHelper.getInstance().showInputDialog(mActivity, "新建歌单", new InputDialogListener() {
+                    @Override
+                    public void sure(String result) {
+
                     }
                 });
                 break;

@@ -24,6 +24,14 @@ public class MyApplication extends Application {
         Utils.init(this);
         Bugly.init(getApplicationContext(), Constants.BUGLY_APPID, false);
         initIM();
+        if (Constants.isDebug) {
+            initCrash();
+        }
+    }
+
+    private void initCrash() {
+        CrashHandler crashHandler = CrashHandler.getInstance();
+        crashHandler.init(getApplicationContext());
     }
 
     private void initIM() {

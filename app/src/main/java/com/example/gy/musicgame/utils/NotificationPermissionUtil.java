@@ -1,19 +1,14 @@
 package com.example.gy.musicgame.utils;
 
-import android.app.AlertDialog;
-import android.app.AppOpsManager;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.ApplicationInfo;
 import android.net.Uri;
 import android.os.Build;
 
-import androidx.annotation.RequiresApi;
+import androidx.core.app.NotificationManagerCompat;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+import com.example.gy.musicgame.R;
+import com.hb.dialog.dialog.ConfirmDialog;
 
 /**
  * Description: CustomerMusic
@@ -21,37 +16,20 @@ import java.lang.reflect.Method;
  * Created Time on 2019/11/3 14:16
  */
 public class NotificationPermissionUtil {
-    private static final String CHECK_OP_NO_THROW = "checkOpNoThrow";
-    private static final String OP_POST_NOTIFICATION = "OP_POST_NOTIFICATION";
 
-    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     public static boolean isNotificationEnabled(Context context) {
-        AppOpsManager appOps = (AppOpsManager) context.getSystemService(Context.APP_OPS_SERVICE);
-        ApplicationInfo appInfo = context.getApplicationInfo();
-        String packageName = context.getApplicationContext().getPackageName();
-        int uid = appInfo.uid;
-        Class<?> appOpsClass;
+        boolean isOpened;
         try {
-            appOpsClass = Class.forName(AppOpsManager.class.getName());
-            Method method = appOpsClass.getMethod(CHECK_OP_NO_THROW, Integer.TYPE, Integer.TYPE, String.class);
-            Field notificationFieldValue = appOpsClass.getDeclaredField(OP_POST_NOTIFICATION);
-            int value = (int) notificationFieldValue.get(Integer.class);
-            return ((int) method.invoke(appOps, value, uid, packageName) == AppOpsManager.MODE_ALLOWED);
-        } catch (ClassNotFoundException e) {
+            isOpened = NotificationManagerCompat.from(context).areNotificationsEnabled();
+        } catch (Exception e) {
             e.printStackTrace();
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        } catch (NoSuchFieldException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
+            isOpened = false;
         }
-        return false;
+        return isOpened;
+
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+
     public static void checkNotificationEnable(final Context context) {
         if (!isNotificationEnabled(context)) {
             openPermission(context);
@@ -60,33 +38,43 @@ public class NotificationPermissionUtil {
     }
 
     private static void openPermission(final Context context) {
-        final AlertDialog.Builder dialog = new AlertDialog.Builder(context);
-        dialog.setTitle("温馨提示");
-        dialog.setCancelable(false);
-        dialog.setMessage("通知权限没有开启," +
+        ConfirmDialog confirmDialog = new ConfirmDialog(context);
+        confirmDialog.setLogoImg(R.mipmap.logo).setMsg("通知权限没有开启," +
                 "开启后才能在通知栏显示当前音乐播放的信息,你要开启吗?");
-        dialog.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+        confirmDialog.setClickListener(new ConfirmDialog.OnBtnClickListener() {
             @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
+            public void ok() {
                 toSetting(context);
             }
-        });
-        dialog.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+
             @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                dialogInterface.dismiss();
+            public void cancel() {
+
             }
         });
-
-        dialog.show();
+        confirmDialog.setCancelable(false);
+        confirmDialog.setCanceledOnTouchOutside(false);
+        confirmDialog.show();
     }
 
     private static void toSetting(Context context) {
-        Intent localIntent = new Intent();
-        localIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        localIntent.setAction("android.settings.APPLICATION_DETAILS_SETTINGS");
-        localIntent.setData(Uri.fromParts("package", context.getPackageName(), null));
-        context.startActivity(localIntent);
+        Intent intent = new Intent();
+        if (Build.VERSION.SDK_INT >= 26) {
+            // android 8.0引导
+            intent.setAction("android.settings.APP_NOTIFICATION_SETTINGS");
+            intent.putExtra("android.provider.extra.APP_PACKAGE", context.getPackageName());
+        } else if (Build.VERSION.SDK_INT >= 21) {
+            // android 5.0-7.0
+            intent.setAction("android.settings.APP_NOTIFICATION_SETTINGS");
+            intent.putExtra("app_package", context.getPackageName());
+            intent.putExtra("app_uid", context.getApplicationInfo().uid);
+        } else {
+            // 其他
+            intent.setAction("android.settings.APPLICATION_DETAILS_SETTINGS");
+            intent.setData(Uri.fromParts("package", context.getPackageName(), null));
+        }
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        context.startActivity(intent);
     }
 
 }

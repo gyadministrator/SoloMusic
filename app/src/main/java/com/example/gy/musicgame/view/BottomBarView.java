@@ -107,6 +107,7 @@ public class BottomBarView extends LinearLayout {
         bottomBarVo.setName(musicVo.getTitle());
         bottomBarVo.setPath(musicVo.getPath());
         bottomBarVo.setSongId(musicVo.getSongId());
+        bottomBarVo.setTingUid(musicVo.getTingUid());
         mediaPlayerHelper.setPath(bottomBarVo.getPath());
 
         SharedPreferenceUtil<BottomBarVo> preferenceUtil = new SharedPreferenceUtil<>();
@@ -172,7 +173,7 @@ public class BottomBarView extends LinearLayout {
                     musicVo.setAuthor(bottomBarVo.getAuthor());
                     play(musicVo);
                 }
-                LrcActivity.startActivity((Activity) mContext, bottomBarVo.getName(), bottomBarVo.getSongId(), bottomBarVo.getImage());
+                LrcActivity.startActivity((Activity) mContext, bottomBarVo.getName(), bottomBarVo.getSongId(), bottomBarVo.getImage(), bottomBarVo.getTingUid());
             }
         });
 
