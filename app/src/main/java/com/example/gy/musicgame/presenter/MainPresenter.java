@@ -34,10 +34,7 @@ public class MainPresenter<V extends MainView> extends BasePresenter {
         return mType;
     }
 
-    public void getRecommendList(final boolean isShow) {
-        if (isShow) {
-            view.showLoading("加载中...");
-        }
+    public void getRecommendList() {
         mParams.put("method", Constants.METHOD_RECOMMEND);
         mParams.put("song_id", "87757");
         mParams.put("num", 6);
@@ -60,16 +57,10 @@ public class MainPresenter<V extends MainView> extends BasePresenter {
                     @Override
                     public void onError(Throwable e) {
                         view.fail(e.getMessage());
-                        if (isShow) {
-                            view.dismissLoading();
-                        }
                     }
 
                     @Override
                     public void onComplete() {
-                        if (isShow) {
-                            view.dismissLoading();
-                        }
                     }
                 });
     }

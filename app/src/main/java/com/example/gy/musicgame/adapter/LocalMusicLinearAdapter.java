@@ -2,8 +2,6 @@ package com.example.gy.musicgame.adapter;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.Intent;
-import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,8 +14,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.gy.musicgame.R;
+import com.example.gy.musicgame.listener.OnItemClickListener;
+import com.example.gy.musicgame.model.BottomBarVo;
 import com.example.gy.musicgame.model.LocalMusicModel;
-import com.example.gy.musicgame.model.MusicVo;
 import com.example.gy.musicgame.utils.LocalMusicUtils;
 
 import java.util.List;
@@ -30,6 +29,11 @@ import java.util.List;
 public class LocalMusicLinearAdapter extends RecyclerView.Adapter<LocalMusicLinearAdapter.ViewHolder> {
     private Context mContext;
     private List<LocalMusicModel> list;
+    private OnItemClickListener onItemClickListener;
+
+    public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
+        this.onItemClickListener = onItemClickListener;
+    }
 
     public LocalMusicLinearAdapter(Context mContext, List<LocalMusicModel> list) {
         this.mContext = mContext;
@@ -68,20 +72,17 @@ public class LocalMusicLinearAdapter extends RecyclerView.Adapter<LocalMusicLine
 
     private void getSongPath(LocalMusicModel musicModel) {
         String file_link = musicModel.getPath();
-        MusicVo musicVo = new MusicVo();
-        musicVo.setAuthor(musicModel.getSinger());
+        BottomBarVo bottomBarVo = new BottomBarVo();
+        bottomBarVo.setAuthor(musicModel.getSinger());
         String albumArt = LocalMusicUtils.getAlbumArt(mContext, musicModel.getAlbumId());
         if (!TextUtils.isEmpty(albumArt)) {
-            musicVo.setImageUrl(albumArt);
+            bottomBarVo.setImage(albumArt);
         }
-        musicVo.setTitle(musicModel.getName());
-        musicVo.setPath(file_link);
-
-        Intent intent = new Intent();
-        Bundle bundle = new Bundle();
-        bundle.putSerializable("bottomBar", musicVo);
-        intent.putExtra("bottomBar", bundle);
-        mContext.sendBroadcast(intent);
+        bottomBarVo.setName(musicModel.getName());
+        bottomBarVo.setPath(file_link);
+        if (onItemClickListener != null) {
+            onItemClickListener.play(bottomBarVo);
+        }
     }
 
 

@@ -11,13 +11,21 @@ import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 
 import com.example.gy.musicgame.R;
+import com.example.gy.musicgame.constant.Constants;
 import com.example.gy.musicgame.fragment.FriendFragment;
 import com.example.gy.musicgame.fragment.InfoFragment;
 import com.example.gy.musicgame.fragment.ListenFragment;
 import com.example.gy.musicgame.fragment.MeFragment;
 import com.example.gy.musicgame.fragment.RecipeFragment;
+import com.example.gy.musicgame.model.BottomBarVo;
+import com.example.gy.musicgame.utils.NotificationPermissionUtil;
+import com.example.gy.musicgame.utils.SharedPreferenceUtil;
+import com.example.gy.musicgame.view.BottomBarView;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.next.easynavigation.view.EasyNavigationBar;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,14 +40,17 @@ public class MainActivity extends BaseActivity {
 
     private List<Fragment> fragments = new ArrayList<>();
     private EasyNavigationBar navigationBar;
+    private BottomBarView bottomBarView;
     private final String[] PERMISSIONS = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE
             , Manifest.permission.CAMERA};
 
     @Override
     protected void initView() {
         navigationBar = fd(R.id.navigationBar);
+        bottomBarView = fd(R.id.bottom_bar_view);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     protected void initData() {
         setSwipeBackEnable(false);
@@ -59,8 +70,18 @@ public class MainActivity extends BaseActivity {
                 .fragmentList(fragments)
                 .fragmentManager(getSupportFragmentManager())
                 .build();
+    }
 
-        requestPermission();
+
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    private void checkPermission() {
+        NotificationPermissionUtil.checkNotificationEnable(mActivity);
+    }
+
+    public void play(BottomBarVo bottomBarVo) {
+        if (bottomBarView != null) {
+            bottomBarView.play(bottomBarVo);
+        }
     }
 
     private void requestPermission() {
@@ -69,6 +90,20 @@ public class MainActivity extends BaseActivity {
                 ActivityCompat.requestPermissions(mActivity, PERMISSIONS, REQUEST_CODE);
             }
         }
+    }
+
+    @Override
+    protected void musicStop() {
+        super.musicStop();
+    }
+
+    private void setBottomBarData() {
+        SharedPreferenceUtil<BottomBarVo> preferenceUtil = new SharedPreferenceUtil<>();
+        String json = preferenceUtil.getObjectJson(mActivity, Constants.CURRENT_BOTTOM_VO);
+        Type type = new TypeToken<BottomBarVo>() {
+        }.getType();
+        BottomBarVo bottomBarVo = new Gson().fromJson(json, type);
+        bottomBarView.setBottomBarVo(bottomBarVo);
     }
 
     /**
@@ -108,8 +143,13 @@ public class MainActivity extends BaseActivity {
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     protected void initAction() {
+        requestPermission();
+        //检测通知栏权限
+        checkPermission();
+        setBottomBarData();
     }
 
     @Override

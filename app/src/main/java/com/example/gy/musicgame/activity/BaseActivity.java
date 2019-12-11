@@ -33,6 +33,7 @@ public abstract class BaseActivity extends SwipeBackActivity {
     private NetworkChangedReceiver networkChangedReceiver;
     private long start;
     private boolean isNet = true;
+    private MyMusicReceiver musicReceiver;
 
     /**
      * 初始化布局
@@ -55,6 +56,12 @@ public abstract class BaseActivity extends SwipeBackActivity {
      * @return
      */
     protected abstract int getContentView();
+
+    /**
+     * 音乐暂停
+     */
+    protected void musicStop() {
+    }
 
     /**
      * 获取控件的值
@@ -96,6 +103,11 @@ public abstract class BaseActivity extends SwipeBackActivity {
         registerReceiver(networkChangedReceiver, intentFilter);
         //注册eventBus
         EventBus.getDefault().register(this);
+
+        musicReceiver = new MyMusicReceiver();
+        IntentFilter filter = new IntentFilter();
+        filter.addAction("music_stop");
+        registerReceiver(musicReceiver, filter);
     }
 
     /**
@@ -140,6 +152,9 @@ public abstract class BaseActivity extends SwipeBackActivity {
         if (networkChangedReceiver != null) {
             unregisterReceiver(networkChangedReceiver);
         }
+        if (musicReceiver != null) {
+            unregisterReceiver(musicReceiver);
+        }
         //解绑eventBus
         EventBus.getDefault().unregister(this);
     }
@@ -181,6 +196,20 @@ public abstract class BaseActivity extends SwipeBackActivity {
                         hasNet();
                     }
                     break;
+            }
+        }
+    }
+
+
+    private class MyMusicReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            if (action != null) {
+                if ("music_stop".equals(action)) {
+                    musicStop();
+                }
             }
         }
     }

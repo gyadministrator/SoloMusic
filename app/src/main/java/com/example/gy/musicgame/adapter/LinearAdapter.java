@@ -3,9 +3,7 @@ package com.example.gy.musicgame.adapter;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Build;
-import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,8 +23,9 @@ import com.example.gy.musicgame.api.Api;
 import com.example.gy.musicgame.constant.Constants;
 import com.example.gy.musicgame.helper.LoadingDialogHelper;
 import com.example.gy.musicgame.helper.RetrofitHelper;
+import com.example.gy.musicgame.listener.OnItemClickListener;
+import com.example.gy.musicgame.model.BottomBarVo;
 import com.example.gy.musicgame.model.MusicModel;
-import com.example.gy.musicgame.model.MusicVo;
 import com.example.gy.musicgame.model.PlayMusicModel;
 
 import java.util.List;
@@ -53,6 +52,11 @@ public class LinearAdapter extends RecyclerView.Adapter<LinearAdapter.ViewHolder
     private boolean isCalculationRvHeight;
     private List<MusicModel.SongListBean> list;
     private boolean isFlag;
+    private OnItemClickListener onItemClickListener;
+
+    public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
+        this.onItemClickListener = onItemClickListener;
+    }
 
     public void setList(List<MusicModel.SongListBean> list, boolean isFlag) {
         this.list = list;
@@ -121,23 +125,20 @@ public class LinearAdapter extends RecyclerView.Adapter<LinearAdapter.ViewHolder
                             PlayMusicModel.BitrateBean bitrate = playMusicModel.getBitrate();
                             if (bitrate != null) {
                                 String file_link = bitrate.getFile_link();
-                                MusicVo musicVo = new MusicVo();
-                                musicVo.setAuthor(bean.getAuthor());
+                                BottomBarVo bottomBarVo = new BottomBarVo();
+                                bottomBarVo.setAuthor(bean.getAuthor());
                                 if (!TextUtils.isEmpty(bean.getPic_small())) {
-                                    musicVo.setImageUrl(bean.getPic_small());
+                                    bottomBarVo.setImage(bean.getPic_small());
                                 } else {
-                                    musicVo.setImageUrl(bean.getPic_big());
+                                    bottomBarVo.setImage(bean.getPic_big());
                                 }
-                                musicVo.setSongId(bean.getSong_id());
-                                musicVo.setTitle(bean.getTitle());
-                                musicVo.setPath(file_link);
-                                musicVo.setTingUid(bean.getTing_uid());
-
-                                Intent intent = new Intent();
-                                Bundle bundle = new Bundle();
-                                bundle.putSerializable("bottomBar", musicVo);
-                                intent.putExtra("bottomBar", bundle);
-                                mContext.sendBroadcast(intent);
+                                bottomBarVo.setSongId(bean.getSong_id());
+                                bottomBarVo.setName(bean.getTitle());
+                                bottomBarVo.setPath(file_link);
+                                bottomBarVo.setTingUid(bean.getTing_uid());
+                                if (onItemClickListener != null) {
+                                    onItemClickListener.play(bottomBarVo);
+                                }
                             }
                         }
                     }

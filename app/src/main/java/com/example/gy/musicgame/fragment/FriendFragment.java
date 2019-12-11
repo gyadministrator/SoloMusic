@@ -6,6 +6,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -16,6 +17,7 @@ import android.widget.ListView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 
@@ -23,23 +25,16 @@ import com.blankj.utilcode.util.ToastUtils;
 import com.example.gy.musicgame.R;
 import com.example.gy.musicgame.activity.MainActivity;
 import com.example.gy.musicgame.activity.SearchFriendActivity;
-import com.example.gy.musicgame.constant.Constants;
 import com.example.gy.musicgame.friend.SideBar;
 import com.example.gy.musicgame.friend.SortAdapter;
-import com.example.gy.musicgame.model.BottomBarVo;
 import com.example.gy.musicgame.model.UserModel;
 import com.example.gy.musicgame.utils.LogUtils;
-import com.example.gy.musicgame.utils.SharedPreferenceUtil;
-import com.example.gy.musicgame.view.BottomBarView;
 import com.example.gy.musicgame.view.TitleView;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.hyphenate.EMCallBack;
 import com.hyphenate.EMError;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.exceptions.HyphenateException;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -58,10 +53,10 @@ public class FriendFragment extends Fragment {
     private MyReceiver myReceiver;
     private TitleView titleView;
     private SortAdapter adapter;
-    private BottomBarView bottomBarView;
 
     @SuppressLint("HandlerLeak")
     private Handler mHandler = new Handler() {
+        @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
         @Override
         public void handleMessage(@NonNull Message msg) {
             super.handleMessage(msg);
@@ -119,28 +114,6 @@ public class FriendFragment extends Fragment {
         mActivity = getActivity();
     }
 
-    @Override
-    public void setUserVisibleHint(boolean isVisibleToUser) {
-        super.setUserVisibleHint(isVisibleToUser);
-        if (isVisibleToUser) {
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    setBottomBarData();
-                }
-            }, 1200);
-        }
-    }
-
-    private void setBottomBarData() {
-        SharedPreferenceUtil<BottomBarVo> preferenceUtil = new SharedPreferenceUtil<>();
-        String json = preferenceUtil.getObjectJson(mActivity, Constants.CURRENT_BOTTOM_VO);
-        Type type = new TypeToken<BottomBarVo>() {
-        }.getType();
-        BottomBarVo bottomBarVo = new Gson().fromJson(json, type);
-        bottomBarView.setBottomBarVo(bottomBarVo);
-    }
-
     private void initAction() {
         loginIM();
     }
@@ -169,7 +142,6 @@ public class FriendFragment extends Fragment {
                     LogUtils.d(TAG, "getContactList: " + friendList.size());
                 } catch (HyphenateException e) {
                     e.printStackTrace();
-                    //ToastUtils.showToast("获取好友列表失败");
                     LogUtils.d(TAG, "getContactList: 获取好友列表失败" + e.getErrorCode() + e.getMessage());
                     setEmpty();
                 }
@@ -180,7 +152,6 @@ public class FriendFragment extends Fragment {
     private void initView(View view) {
         listView = view.findViewById(R.id.listView);
         sideBar = view.findViewById(R.id.side_bar);
-        bottomBarView = view.findViewById(R.id.bottom_bar_view);
         titleView = view.findViewById(R.id.titleView);
         titleView.setRightClickListener(new TitleView.OnRightClickListener() {
             @Override

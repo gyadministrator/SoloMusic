@@ -2,7 +2,6 @@ package com.example.gy.musicgame.activity;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.media.Image;
 import android.media.MediaPlayer;
 import android.os.Build;
 import android.text.TextUtils;
@@ -19,11 +18,11 @@ import com.example.gy.musicgame.api.Api;
 import com.example.gy.musicgame.constant.Constants;
 import com.example.gy.musicgame.helper.DialogHelper;
 import com.example.gy.musicgame.helper.LoadingDialogHelper;
-import com.example.gy.musicgame.helper.MediaPlayerHelper;
 import com.example.gy.musicgame.helper.RetrofitHelper;
 import com.example.gy.musicgame.listener.SheetDialogListener;
 import com.example.gy.musicgame.model.LrcModel;
 import com.example.gy.musicgame.model.SingerInfoModel;
+import com.example.gy.musicgame.utils.MusicUtils;
 import com.example.gy.musicgame.view.ILrcBuilder;
 import com.example.gy.musicgame.view.ILrcViewListener;
 import com.example.gy.musicgame.view.TitleView;
@@ -56,7 +55,6 @@ public class LrcActivity extends BaseActivity {
     private TitleView titleView;
     private String tingUid;
     private String url;
-    private MediaPlayerHelper mediaPlayerHelper;
     //更新歌词的定时器
     private Timer mTimer;
     //更新歌词的定时任务
@@ -118,8 +116,8 @@ public class LrcActivity extends BaseActivity {
         @Override
         public void run() {
             //获取歌曲播放的位置
-            if (mediaPlayerHelper != null) {
-                final long timePassed = mediaPlayerHelper.getmMediaPlayer().getCurrentPosition();
+            if (MusicUtils.getMediaPlayer() != null) {
+                final long timePassed = MusicUtils.getMediaPlayer().getCurrentPosition();
                 LrcActivity.this.runOnUiThread(new Runnable() {
                     public void run() {
                         //滚动歌词
@@ -152,8 +150,10 @@ public class LrcActivity extends BaseActivity {
             mTimer.scheduleAtFixedRate(mTask, 0, mP1ayTimerDuration);
         }
 
+        if (MusicUtils.getMediaPlayer() == null) return;
+
         //歌曲播放完毕监听
-        mediaPlayerHelper.getmMediaPlayer().setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+        MusicUtils.getMediaPlayer().setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             public void onCompletion(MediaPlayer mp) {
                 stopLrcPlay();
             }
@@ -163,14 +163,13 @@ public class LrcActivity extends BaseActivity {
         mLrcView.setListener(new ILrcViewListener() {
             //当歌词被用户上下拖动的时候回调该方法,从高亮的那一句歌词开始播放
             public void onLrcSeeked(int newPosition, LrcRow row) {
-                mediaPlayerHelper.getmMediaPlayer().seekTo((int) row.time);
+                MusicUtils.getMediaPlayer().seekTo((int) row.time);
             }
         });
     }
 
     @Override
     protected void initData() {
-        mediaPlayerHelper = MediaPlayerHelper.getInstance(mActivity);
         immersionBar = ImmersionBar.with(mActivity);
         immersionBar.statusBarDarkFont(true, 0.2f)
                 .statusBarColor(R.color.transparent)

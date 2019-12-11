@@ -21,7 +21,8 @@ import com.example.gy.musicgame.api.Api;
 import com.example.gy.musicgame.constant.Constants;
 import com.example.gy.musicgame.helper.LoadingDialogHelper;
 import com.example.gy.musicgame.helper.RetrofitHelper;
-import com.example.gy.musicgame.model.MusicVo;
+import com.example.gy.musicgame.listener.OnItemClickListener;
+import com.example.gy.musicgame.model.BottomBarVo;
 import com.example.gy.musicgame.model.PlayMusicModel;
 import com.example.gy.musicgame.model.RecommendMusicModel;
 import com.example.gy.musicgame.view.WidthEqualHeightImageView;
@@ -44,6 +45,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
     private Context mContext;
     private List<RecommendMusicModel.ResultBean.ListBean> list;
     private View mItemView;
+    private OnItemClickListener onItemClickListener;
 
     public RecyclerAdapter(Context mContext, List<RecommendMusicModel.ResultBean.ListBean> list) {
         this.mContext = mContext;
@@ -84,12 +86,6 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
         });
     }
 
-    public interface OnItemClickListener {
-        void play(MusicVo musicVo);
-    }
-
-    OnItemClickListener onItemClickListener;
-
     public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
         this.onItemClickListener = onItemClickListener;
     }
@@ -115,20 +111,20 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
                             PlayMusicModel.BitrateBean bitrate = playMusicModel.getBitrate();
                             if (bitrate != null) {
                                 String file_link = bitrate.getFile_link();
-                                MusicVo musicVo = new MusicVo();
-                                musicVo.setAuthor(bean.getAuthor());
+                                BottomBarVo bottomBarVo = new BottomBarVo();
+                                bottomBarVo.setAuthor(bean.getAuthor());
                                 if (!TextUtils.isEmpty(bean.getPic_small())) {
-                                    musicVo.setImageUrl(bean.getPic_small());
+                                    bottomBarVo.setImage(bean.getPic_small());
                                 } else {
-                                    musicVo.setImageUrl(bean.getPic_big());
+                                    bottomBarVo.setImage(bean.getPic_big());
                                 }
-                                musicVo.setSongId(bean.getSong_id());
-                                musicVo.setTitle(bean.getTitle());
-                                musicVo.setPath(file_link);
-                                musicVo.setTingUid(bean.getTing_uid());
+                                bottomBarVo.setSongId(bean.getSong_id());
+                                bottomBarVo.setName(bean.getTitle());
+                                bottomBarVo.setPath(file_link);
+                                bottomBarVo.setTingUid(bean.getTing_uid());
 
                                 if (onItemClickListener != null) {
-                                    onItemClickListener.play(musicVo);
+                                    onItemClickListener.play(bottomBarVo);
                                 }
                             }
                         }

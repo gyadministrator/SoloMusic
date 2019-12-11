@@ -20,7 +20,7 @@ import com.example.gy.musicgame.BuildConfig;
 import com.example.gy.musicgame.R;
 import com.example.gy.musicgame.activity.MainActivity;
 import com.example.gy.musicgame.constant.Constants;
-import com.example.gy.musicgame.model.MusicVo;
+import com.example.gy.musicgame.model.BottomBarVo;
 import com.example.gy.musicgame.service.MusicService;
 
 import static android.app.Notification.VISIBILITY_SECRET;
@@ -32,7 +32,7 @@ import static android.app.Notification.VISIBILITY_SECRET;
 public class NotificationUtils {
     private static NotificationManager notificationManager;
     private static RemoteViews remoteViews;
-    private static MusicVo mMusic;
+    private static BottomBarVo bottomBarVo;
     private final static String CHANNEL_ID = BuildConfig.APPLICATION_ID + ".channel";
     private final static String CHANNEL_NAME = BuildConfig.APPLICATION_ID + ".name";
 
@@ -42,9 +42,6 @@ public class NotificationUtils {
         return notificationManager;
     }
 
-    public static void setMusic(MusicVo music) {
-        mMusic = music;
-    }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     public static void sendNormalNotification(Context context) {
@@ -53,8 +50,8 @@ public class NotificationUtils {
     }
 
     @TargetApi(Build.VERSION_CODES.O)
-    public static void sendCustomNotification(Context context, MusicVo music, Bitmap bitmap, int image) {
-        if (music == null) music = mMusic;
+    public static void sendCustomNotification(Context context, BottomBarVo bottomBarVo, Bitmap bitmap, int image) {
+        if (bottomBarVo == null)return;
         Notification.Builder builder = getNotificationBuilder(context);
         remoteViews = new RemoteViews(context.getPackageName(), R.layout.back_view);
         if (bitmap != null) {
@@ -62,12 +59,12 @@ public class NotificationUtils {
         } else {
             remoteViews.setImageViewResource(R.id.back_music_img, R.mipmap.logo);
         }
-        String title = music.getTitle();
+        String title = bottomBarVo.getName();
         if (title.length() > 10) {
             title = title.substring(0, 10) + "...";
         }
         remoteViews.setTextViewText(R.id.back_music_title, title);
-        remoteViews.setTextViewText(R.id.back_music_singer, music.getAuthor());
+        remoteViews.setTextViewText(R.id.back_music_singer, bottomBarVo.getAuthor());
         remoteViews.setImageViewResource(R.id.back_play, image);
         PendingIntent intent = PendingIntent.getActivity(context, -1, new Intent(context, MainActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
         remoteViews.setOnClickPendingIntent(R.id.ll_back, intent);
@@ -126,11 +123,11 @@ public class NotificationUtils {
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @SuppressLint("ObsoleteSdkInt")
-    public static void showNotification(Context context, MusicVo music) {
+    public static void showNotification(Context context, BottomBarVo bottomBarVo) {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
         builder.setSmallIcon(R.mipmap.logo);
-        builder.setContentTitle(music.getTitle());
-        builder.setContentText(music.getAuthor());
+        builder.setContentTitle(bottomBarVo.getName());
+        builder.setContentText(bottomBarVo.getAuthor());
         // 需要VIBRATE权限
         builder.setPriority(Notification.PRIORITY_DEFAULT);
         builder.setOngoing(true);

@@ -10,7 +10,6 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.media.MediaPlayer;
 import android.os.Binder;
 import android.os.Build;
 import android.os.IBinder;
@@ -20,13 +19,10 @@ import androidx.annotation.RequiresApi;
 import com.example.gy.musicgame.R;
 import com.example.gy.musicgame.activity.MainActivity;
 import com.example.gy.musicgame.constant.Constants;
-import com.example.gy.musicgame.event.CustomEvent;
-import com.example.gy.musicgame.helper.MediaPlayerHelper;
-import com.example.gy.musicgame.model.MusicVo;
+import com.example.gy.musicgame.model.BottomBarVo;
+import com.example.gy.musicgame.utils.MusicUtils;
 import com.example.gy.musicgame.utils.NotificationPermissionUtil;
 import com.example.gy.musicgame.utils.NotificationUtils;
-
-import org.greenrobot.eventbus.EventBus;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -45,8 +41,6 @@ import java.util.Objects;
  * 2.监听音乐播放完成，停止service
  */
 public class MusicService extends Service {
-    private MediaPlayerHelper mMediaPlayerHelper;
-    private MusicVo mMusic;
     private final int NOTIFICATION_ID = 1;//不可为0
     private String CHANNEL_ONE_ID = "CHANNEL_ONE_ID";
     private String CHANNEL_ONE_NAME = "CHANNEL_ONE_ID";
@@ -54,6 +48,7 @@ public class MusicService extends Service {
     private Notification notification = null;
     private Bitmap bitmap;
     private Context mContext;
+    private BottomBarVo bottomBarVo;
 
     public MusicService() {
     }
@@ -66,14 +61,14 @@ public class MusicService extends Service {
             if (Constants.CANCEL.equals(action)) {
                 //取消
                 NotificationUtils.closeNotification();
-            } else if (Constants.PLAY.equals(action)) {
+            } else if (Constants.PLAY.equals(action) && MusicUtils.getMediaPlayer() != null && bottomBarVo != null) {
                 //播放
-                if (mMediaPlayerHelper.isPlaying()) {
-                    NotificationUtils.sendCustomNotification(mContext, mMusic, bitmap, R.mipmap.play);
-                    mMediaPlayerHelper.pause();
+                if (MusicUtils.isPlaying()) {
+                    NotificationUtils.sendCustomNotification(mContext, bottomBarVo, bitmap, R.mipmap.play);
+                    MusicUtils.pause();
                 } else {
-                    NotificationUtils.sendCustomNotification(mContext, mMusic, bitmap, R.mipmap.stop);
-                    mMediaPlayerHelper.start();
+                    NotificationUtils.sendCustomNotification(mContext, bottomBarVo, bitmap, R.mipmap.stop);
+                    MusicUtils.playContinue();
                 }
             }
         }
@@ -85,21 +80,21 @@ public class MusicService extends Service {
          * 设置音乐（MusicModel）
          */
         @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
-        public void setMusic(final MusicVo music) {
-            mMusic = music;
+        public void setMusic(final BottomBarVo mBottomBarVo) {
+            bottomBarVo = mBottomBarVo;
             //startForeground();
             new Thread(new Runnable() {
                 @RequiresApi(api = Build.VERSION_CODES.KITKAT)
                 @Override
                 public void run() {
-                    if (music.getImageUrl() != null) {
-                        bitmap = returnBitmap(music.getImageUrl());
+                    if (bottomBarVo.getImage() != null) {
+                        bitmap = returnBitmap(bottomBarVo.getImage());
                         if (NotificationPermissionUtil.isNotificationEnabled(mContext) && bitmap != null) {
-                            NotificationUtils.sendCustomNotification(mContext, mMusic, bitmap, R.mipmap.stop);
+                            NotificationUtils.sendCustomNotification(mContext, mBottomBarVo, bitmap, R.mipmap.stop);
                         }
                     } else {
                         if (NotificationPermissionUtil.isNotificationEnabled(mContext)) {
-                            NotificationUtils.sendCustomNotification(mContext, mMusic, bitmap, R.mipmap.stop);
+                            NotificationUtils.sendCustomNotification(mContext, mBottomBarVo, bitmap, R.mipmap.stop);
                         }
                     }
                 }
@@ -142,29 +137,14 @@ public class MusicService extends Service {
          * 播放音乐
          */
         public void playMusic() {
-            if (mMediaPlayerHelper.getPath() != null && mMediaPlayerHelper.getPath().equals(mMusic.getPath())) {
-                mMediaPlayerHelper.start();
-            } else {
-                mMediaPlayerHelper.setPath(mMusic.getPath());
-                mMediaPlayerHelper.setOnMediaPlayerHelperListener(new MediaPlayerHelper.OnMediaPlayerHelperListener() {
-                    @Override
-                    public void onPrepared(MediaPlayer mediaPlayer) {
-                        mMediaPlayerHelper.start();
-                    }
 
-                    @Override
-                    public void onCompletion(MediaPlayer mediaPlayer) {
-                        stopSelf();
-                    }
-                });
-            }
         }
 
         /**
          * 暂停音乐
          */
         public void stopMusic() {
-            mMediaPlayerHelper.pause();
+
         }
     }
 
@@ -176,7 +156,6 @@ public class MusicService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        mMediaPlayerHelper = MediaPlayerHelper.getInstance(this);
         mContext = this;
     }
 
@@ -213,9 +192,9 @@ public class MusicService extends Service {
             notification = new Notification.Builder(this).setChannelId(CHANNEL_ONE_ID)
                     .setTicker("Nature")
                     .setSmallIcon(R.mipmap.logo)
-                    .setContentTitle(mMusic.getTitle())
+                    .setContentTitle(bottomBarVo.getName())
                     .setContentIntent(pendingIntent)
-                    .setContentText(mMusic.getAuthor())
+                    .setContentText(bottomBarVo.getAuthor())
                     .build();
             notification.flags |= Notification.FLAG_NO_CLEAR;
         } else {
@@ -223,8 +202,8 @@ public class MusicService extends Service {
              * 创建Notification
              */
             notification = new Notification.Builder(this)
-                    .setContentTitle(mMusic.getTitle())
-                    .setContentText(mMusic.getAuthor())
+                    .setContentTitle(bottomBarVo.getName())
+                    .setContentText(bottomBarVo.getAuthor())
                     .setSmallIcon(R.mipmap.logo)
                     .setContentIntent(pendingIntent)
                     .build();

@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -35,14 +34,12 @@ import com.example.gy.musicgame.helper.LoadingDialogHelper;
 import com.example.gy.musicgame.helper.RetrofitHelper;
 import com.example.gy.musicgame.listener.InputDialogListener;
 import com.example.gy.musicgame.listener.SheetDialogListener;
-import com.example.gy.musicgame.model.BottomBarVo;
 import com.example.gy.musicgame.model.FileVo;
 import com.example.gy.musicgame.model.UserInfoVo;
 import com.example.gy.musicgame.utils.HandlerUtils;
 import com.example.gy.musicgame.utils.LogUtils;
 import com.example.gy.musicgame.utils.SharedPreferenceUtil;
 import com.example.gy.musicgame.utils.UserManager;
-import com.example.gy.musicgame.view.BottomBarView;
 import com.example.gy.musicgame.view.GlideImageLoader;
 import com.example.gy.musicgame.view.TitleView;
 import com.google.gson.Gson;
@@ -81,7 +78,6 @@ public class MeFragment extends Fragment implements View.OnClickListener {
     private static final int REQUEST_CODE_PREVIEW = 101;
     private String token;
     private TitleView titleView;
-    private BottomBarView bottomBarView;
     private SharedPreferences preferences;
     private LinearLayout llLocalMusic;
     private TextView tvLocalMusic;
@@ -186,7 +182,6 @@ public class MeFragment extends Fragment implements View.OnClickListener {
         tvName = view.findViewById(R.id.tv_name);
         ImageView iv_refresh = view.findViewById(R.id.iv_refresh);
         titleView = view.findViewById(R.id.titleView);
-        bottomBarView = view.findViewById(R.id.bottom_bar_view);
         llLocalMusic = view.findViewById(R.id.ll_local_music);
         tvLocalMusic = view.findViewById(R.id.tv_local_music);
         ivAdd = view.findViewById(R.id.iv_add);
@@ -214,28 +209,6 @@ public class MeFragment extends Fragment implements View.OnClickListener {
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         mActivity = getActivity();
-    }
-
-    @Override
-    public void setUserVisibleHint(boolean isVisibleToUser) {
-        super.setUserVisibleHint(isVisibleToUser);
-        if (isVisibleToUser) {
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    setBottomBarData();
-                }
-            }, 1200);
-        }
-    }
-
-    private void setBottomBarData() {
-        SharedPreferenceUtil<BottomBarVo> preferenceUtil = new SharedPreferenceUtil<>();
-        String json = preferenceUtil.getObjectJson(mActivity, Constants.CURRENT_BOTTOM_VO);
-        Type type = new TypeToken<BottomBarVo>() {
-        }.getType();
-        BottomBarVo bottomBarVo = new Gson().fromJson(json, type);
-        bottomBarView.setBottomBarVo(bottomBarVo);
     }
 
     @Override

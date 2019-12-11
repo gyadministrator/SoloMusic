@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,18 +23,12 @@ import com.example.gy.musicgame.adapter.RecyclerRecipeAdapter;
 import com.example.gy.musicgame.api.Api;
 import com.example.gy.musicgame.constant.Constants;
 import com.example.gy.musicgame.helper.RetrofitHelper;
-import com.example.gy.musicgame.model.BottomBarVo;
 import com.example.gy.musicgame.model.RecipeSearchModel;
 import com.example.gy.musicgame.model.RecipeTypeModel;
-import com.example.gy.musicgame.utils.SharedPreferenceUtil;
-import com.example.gy.musicgame.view.BottomBarView;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.jcodecraeer.xrecyclerview.ProgressStyle;
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
 import com.lqr.dropdownLayout.LQRDropdownLayout;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -52,9 +45,8 @@ import io.reactivex.schedulers.Schedulers;
 public class RecipeFragment extends Fragment implements RecyclerRecipeAdapter.OnRecyclerViewListener, XRecyclerView.LoadingListener, LQRDropdownLayout.OnDropdownListListener {
 
     private RecipeViewModel mViewModel;
-    LQRDropdownLayout dl;
-    ShimmerRecyclerView shimmerRecyclerView;
-
+    private LQRDropdownLayout dl;
+    private ShimmerRecyclerView shimmerRecyclerView;
     private List<String> headers = new ArrayList<>();
     private int page = 1;
     private int pageSize = 20;
@@ -67,7 +59,6 @@ public class RecipeFragment extends Fragment implements RecyclerRecipeAdapter.On
     private RecyclerRecipeAdapter adapter;
     private List<Map<String, String>> mapList = new ArrayList<>();
     private Activity mActivity;
-    private BottomBarView bottomBarView;
     private List<Map<String, List<RecipeTypeModel.ResultBean.ChildsBeanX.ChildsBean.CategoryInfoBeanXX>>> maps = new ArrayList<>();
     private ArrayList<RecipeTypeModel.ResultBean.ChildsBeanX.ChildsBean.CategoryInfoBeanXX> categoryInfoBeans;
 
@@ -90,28 +81,6 @@ public class RecipeFragment extends Fragment implements RecyclerRecipeAdapter.On
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         mActivity = getActivity();
-    }
-
-    @Override
-    public void setUserVisibleHint(boolean isVisibleToUser) {
-        super.setUserVisibleHint(isVisibleToUser);
-        if (isVisibleToUser) {
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    setBottomBarData();
-                }
-            }, 1200);
-        }
-    }
-
-    private void setBottomBarData() {
-        SharedPreferenceUtil<BottomBarVo> preferenceUtil = new SharedPreferenceUtil<>();
-        String json = preferenceUtil.getObjectJson(mActivity, Constants.CURRENT_BOTTOM_VO);
-        Type type = new TypeToken<BottomBarVo>() {
-        }.getType();
-        BottomBarVo bottomBarVo = new Gson().fromJson(json, type);
-        bottomBarView.setBottomBarVo(bottomBarVo);
     }
 
     private void initAction() {
@@ -237,13 +206,13 @@ public class RecipeFragment extends Fragment implements RecyclerRecipeAdapter.On
                 total = recipeSearchModel.getResult().getTotal();
                 if (flag) {
                     if (xRecyclerView == null) {
-                        xRecyclerView = new XRecyclerView(getActivity());
+                        xRecyclerView = new XRecyclerView(mActivity);
                     }
                     xRecyclerView.setRefreshProgressStyle(ProgressStyle.BallSpinFadeLoader);
                     xRecyclerView.setLoadingMoreProgressStyle(ProgressStyle.Pacman);
                     xRecyclerView.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
                     xRecyclerView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-                    adapter = new RecyclerRecipeAdapter(list, getActivity());
+                    adapter = new RecyclerRecipeAdapter(list, mActivity);
                     adapter.setOnRecyclerViewListener(RecipeFragment.this);
                     xRecyclerView.setAdapter(adapter);
                     flag = false;
@@ -270,7 +239,6 @@ public class RecipeFragment extends Fragment implements RecyclerRecipeAdapter.On
     private void initView(View view) {
         dl = view.findViewById(R.id.dl);
         shimmerRecyclerView = view.findViewById(R.id.shimmer_recycler_view);
-        bottomBarView = view.findViewById(R.id.bottom_bar_view);
     }
 
     @Override

@@ -3,7 +3,6 @@ package com.example.gy.musicgame.fragment;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,17 +15,10 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.example.gy.musicgame.R;
 import com.example.gy.musicgame.adapter.MyPagerAdapter;
-import com.example.gy.musicgame.constant.Constants;
 import com.example.gy.musicgame.fragment.info.MessageFragment;
 import com.example.gy.musicgame.fragment.info.NoticeFragment;
-import com.example.gy.musicgame.model.BottomBarVo;
-import com.example.gy.musicgame.utils.SharedPreferenceUtil;
-import com.example.gy.musicgame.view.BottomBarView;
 import com.google.android.material.tabs.TabLayout;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,7 +26,6 @@ public class InfoFragment extends Fragment {
 
     private InfoViewModel mViewModel;
     private Activity mActivity;
-    private BottomBarView bottomBarView;
     private ViewPager viewPager;
     private TabLayout tabLayout;
 
@@ -68,7 +59,6 @@ public class InfoFragment extends Fragment {
     }
 
     private void initView(View view) {
-        bottomBarView = view.findViewById(R.id.bottom_bar_view);
         viewPager = view.findViewById(R.id.viewPager);
         tabLayout = view.findViewById(R.id.tabLayout);
     }
@@ -84,27 +74,5 @@ public class InfoFragment extends Fragment {
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         mActivity = getActivity();
-    }
-
-    @Override
-    public void setUserVisibleHint(boolean isVisibleToUser) {
-        super.setUserVisibleHint(isVisibleToUser);
-        if (isVisibleToUser) {
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    setBottomBarData();
-                }
-            }, 1200);
-        }
-    }
-
-    private void setBottomBarData() {
-        SharedPreferenceUtil<BottomBarVo> preferenceUtil = new SharedPreferenceUtil<>();
-        String json = preferenceUtil.getObjectJson(mActivity, Constants.CURRENT_BOTTOM_VO);
-        Type type = new TypeToken<BottomBarVo>() {
-        }.getType();
-        BottomBarVo bottomBarVo = new Gson().fromJson(json, type);
-        bottomBarView.setBottomBarVo(bottomBarVo);
     }
 }
