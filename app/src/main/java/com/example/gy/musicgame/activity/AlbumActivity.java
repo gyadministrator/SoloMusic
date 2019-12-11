@@ -15,6 +15,7 @@ import com.blankj.utilcode.util.ToastUtils;
 import com.example.gy.musicgame.R;
 import com.example.gy.musicgame.adapter.LinearAdapter;
 import com.example.gy.musicgame.constant.Constants;
+import com.example.gy.musicgame.event.CustomEvent;
 import com.example.gy.musicgame.helper.LoadingDialogHelper;
 import com.example.gy.musicgame.helper.RetrofitHelper;
 import com.example.gy.musicgame.model.BottomBarVo;
@@ -28,6 +29,8 @@ import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.lang.reflect.Type;
 import java.util.Map;
@@ -150,6 +153,12 @@ public class AlbumActivity extends BaseActivity implements OnRefreshListener, On
         }.getType();
         BottomBarVo bottomBarVo = new Gson().fromJson(json, type);
         bottomBarView.setBottomBarVo(bottomBarVo);
+    }
+
+    @Override
+    public void finish() {
+        super.finish();
+        EventBus.getDefault().post(new CustomEvent());
     }
 
     /**

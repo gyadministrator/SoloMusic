@@ -12,6 +12,7 @@ import androidx.fragment.app.Fragment;
 
 import com.example.gy.musicgame.R;
 import com.example.gy.musicgame.constant.Constants;
+import com.example.gy.musicgame.event.CustomEvent;
 import com.example.gy.musicgame.fragment.FriendFragment;
 import com.example.gy.musicgame.fragment.InfoFragment;
 import com.example.gy.musicgame.fragment.ListenFragment;
@@ -79,18 +80,11 @@ public class MainActivity extends BaseActivity {
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        if (isFront) {
+    public void onEvent(Object object) {
+        super.onEvent(object);
+        if (object instanceof CustomEvent) {
             setBottomBarData();
-            isFront = false;
         }
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        isFront = true;
     }
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)

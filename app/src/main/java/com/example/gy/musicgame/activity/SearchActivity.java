@@ -16,6 +16,7 @@ import com.example.gy.musicgame.R;
 import com.example.gy.musicgame.adapter.SearchAdapter;
 import com.example.gy.musicgame.api.Api;
 import com.example.gy.musicgame.constant.Constants;
+import com.example.gy.musicgame.event.CustomEvent;
 import com.example.gy.musicgame.helper.LoadingDialogHelper;
 import com.example.gy.musicgame.helper.RetrofitHelper;
 import com.example.gy.musicgame.model.BottomBarVo;
@@ -24,6 +25,8 @@ import com.example.gy.musicgame.utils.SharedPreferenceUtil;
 import com.example.gy.musicgame.view.BottomBarView;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.lang.reflect.Type;
 import java.util.List;
@@ -71,6 +74,12 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
         }.getType();
         BottomBarVo bottomBarVo = new Gson().fromJson(json, type);
         bottomBarView.setBottomBarVo(bottomBarVo);
+    }
+
+    @Override
+    public void finish() {
+        super.finish();
+        EventBus.getDefault().post(new CustomEvent());
     }
 
     @Override
