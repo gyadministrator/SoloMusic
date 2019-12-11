@@ -28,8 +28,10 @@ import com.example.gy.musicgame.activity.CodeActivity;
 import com.example.gy.musicgame.activity.SettingActivity;
 import com.example.gy.musicgame.api.Api;
 import com.example.gy.musicgame.constant.Constants;
+import com.example.gy.musicgame.helper.DialogHelper;
 import com.example.gy.musicgame.helper.LoadingDialogHelper;
 import com.example.gy.musicgame.helper.RetrofitHelper;
+import com.example.gy.musicgame.listener.SheetDialogListener;
 import com.example.gy.musicgame.model.BottomBarVo;
 import com.example.gy.musicgame.model.FileVo;
 import com.example.gy.musicgame.model.UserInfoVo;
@@ -38,6 +40,7 @@ import com.example.gy.musicgame.utils.LogUtils;
 import com.example.gy.musicgame.utils.SharedPreferenceUtil;
 import com.example.gy.musicgame.utils.UserManager;
 import com.example.gy.musicgame.view.BottomBarView;
+import com.example.gy.musicgame.view.GlideImageLoader;
 import com.example.gy.musicgame.view.TitleView;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.gson.Gson;
@@ -45,10 +48,12 @@ import com.google.gson.reflect.TypeToken;
 import com.lzy.imagepicker.ImagePicker;
 import com.lzy.imagepicker.bean.ImageItem;
 import com.lzy.imagepicker.ui.ImageGridActivity;
+import com.lzy.imagepicker.view.CropImageView;
 
 import java.io.File;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -83,8 +88,13 @@ public class MeFragment extends Fragment implements View.OnClickListener {
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.me_fragment, container, false);
         initView(view);
+        initData();
         initAction();
         return view;
+    }
+
+    private void initData() {
+        initImagePicker();
     }
 
     private void initAction() {
@@ -142,6 +152,20 @@ public class MeFragment extends Fragment implements View.OnClickListener {
 
                     }
                 });
+    }
+
+    private void initImagePicker() {
+        ImagePicker imagePicker = ImagePicker.getInstance();
+        imagePicker.setImageLoader(new GlideImageLoader());   //设置图片加载器
+        imagePicker.setShowCamera(true);                      //显示拍照按钮
+        imagePicker.setCrop(true);                           //允许裁剪（单选才有效）
+        imagePicker.setSaveRectangle(true);                   //是否按矩形区域保存
+        imagePicker.setSelectLimit(1);              //选中数量限制
+        imagePicker.setStyle(CropImageView.Style.RECTANGLE);  //裁剪框的形状
+        imagePicker.setFocusWidth(800);                       //裁剪框的宽度。单位像素（圆形自动取宽高最小值）
+        imagePicker.setFocusHeight(800);                      //裁剪框的高度。单位像素（圆形自动取宽高最小值）
+        imagePicker.setOutPutX(1000);                         //保存文件的宽度。单位像素
+        imagePicker.setOutPutY(1000);                         //保存文件的高度。单位像素
     }
 
     private void initView(View view) {
@@ -218,7 +242,25 @@ public class MeFragment extends Fragment implements View.OnClickListener {
                 initAction();
                 break;
             case R.id.iv_user:
-                showBottom();
+                //showBottom();
+                List<String> items = new ArrayList<>();
+                items.add("拍照");
+                items.add("相册");
+                DialogHelper.getInstance().showBottomDialog(mActivity, items, new SheetDialogListener() {
+                    @Override
+                    public void selectPosition(int position) {
+                        switch (position) {
+                            case 0:
+                                //拍照
+                                takePhoto();
+                                break;
+                            case 1:
+                                //相册
+                                selectAlbum();
+                                break;
+                        }
+                    }
+                });
                 break;
         }
     }

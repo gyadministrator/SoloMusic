@@ -69,13 +69,16 @@ public class SortAdapter extends BaseAdapter {
             viewHolder.image = view.findViewById(R.id.iv_image);
             viewHolder.name = view.findViewById(R.id.name);
             viewHolder.catalog = view.findViewById(R.id.catalog);
+            viewHolder.view = view.findViewById(R.id.line);
             view.setTag(viewHolder);
         } else {
             viewHolder = (ViewHolder) view.getTag();
         }
+        if (position == 0 || position == list.size() - 1) {
+            viewHolder.view.setVisibility(View.GONE);
+        }
         //根据position获取首字母作为目录catalog
         String catalog = user.getFirstLetter();
-
         //如果当前位置等于该分类首字母的Char的位置 ，则认为是第一次出现
         if (position == getPositionForSection(catalog)) {
             viewHolder.catalog.setVisibility(View.VISIBLE);
@@ -145,6 +148,7 @@ public class SortAdapter extends BaseAdapter {
         TextView catalog;
         TextView name;
         ImageView image;
+        View view;
     }
 
     /**

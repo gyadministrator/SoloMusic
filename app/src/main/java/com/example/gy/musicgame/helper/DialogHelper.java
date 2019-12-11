@@ -5,9 +5,12 @@ import android.view.View;
 
 import com.example.gy.musicgame.listener.DialogListener;
 import com.example.gy.musicgame.listener.InputDialogListener;
+import com.example.gy.musicgame.listener.SheetDialogListener;
 import com.hb.dialog.myDialog.ActionSheetDialog;
 import com.hb.dialog.myDialog.MyAlertDialog;
 import com.hb.dialog.myDialog.MyAlertInputDialog;
+
+import java.util.List;
 
 /**
  * Description: SoloMusic
@@ -79,20 +82,28 @@ public class DialogHelper {
 
     }
 
-    public void showBottomDialog(Context context) {
-        ActionSheetDialog dialog = new ActionSheetDialog(context).builder().setTitle("请选择")
-                .addSheetItem("相册", null, new ActionSheetDialog.OnSheetItemClickListener() {
+    /**
+     * 显示底部弹出框
+     *
+     * @param context context
+     * @param items   条目
+     */
+    public void showBottomDialog(Context context, List<String> items, final SheetDialogListener sheetDialogListener) {
+        ActionSheetDialog dialog = new ActionSheetDialog(context).builder().setTitle("请选择");
+        if (items != null) {
+            for (String item : items) {
+                dialog.addSheetItem(item, null, new ActionSheetDialog.OnSheetItemClickListener() {
                     @Override
                     public void onClick(int which) {
-
-                    }
-                }).addSheetItem("拍照", null, new ActionSheetDialog.OnSheetItemClickListener() {
-                    @Override
-                    public void onClick(int which) {
-
+                        if (sheetDialogListener != null) {
+                            sheetDialogListener.selectPosition(which - 1);
+                        }
                     }
                 });
-        dialog.setCanceledOnTouchOutside(false);
+            }
+        }
+        dialog.setCanceledOnTouchOutside(true);
+        dialog.setCancelable(true);
         dialog.show();
     }
 }
