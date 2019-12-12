@@ -43,6 +43,12 @@
         android:theme="@style/AppTheme"
         tools:ignore="UnusedAttribute">
         <activity
+            android:name=".chatui.ui.activity.ChatActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".chatui.ui.activity.FullImageActivity"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".activity.LocalMusicActivity"
             android:screenOrientation="portrait" />
         <activity

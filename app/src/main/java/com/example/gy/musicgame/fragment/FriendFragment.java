@@ -13,6 +13,7 @@ import android.os.Message;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import androidx.annotation.NonNull;
@@ -25,6 +26,7 @@ import com.blankj.utilcode.util.ToastUtils;
 import com.example.gy.musicgame.R;
 import com.example.gy.musicgame.activity.MainActivity;
 import com.example.gy.musicgame.activity.SearchFriendActivity;
+import com.example.gy.musicgame.chatui.ui.activity.ChatActivity;
 import com.example.gy.musicgame.friend.SideBar;
 import com.example.gy.musicgame.friend.SortAdapter;
 import com.example.gy.musicgame.model.UserModel;
@@ -41,7 +43,7 @@ import java.util.List;
 
 import static android.content.Context.MODE_PRIVATE;
 
-public class FriendFragment extends Fragment {
+public class FriendFragment extends Fragment implements AdapterView.OnItemClickListener {
 
     private FriendViewModel mViewModel;
     private Activity mActivity;
@@ -164,6 +166,7 @@ public class FriendFragment extends Fragment {
 
             }
         });
+        listView.setOnItemClickListener(this);
     }
 
     private void loginIM() {
@@ -221,6 +224,13 @@ public class FriendFragment extends Fragment {
         super.onDestroy();
         if (mHandler != null) {
             mHandler.removeCallbacksAndMessages(null);
+        }
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        if (position != 0) {
+            startActivity(new Intent(mActivity, ChatActivity.class));
         }
     }
 
