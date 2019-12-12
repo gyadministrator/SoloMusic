@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.gy.musicgame.R;
+import com.example.gy.musicgame.constant.Constants;
 import com.example.gy.musicgame.listener.OnItemClickListener;
 import com.example.gy.musicgame.model.BottomBarVo;
 import com.example.gy.musicgame.model.LocalMusicModel;
@@ -77,6 +78,8 @@ public class LocalMusicLinearAdapter extends RecyclerView.Adapter<LocalMusicLine
         String albumArt = LocalMusicUtils.getAlbumArt(mContext, musicModel.getAlbumId());
         if (!TextUtils.isEmpty(albumArt)) {
             bottomBarVo.setImage(albumArt);
+        } else {
+            bottomBarVo.setImage(Constants.DEFAULT_ALBUM_URL);
         }
         bottomBarVo.setName(musicModel.getName());
         bottomBarVo.setPath(file_link);

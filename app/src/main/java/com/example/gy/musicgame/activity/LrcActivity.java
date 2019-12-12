@@ -98,7 +98,11 @@ public class LrcActivity extends BaseActivity {
     }
 
     private void findSingerInFo() {
-        WebActivity.startActivity(mActivity, url);
+        if (TextUtils.isEmpty(tingUid)) {
+            ToastUtils.showShort("该歌手信息暂未找到");
+        } else {
+            WebActivity.startActivity(mActivity, url);
+        }
     }
 
     @Override
@@ -199,7 +203,9 @@ public class LrcActivity extends BaseActivity {
     @Override
     protected void initAction() {
         getLrc(songId);
-        getSingerInfo();
+        if (!TextUtils.isEmpty(tingUid)) {
+            getSingerInfo();
+        }
     }
 
     private void getSingerInfo() {

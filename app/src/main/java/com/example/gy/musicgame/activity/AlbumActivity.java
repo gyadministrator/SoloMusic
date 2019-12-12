@@ -20,17 +20,13 @@ import com.example.gy.musicgame.helper.RetrofitHelper;
 import com.example.gy.musicgame.listener.OnItemClickListener;
 import com.example.gy.musicgame.model.BottomBarVo;
 import com.example.gy.musicgame.model.MusicModel;
-import com.example.gy.musicgame.utils.SharedPreferenceUtil;
-import com.example.gy.musicgame.view.BottomBarView;
+import com.example.gy.musicgame.utils.MusicUtils;
 import com.example.gy.musicgame.view.TitleView;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
-import java.lang.reflect.Type;
 import java.util.Map;
 import java.util.Objects;
 
@@ -49,7 +45,6 @@ public class AlbumActivity extends BaseActivity implements OnRefreshListener, On
     private SmartRefreshLayout refreshLayout;
     private int offset = 0;
     private boolean isLoad;
-    private BottomBarView bottomBarView;
 
     @Override
     protected void initView() {
@@ -57,7 +52,6 @@ public class AlbumActivity extends BaseActivity implements OnRefreshListener, On
         tvTopTitle = fd(R.id.tv_top_title);
         rv_linear = fd(R.id.rv_linear);
         refreshLayout = fd(R.id.refreshLayout);
-        bottomBarView = fd(R.id.bottom_bar_view);
         refreshLayout.setOnRefreshListener(this);
         refreshLayout.setOnLoadMoreListener(this);
     }
@@ -69,8 +63,6 @@ public class AlbumActivity extends BaseActivity implements OnRefreshListener, On
         mType = intent.getIntExtra("type", 1);
         tvTopTitle.setText(mTitle);
         titleView.setTitle(mTitle);
-
-        setBottomBarData();
     }
 
     @Override
@@ -122,8 +114,18 @@ public class AlbumActivity extends BaseActivity implements OnRefreshListener, On
                             linerAdapter.setOnItemClickListener(new OnItemClickListener() {
                                 @Override
                                 public void play(BottomBarVo bottomBarVo) {
-                                    if (bottomBarView != null) {
-                                        bottomBarView.play(bottomBarVo);
+                                    if (bottomBarVo != null) {
+                                        MusicUtils.play(bottomBarVo.getPath(), mActivity, new MusicUtils.IMusicListener() {
+                                            @Override
+                                            public void success() {
+
+                                            }
+
+                                            @Override
+                                            public void error(String msg) {
+                                                ToastUtils.showShort(msg);
+                                            }
+                                        });
                                     }
                                 }
                             });
@@ -151,15 +153,6 @@ public class AlbumActivity extends BaseActivity implements OnRefreshListener, On
                         }
                     }
                 });
-    }
-
-    private void setBottomBarData() {
-        SharedPreferenceUtil<BottomBarVo> preferenceUtil = new SharedPreferenceUtil<>();
-        String json = preferenceUtil.getObjectJson(mActivity, Constants.CURRENT_BOTTOM_VO);
-        Type type = new TypeToken<BottomBarVo>() {
-        }.getType();
-        BottomBarVo bottomBarVo = new Gson().fromJson(json, type);
-        bottomBarView.setBottomBarVo(bottomBarVo);
     }
 
     @Override

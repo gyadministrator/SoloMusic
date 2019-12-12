@@ -4,9 +4,9 @@
     android:id="@+id/ll_bottom_bar"
     android:layout_width="match_parent"
     android:layout_height="60dp"
+    android:layout_gravity="bottom"
     android:background="@color/white"
     android:orientation="horizontal"
-    android:layout_gravity="bottom"
     android:padding="6dp">
 
     <de.hdodenhof.circleimageview.CircleImageView
@@ -16,6 +16,7 @@
         android:src="@mipmap/logo" />
 
     <LinearLayout
+        android:id="@+id/ll_content"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_marginStart="6dp"
@@ -51,14 +52,4 @@
         android:layout_gravity="center_vertical"
         android:scaleType="fitXY"
         android:src="@mipmap/play" />
-
-    <ImageView
-        android:id="@+id/iv_next"
-        android:layout_width="@dimen/icon_size"
-        android:layout_height="@dimen/icon_size"
-        android:layout_gravity="center_vertical"
-        android:layout_marginStart="15dp"
-        android:layout_marginLeft="15dp"
-        android:scaleType="fitXY"
-        android:src="@mipmap/next" />
 </LinearLayout>

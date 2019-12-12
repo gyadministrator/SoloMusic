@@ -34,7 +34,6 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.List;
 import java.util.Objects;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -50,23 +49,17 @@ public class BottomBarView extends LinearLayout {
     private TextView tvName;
     private TextView tvAuthor;
     private ImageView ivPlay;
-    private ImageView ivNext;
     private BottomBarVo bottomBarVo;
     private Context mContext;
-    private Animation animation;
+    private Animation playAnimation;
     private LinearLayout llBottomBar;
-    private int currentPosition = -1;
-    private List<BottomBarVo> list;
     private Bitmap bitmap;
+    private LinearLayout llContent;
 
 
     public void setBottomBarVo(BottomBarVo bottomBarVo) {
         this.bottomBarVo = bottomBarVo;
         initData(bottomBarVo);
-    }
-
-    public void setList(List<BottomBarVo> list) {
-        this.list = list;
     }
 
     public BottomBarView(Context context) {
@@ -87,12 +80,12 @@ public class BottomBarView extends LinearLayout {
         View mView = LayoutInflater.from(context).inflate(R.layout.bottom_bar, this);
         ivIcon = mView.findViewById(R.id.iv_icon);
         ivPlay = mView.findViewById(R.id.iv_play);
-        ivNext = mView.findViewById(R.id.iv_next);
         tvName = mView.findViewById(R.id.tv_name);
         tvAuthor = mView.findViewById(R.id.tv_author);
         llBottomBar = mView.findViewById(R.id.ll_bottom_bar);
+        llContent = mView.findViewById(R.id.ll_content);
 
-        animation = AnimationUtils.loadAnimation(context, R.anim.play_music_anim);
+        playAnimation = AnimationUtils.loadAnimation(context, R.anim.play_music_anim);
         initEvent();
     }
 
@@ -102,14 +95,23 @@ public class BottomBarView extends LinearLayout {
         MusicUtils.play(bottomBarVo.getPath(), mContext, new MusicUtils.IMusicListener() {
             @Override
             public void success() {
-                initData(bottomBarVo);
+                ivIcon.startAnimation(playAnimation);
+                ivPlay.setImageResource(R.mipmap.stop);
+                if (!TextUtils.isEmpty(bottomBarVo.getName())) {
+                    tvName.setText(bottomBarVo.getName());
+                }
+                if (!TextUtils.isEmpty(bottomBarVo.getAuthor())) {
+                    tvAuthor.setText(bottomBarVo.getAuthor());
+                }
+                tvName.setTextColor(mContext.getResources().getColor(R.color.pressed));
+                tvAuthor.setTextColor(mContext.getResources().getColor(R.color.pressed));
                 //开启通知栏
                 openNotice(bottomBarVo);
             }
 
             @Override
             public void error(String msg) {
-
+                ToastUtils.showShort(msg);
             }
         });
     }
@@ -180,56 +182,47 @@ public class BottomBarView extends LinearLayout {
             @Override
             public void onClick(View v) {
                 if (bottomBarVo == null) return;
-                if (MusicUtils.isPlaying()) {
-                    MusicUtils.pause();
-                    close();
-                } else {
-                    if (MusicUtils.getMediaPlayer() == null) {
-                        play(bottomBarVo);
-                        return;
-                    }
-                    MusicUtils.playContinue();
+                if (MusicUtils.getMediaPlayer() == null) {
+                    MusicUtils.play(bottomBarVo.getPath(), mContext, new MusicUtils.IMusicListener() {
+                        @Override
+                        public void success() {
+
+                        }
+
+                        @Override
+                        public void error(String msg) {
+                            ToastUtils.showShort(msg);
+                        }
+                    });
+                    ivIcon.startAnimation(playAnimation);
                     ivPlay.setImageResource(R.mipmap.stop);
-                    ivIcon.startAnimation(animation);
+                    tvName.setTextColor(mContext.getResources().getColor(R.color.pressed));
+                    tvAuthor.setTextColor(mContext.getResources().getColor(R.color.pressed));
+                } else {
+                    if (MusicUtils.isPlaying()) {
+                        MusicUtils.pause();
+                        close();
+                    } else {
+                        MusicUtils.playContinue();
+                        ivPlay.setImageResource(R.mipmap.stop);
+                        ivIcon.startAnimation(playAnimation);
+                        tvName.setTextColor(mContext.getResources().getColor(R.color.pressed));
+                        tvAuthor.setTextColor(mContext.getResources().getColor(R.color.pressed));
+                    }
                 }
             }
         });
-
-        ivNext.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (bottomBarVo == null) return;
-                if (list == null || list.size() == 0) {
-                    ToastUtils.showShort("当前是最后一曲了！");
-                    return;
-                }
-                next();
-            }
-        });
-    }
-
-    private void next() {
-        currentPosition += 1;
-        BottomBarVo bottomBarVo = list.get(currentPosition);
-        if (bottomBarVo != null) {
-            Glide.with(mContext).load(bottomBarVo.getImage()).into(ivIcon);
-            ivIcon.startAnimation(animation);
-
-            tvName.setText(bottomBarVo.getName());
-            tvAuthor.setText(bottomBarVo.getAuthor());
-
-            play(bottomBarVo);
-        }
     }
 
     private void initData(BottomBarVo bottomBarVo) {
-        this.bottomBarVo = bottomBarVo;
         if (bottomBarVo != null) {
             if (!TextUtils.isEmpty(bottomBarVo.getImage())) {
                 Glide.with(mContext).load(bottomBarVo.getImage()).into(ivIcon);
                 if (MusicUtils.isPlaying()) {
-                    ivIcon.startAnimation(animation);
+                    ivIcon.startAnimation(playAnimation);
                     ivPlay.setImageResource(R.mipmap.stop);
+                    tvName.setTextColor(mContext.getResources().getColor(R.color.pressed));
+                    tvAuthor.setTextColor(mContext.getResources().getColor(R.color.pressed));
                 } else {
                     close();
                 }
@@ -248,7 +241,9 @@ public class BottomBarView extends LinearLayout {
      */
     public void close() {
         ivPlay.setImageResource(R.mipmap.play);
-        if (animation != null) {
+        tvName.setTextColor(mContext.getResources().getColor(R.color.normal));
+        tvAuthor.setTextColor(mContext.getResources().getColor(R.color.normal));
+        if (playAnimation != null) {
             ivIcon.clearAnimation();
         }
     }

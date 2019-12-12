@@ -20,14 +20,11 @@ import com.example.gy.musicgame.api.Api;
 import com.example.gy.musicgame.constant.Constants;
 import com.example.gy.musicgame.helper.LoadingDialogHelper;
 import com.example.gy.musicgame.helper.RetrofitHelper;
+import com.example.gy.musicgame.listener.OnItemClickListener;
 import com.example.gy.musicgame.model.BottomBarVo;
 import com.example.gy.musicgame.model.SearchMusicModel;
-import com.example.gy.musicgame.utils.SharedPreferenceUtil;
-import com.example.gy.musicgame.view.BottomBarView;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
+import com.example.gy.musicgame.utils.MusicUtils;
 
-import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -42,14 +39,12 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
     private EditText etSearch;
     private TextView tvSearch;
     private RecyclerView recyclerView;
-    private BottomBarView bottomBarView;
 
     @Override
     protected void initView() {
         etSearch = fd(R.id.et_search);
         tvSearch = fd(R.id.tv_search);
         recyclerView = fd(R.id.recyclerView);
-        bottomBarView = fd(R.id.bottom_bar_view);
     }
 
     @Override
@@ -57,21 +52,11 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
         tvSearch.setText("返回");
         etSearch.addTextChangedListener(this);
         tvSearch.setOnClickListener(this);
-        setBottomBarData();
     }
 
     @Override
     protected void initAction() {
 
-    }
-
-    private void setBottomBarData() {
-        SharedPreferenceUtil<BottomBarVo> preferenceUtil = new SharedPreferenceUtil<>();
-        String json = preferenceUtil.getObjectJson(mActivity, Constants.CURRENT_BOTTOM_VO);
-        Type type = new TypeToken<BottomBarVo>() {
-        }.getType();
-        BottomBarVo bottomBarVo = new Gson().fromJson(json, type);
-        bottomBarView.setBottomBarVo(bottomBarVo);
     }
 
     @Override
@@ -133,6 +118,23 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
                             recyclerView.setLayoutManager(new LinearLayoutManager(mActivity));
                             recyclerView.addItemDecoration(new DividerItemDecoration(mActivity, DividerItemDecoration.VERTICAL));
                             recyclerView.setAdapter(searchAdapter);
+
+                            searchAdapter.setOnItemClickListener(new OnItemClickListener() {
+                                @Override
+                                public void play(BottomBarVo bottomBarVo) {
+                                    MusicUtils.play(bottomBarVo.getPath(), mActivity, new MusicUtils.IMusicListener() {
+                                        @Override
+                                        public void success() {
+
+                                        }
+
+                                        @Override
+                                        public void error(String msg) {
+                                            ToastUtils.showShort(msg);
+                                        }
+                                    });
+                                }
+                            });
                         }
                     }
 

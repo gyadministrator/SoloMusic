@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.CountDownTimer;
+import android.text.TextUtils;
 
 import com.blankj.utilcode.util.ToastUtils;
 
@@ -38,7 +39,7 @@ public class MusicUtils {
      * @param url 音乐地址
      */
     public static void play(final String url, final Context context, final IMusicListener musicListener) {
-        if (url == null || url.equals("")) {
+        if (TextUtils.isEmpty(url)) {
             ToastUtils.showShort("该歌曲暂时无法获取播放源");
             return;
         }
