@@ -102,10 +102,7 @@ public class BottomBarView extends LinearLayout {
         MusicUtils.play(bottomBarVo.getPath(), mContext, new MusicUtils.IMusicListener() {
             @Override
             public void success() {
-                ivIcon.startAnimation(animation);
-                ivPlay.setImageResource(R.mipmap.stop);
                 initData(bottomBarVo);
-
                 //开启通知栏
                 openNotice(bottomBarVo);
             }
@@ -182,15 +179,15 @@ public class BottomBarView extends LinearLayout {
         ivPlay.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (bottomBarVo != null && !MusicUtils.isPlaying() && Constants.isFirst) {
-                    play(bottomBarVo);
-                    Constants.isFirst = false;
-                    return;
-                }
+                if (bottomBarVo == null) return;
                 if (MusicUtils.isPlaying()) {
                     MusicUtils.pause();
                     close();
                 } else {
+                    if (MusicUtils.getMediaPlayer() == null) {
+                        play(bottomBarVo);
+                        return;
+                    }
                     MusicUtils.playContinue();
                     ivPlay.setImageResource(R.mipmap.stop);
                     ivIcon.startAnimation(animation);
@@ -233,6 +230,8 @@ public class BottomBarView extends LinearLayout {
                 if (MusicUtils.isPlaying()) {
                     ivIcon.startAnimation(animation);
                     ivPlay.setImageResource(R.mipmap.stop);
+                } else {
+                    close();
                 }
             }
             if (!TextUtils.isEmpty(bottomBarVo.getName())) {

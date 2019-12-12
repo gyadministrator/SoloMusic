@@ -8,10 +8,8 @@ import android.media.MediaPlayer;
 import android.os.CountDownTimer;
 
 import com.blankj.utilcode.util.ToastUtils;
-import com.example.gy.musicgame.constant.Constants;
 
 import java.io.IOException;
-import java.sql.Ref;
 
 
 /**
@@ -40,7 +38,6 @@ public class MusicUtils {
      * @param url 音乐地址
      */
     public static void play(final String url, final Context context, final IMusicListener musicListener) {
-        Constants.isFirst = true;
         if (url == null || url.equals("")) {
             ToastUtils.showShort("该歌曲暂时无法获取播放源");
             return;

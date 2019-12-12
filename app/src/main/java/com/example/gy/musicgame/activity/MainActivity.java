@@ -1,6 +1,10 @@
 package com.example.gy.musicgame.activity;
 
 import android.Manifest;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Build;
@@ -12,7 +16,6 @@ import androidx.fragment.app.Fragment;
 
 import com.example.gy.musicgame.R;
 import com.example.gy.musicgame.constant.Constants;
-import com.example.gy.musicgame.event.CustomEvent;
 import com.example.gy.musicgame.fragment.FriendFragment;
 import com.example.gy.musicgame.fragment.InfoFragment;
 import com.example.gy.musicgame.fragment.ListenFragment;
@@ -41,7 +44,7 @@ public class MainActivity extends BaseActivity {
 
     private List<Fragment> fragments = new ArrayList<>();
     private EasyNavigationBar navigationBar;
-    private boolean isFront = false;
+    private MyMusicReceiver musicReceiver;
     private BottomBarView bottomBarView;
     private final String[] PERMISSIONS = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE
             , Manifest.permission.CAMERA};
@@ -77,14 +80,10 @@ public class MainActivity extends BaseActivity {
                 .fragmentList(fragments)
                 .fragmentManager(getSupportFragmentManager())
                 .build();
-    }
-
-    @Override
-    public void onEvent(Object object) {
-        super.onEvent(object);
-        if (object instanceof CustomEvent) {
-            setBottomBarData();
-        }
+        musicReceiver = new MyMusicReceiver();
+        IntentFilter filter = new IntentFilter();
+        filter.addAction("mainMusic");
+        registerReceiver(musicReceiver, filter);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
@@ -145,6 +144,14 @@ public class MainActivity extends BaseActivity {
     }
 
     @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (musicReceiver != null) {
+            unregisterReceiver(musicReceiver);
+        }
+    }
+
+    @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         // 获取到Activity下的Fragment
@@ -170,5 +177,18 @@ public class MainActivity extends BaseActivity {
     @Override
     protected int getContentView() {
         return R.layout.activity_main;
+    }
+
+    private class MyMusicReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            if (action != null) {
+                if ("mainMusic".equals(action)) {
+                    setBottomBarData();
+                }
+            }
+        }
     }
 }

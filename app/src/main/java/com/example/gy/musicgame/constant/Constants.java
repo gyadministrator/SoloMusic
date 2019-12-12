@@ -45,6 +45,4 @@ public class Constants {
     public static final String RECIPE_URL = "https://apicloud.mob.com/";
 
     public static final String PLUGIN_NAME = "NativePlugin";
-
-    public static boolean isFirst = true;
 }

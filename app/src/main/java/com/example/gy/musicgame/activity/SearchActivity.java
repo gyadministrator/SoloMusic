@@ -1,5 +1,6 @@
 package com.example.gy.musicgame.activity;
 
+import android.content.Intent;
 import android.os.Build;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -11,12 +12,12 @@ import androidx.annotation.RequiresApi;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.blankj.utilcode.util.ToastUtils;
 import com.example.gy.musicgame.R;
 import com.example.gy.musicgame.adapter.SearchAdapter;
 import com.example.gy.musicgame.api.Api;
 import com.example.gy.musicgame.constant.Constants;
-import com.example.gy.musicgame.event.CustomEvent;
 import com.example.gy.musicgame.helper.LoadingDialogHelper;
 import com.example.gy.musicgame.helper.RetrofitHelper;
 import com.example.gy.musicgame.model.BottomBarVo;
@@ -25,8 +26,6 @@ import com.example.gy.musicgame.utils.SharedPreferenceUtil;
 import com.example.gy.musicgame.view.BottomBarView;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-
-import org.greenrobot.eventbus.EventBus;
 
 import java.lang.reflect.Type;
 import java.util.List;
@@ -58,7 +57,6 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
         tvSearch.setText("返回");
         etSearch.addTextChangedListener(this);
         tvSearch.setOnClickListener(this);
-
         setBottomBarData();
     }
 
@@ -79,7 +77,9 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
     @Override
     public void finish() {
         super.finish();
-        EventBus.getDefault().post(new CustomEvent());
+        Intent intent = new Intent();
+        intent.setAction("mainMusic");
+        sendBroadcast(intent);
     }
 
     @Override

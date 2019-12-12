@@ -1,5 +1,6 @@
 package com.example.gy.musicgame.activity;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 
 import androidx.annotation.NonNull;
@@ -10,7 +11,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.gy.musicgame.R;
 import com.example.gy.musicgame.adapter.LocalMusicLinearAdapter;
 import com.example.gy.musicgame.constant.Constants;
-import com.example.gy.musicgame.event.CustomEvent;
 import com.example.gy.musicgame.model.BottomBarVo;
 import com.example.gy.musicgame.model.LocalMusicModel;
 import com.example.gy.musicgame.utils.LocalMusicUtils;
@@ -79,7 +79,9 @@ public class LocalMusicActivity extends BaseActivity implements OnRefreshListene
     @Override
     public void finish() {
         super.finish();
-        EventBus.getDefault().post(new CustomEvent());
+        Intent intent=new Intent();
+        intent.setAction("mainMusic");
+        sendBroadcast(intent);
     }
 
     @Override

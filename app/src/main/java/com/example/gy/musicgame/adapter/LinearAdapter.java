@@ -53,7 +53,7 @@ public class LinearAdapter extends RecyclerView.Adapter<LinearAdapter.ViewHolder
     private boolean isFlag;
     private OnItemClickListener onItemClickListener;
 
-    void setOnItemClickListener(OnItemClickListener onItemClickListener) {
+   public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
         this.onItemClickListener = onItemClickListener;
     }
 
