@@ -181,6 +181,7 @@ public class NoticeFragment extends Fragment implements AdapterView.OnItemClickL
 
     @Override
     public void onRefresh(@NonNull RefreshLayout refreshLayout) {
+        currentPage = 1;
         getNoticeList();
         isLoadMore = false;
     }

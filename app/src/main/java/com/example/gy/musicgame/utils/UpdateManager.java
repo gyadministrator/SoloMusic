@@ -36,7 +36,7 @@ import java.net.URL;
 public class UpdateManager {
     private Context mContext;
 
-    private Dialog downloadDialog;
+    private ConfirmDialog downloadDialog;
     /* 下载包安装路径 */
     @SuppressLint("SdCardPath")
     private static final String savePath = "/sdcard/music_game/";
@@ -55,7 +55,7 @@ public class UpdateManager {
 
     private TextView progress_tv;
 
-    private Runnable mdownLoadApkRunnable;
+    private Runnable mDownLoadApkRunnable;
 
     private boolean interceptFlag = false;
     @SuppressLint("HandlerLeak")
@@ -67,7 +67,9 @@ public class UpdateManager {
                     mProgress.setProgress(progress);
                     progress_tv.setText("正在下载中..." + progress + "%");
                     if (progress == 99) {
-                        downloadDialog.dismiss();
+                        if (downloadDialog != null && downloadDialog.isShowing()) {
+                            downloadDialog.dismiss();
+                        }
                     }
                     break;
                 case DOWN_OVER:
@@ -131,17 +133,17 @@ public class UpdateManager {
 
     @SuppressLint("CutPasteId")
     private void showDownloadDialog(final ApkModel apkModel) {
-        final ConfirmDialog confirmDialog = new ConfirmDialog(mContext);
+        downloadDialog = new ConfirmDialog(mContext);
         final LayoutInflater inflater = LayoutInflater.from(mContext);
         @SuppressLint("InflateParams") View v = inflater.inflate(R.layout.download_progress, null);
         progress_tv = v.findViewById(R.id.progress_tv);
         mProgress = v.findViewById(R.id.progress);
         TextView tvCancel = v.findViewById(R.id.tv_cancel);
-        confirmDialog.setContentView(v);
+        downloadDialog.setContentView(v);
         tvCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                confirmDialog.dismiss();
+                downloadDialog.dismiss();
                 interceptFlag = true;
 
                 if (apkModel.getIsUpdate() == 1) {
@@ -152,14 +154,14 @@ public class UpdateManager {
                 }
             }
         });
-        confirmDialog.setCanceledOnTouchOutside(false);
-        confirmDialog.setCancelable(false);
-        confirmDialog.show();
+        downloadDialog.setCanceledOnTouchOutside(false);
+        downloadDialog.setCancelable(false);
+        downloadDialog.show();
         downloadApk(apkModel.getDownloadUrl());
     }
 
     private void downloadApp(final String apkUrl) {
-        mdownLoadApkRunnable = new Runnable() {
+        mDownLoadApkRunnable = new Runnable() {
             @Override
             public void run() {
                 try {
@@ -211,7 +213,7 @@ public class UpdateManager {
 
     private void downloadApk(String apkPath) {
         downloadApp(apkPath);
-        Thread downLoadThread = new Thread(mdownLoadApkRunnable);
+        Thread downLoadThread = new Thread(mDownLoadApkRunnable);
         downLoadThread.start();
     }
 
