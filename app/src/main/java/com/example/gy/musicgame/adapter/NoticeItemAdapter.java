@@ -28,6 +28,11 @@ public class NoticeItemAdapter extends BaseAdapter {
         this.context = context;
     }
 
+    public void addData(List<NoticeVo> moreData) {
+        list.addAll(moreData);
+        this.notifyDataSetChanged();
+    }
+
     @Override
     public int getCount() {
         return list.size();
@@ -52,15 +57,11 @@ public class NoticeItemAdapter extends BaseAdapter {
             viewHolder = new ViewHolder();
             viewHolder.tvTitle = convertView.findViewById(R.id.tv_title);
             viewHolder.tvContent = convertView.findViewById(R.id.tv_content);
-            viewHolder.line = convertView.findViewById(R.id.line);
             convertView.setTag(viewHolder);
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
         NoticeVo noticeVo = list.get(position);
-        if (list.size() == 1 || position == list.size() - 1) {
-            viewHolder.line.setVisibility(View.GONE);
-        }
         if (noticeVo != null) {
             String title = noticeVo.getTitle();
             if (title != null && title.length() > 20) {
@@ -79,6 +80,5 @@ public class NoticeItemAdapter extends BaseAdapter {
     class ViewHolder {
         TextView tvTitle;
         TextView tvContent;
-        View line;
     }
 }

@@ -268,6 +268,7 @@ public class ListenFragment extends Fragment implements OnRefreshListener, Title
         // TODO: Use the ViewModel
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     @Override
     public void onRefresh(@NonNull RefreshLayout refreshLayout) {
         isRefresh = true;

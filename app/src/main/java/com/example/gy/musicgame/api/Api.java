@@ -225,4 +225,13 @@ public interface Api {
      */
     @GET("auth/queryByAccount")
     Observable<Map> queryByAccount(@Query("account") String account);
+
+    /**
+     * 通知列表
+     *
+     * @param token token
+     * @return
+     */
+    @GET("message/list")
+    Observable<Map> noticeList(@Header("back-manager-token") String token, @Query("currentPage") Integer currentPage, @Query("pageSize") Integer pageSize);
 }

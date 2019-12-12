@@ -45,7 +45,7 @@
     <View
         android:id="@+id/line"
         android:layout_width="match_parent"
-        android:layout_height="0.5dp"
+        android:layout_height="0.2dp"
         android:layout_marginStart="@dimen/btn_height"
         android:layout_marginLeft="@dimen/btn_height"
         android:background="@color/normal" />
