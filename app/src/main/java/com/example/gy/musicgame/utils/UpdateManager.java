@@ -121,7 +121,7 @@ public class UpdateManager {
             @Override
             public void onClick(View v) {
                 confirmDialog.dismiss();
-                showDownloadDialog(apkModel.getDownloadUrl());
+                showDownloadDialog(apkModel);
             }
         });
         confirmDialog.setCanceledOnTouchOutside(false);
@@ -130,7 +130,7 @@ public class UpdateManager {
     }
 
     @SuppressLint("CutPasteId")
-    private void showDownloadDialog(String apkPath) {
+    private void showDownloadDialog(final ApkModel apkModel) {
         final ConfirmDialog confirmDialog = new ConfirmDialog(mContext);
         final LayoutInflater inflater = LayoutInflater.from(mContext);
         @SuppressLint("InflateParams") View v = inflater.inflate(R.layout.download_progress, null);
@@ -143,12 +143,19 @@ public class UpdateManager {
             public void onClick(View v) {
                 confirmDialog.dismiss();
                 interceptFlag = true;
+
+                if (apkModel.getIsUpdate() == 1) {
+                    //强制更新
+                    ActivityUtils.finishAllActivities();
+                    System.exit(0);
+                    Process.killProcess(Process.myPid());
+                }
             }
         });
         confirmDialog.setCanceledOnTouchOutside(false);
         confirmDialog.setCancelable(false);
         confirmDialog.show();
-        downloadApk(apkPath);
+        downloadApk(apkModel.getDownloadUrl());
     }
 
     private void downloadApp(final String apkUrl) {
@@ -227,6 +234,5 @@ public class UpdateManager {
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         }
         mContext.startActivity(intent);
-
     }
 }
