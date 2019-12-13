@@ -30,7 +30,9 @@
     <string name="password">密码</string>
     <string name="new_password">新密码</string>
     <string name="old_password">旧密码</string>
-    <string name="protocol">登录即同意《爱猜歌服务条款》\n  <font color='#FF0000'>用户协议</font> 和 <font color='#FF0000'>隐私政策</font></string>
+    <string name="protocol">登录即同意《爱猜歌服务条款》\n  <font color='#FF0000'>用户协议</font> 和 <font color='#FF0000'>隐私政策</font>
+    \n第三方<font color='#FF0000'> 隐私条款</font> 和 <font color='#FF0000'>服务条款</font>
+    </string>
     <string name="user_register">用户注册</string>
     <string name="forget_password">忘记密码？</string>
     <string name="mobile">手机号</string>

@@ -38,7 +38,7 @@ public class AgentWebUtils {
     public static AgentWeb openWeb(Activity activity, LinearLayout container, String url, WebChromeClient webChromeClient, WebViewClient webViewClient) {
         mAgentWeb = AgentWeb.with(activity)
                 .setAgentWebParent(container, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT))
-                .useDefaultIndicator(-1, 3)
+                .closeIndicator()
                 .setWebChromeClient(webChromeClient)
                 .setWebViewClient(webViewClient)
                 .setSecurityType(AgentWeb.SecurityType.STRICT_CHECK)

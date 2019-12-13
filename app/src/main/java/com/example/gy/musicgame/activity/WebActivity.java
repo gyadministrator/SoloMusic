@@ -10,6 +10,7 @@ import android.widget.LinearLayout;
 import androidx.annotation.NonNull;
 
 import com.example.gy.musicgame.R;
+import com.example.gy.musicgame.helper.LoadingDialogHelper;
 import com.example.gy.musicgame.utils.AgentWebUtils;
 import com.example.gy.musicgame.utils.ShareUtils;
 import com.example.gy.musicgame.view.TitleView;
@@ -39,6 +40,7 @@ public class WebActivity extends BaseActivity implements OnRefreshListener {
 
     @Override
     protected void initData() {
+        LoadingDialogHelper.show(mActivity, "加载中...");
         Intent intent = getIntent();
         url = intent.getStringExtra("url");
         agentWeb = AgentWebUtils.openWeb(mActivity, container, url, mWebChromeClient, mWebViewClient);
@@ -107,6 +109,7 @@ public class WebActivity extends BaseActivity implements OnRefreshListener {
         @Override
         public void onPageFinished(WebView view, String url) {
             super.onPageFinished(view, url);
+            LoadingDialogHelper.dismiss();
             title = view.getTitle();
             titleView.setTitle(view.getTitle());
             refreshLayout.finishRefresh(1500);

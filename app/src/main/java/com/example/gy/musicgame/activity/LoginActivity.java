@@ -91,7 +91,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     @Override
     protected void initData() {
         preferenceUtil = new SharedPreferenceUtil();
-        String username = (String) preferenceUtil.getObject(mActivity, Constants.CURRENT_USER_NAME);
+        String username = preferenceUtil.getObject(mActivity, Constants.CURRENT_USER_NAME);
         if (!TextUtils.isEmpty(username)) {
             etUser.setText(username);
         }
@@ -120,6 +120,10 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         stringBuilder.setSpan(userProtocol, 16, 20, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         SecretProtocol secretProtocol = new SecretProtocol();
         stringBuilder.setSpan(secretProtocol, 23, 27, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        MobSecretProtocol mobSecretProtocol = new MobSecretProtocol();
+        stringBuilder.setSpan(mobSecretProtocol, 32, 37, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        MobServiceProtocol mobServiceProtocol = new MobServiceProtocol();
+        stringBuilder.setSpan(mobServiceProtocol, 39, 44, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         tvProtocol.setText(stringBuilder);
         tvProtocol.setMovementMethod(LinkMovementMethod.getInstance());
     }
@@ -255,6 +259,38 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         @Override
         public void onClick(@NonNull View view) {
             ToastUtils.showShort("隐私政策");
+        }
+    }
+
+    /**
+     * 第三方隐私政策
+     */
+    private class MobSecretProtocol extends ClickableSpan {
+        @Override
+        public void updateDrawState(@NonNull TextPaint ds) {
+            ds.setColor(getResources().getColor(R.color.black));
+            ds.setUnderlineText(false);
+        }
+
+        @Override
+        public void onClick(@NonNull View view) {
+            WebActivity.startActivity(mActivity,"http://www.mob.com/about/policy");
+        }
+    }
+
+    /**
+     * 第三方服务条款
+     */
+    private class MobServiceProtocol extends ClickableSpan {
+        @Override
+        public void updateDrawState(@NonNull TextPaint ds) {
+            ds.setColor(getResources().getColor(R.color.black));
+            ds.setUnderlineText(false);
+        }
+
+        @Override
+        public void onClick(@NonNull View view) {
+           WebActivity.startActivity(mActivity,"http://www.mob.com/about/service");
         }
     }
 }
