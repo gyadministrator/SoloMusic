@@ -136,7 +136,9 @@ public class FriendFragment extends Fragment implements AdapterView.OnItemClickL
                 //群聊
             }
         });
-        listView.addHeaderView(header);
+        if (listView.getHeaderViewsCount() == 0) {
+            listView.addHeaderView(header);
+        }
     }
 
 
@@ -166,7 +168,9 @@ public class FriendFragment extends Fragment implements AdapterView.OnItemClickL
                 //群聊
             }
         });
-        listView.addHeaderView(view);
+        if (listView.getHeaderViewsCount() == 0) {
+            listView.addHeaderView(view);
+        }
     }
 
     public static FriendFragment newInstance() {
@@ -224,10 +228,14 @@ public class FriendFragment extends Fragment implements AdapterView.OnItemClickL
             }
         } else if (o instanceof FriendChangeEvent) {
             getContactList();
+            adapter.notifyDataSetChanged();
         }
     }
 
     private void getContactList() {
+        if (friendList != null) {
+            friendList.clear();
+        }
         new Thread(new Runnable() {
             @Override
             public void run() {

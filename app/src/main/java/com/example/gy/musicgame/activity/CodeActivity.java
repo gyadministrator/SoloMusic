@@ -2,6 +2,7 @@ package com.example.gy.musicgame.activity;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -25,7 +26,7 @@ public class CodeActivity extends BaseActivity implements View.OnLongClickListen
     private Bitmap bitmap;
     @SuppressLint("InlinedApi")
     private final String[] PERMISSIONS = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE};
-    private final int REQUEST_CODE = 1001;
+    private final int REQUEST_CODE = 1004;
     private String name = "code";
 
     @Override
@@ -35,8 +36,11 @@ public class CodeActivity extends BaseActivity implements View.OnLongClickListen
 
     @Override
     protected void initData() {
+        SharedPreferences sharedPreferences = mActivity.getSharedPreferences("login", MODE_PRIVATE);
+        //TODO 设置用户数据
+        final String username = sharedPreferences.getString("username", null);
         Bitmap logo = BitmapFactory.decodeResource(getResources(), R.mipmap.logo);
-        bitmap = CodeCreator.createQRCode(getString(R.string.app_name), 400, 400, logo);
+        bitmap = CodeCreator.createQRCode("gy"+username, 400, 400, logo);
         ivCode.setImageBitmap(bitmap);
         ivCode.setOnLongClickListener(this);
     }
@@ -54,29 +58,33 @@ public class CodeActivity extends BaseActivity implements View.OnLongClickListen
     @Override
     public boolean onLongClick(View view) {
         //长按保存图片
-        List<String> items = new ArrayList<>();
-        items.add("保存到相册");
-        DialogHelper.getInstance().showBottomDialog(mActivity, items, new SheetDialogListener() {
-            @Override
-            public void selectPosition(int position) {
-                if (position == 0) {
-                    if (ActivityCompat.checkSelfPermission(mActivity, PERMISSIONS[0]) != PackageManager.PERMISSION_GRANTED ||
-                            ActivityCompat.checkSelfPermission(mActivity, PERMISSIONS[1]) != PackageManager.PERMISSION_GRANTED) {
-                        ActivityCompat.requestPermissions(mActivity, PERMISSIONS, REQUEST_CODE);
-                    } else {
+        save();
+        return true;
+    }
+
+    private void save() {
+        if (ActivityCompat.checkSelfPermission(mActivity, PERMISSIONS[0]) != PackageManager.PERMISSION_GRANTED ||
+                ActivityCompat.checkSelfPermission(mActivity, PERMISSIONS[1]) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(mActivity, PERMISSIONS, REQUEST_CODE);
+        } else {
+            List<String> items = new ArrayList<>();
+            items.add("保存到相册");
+            DialogHelper.getInstance().showBottomDialog(mActivity, items, new SheetDialogListener() {
+                @Override
+                public void selectPosition(int position) {
+                    if (position == 0) {
                         ImgUtils.saveImageToGallery(mActivity, bitmap, name);
                     }
                 }
-            }
-        });
-        return true;
+            });
+        }
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == REQUEST_CODE) {
-            ImgUtils.saveImageToGallery(CodeActivity.this, bitmap, name);
+            ImgUtils.saveImageToGallery(mActivity, bitmap, name);
         }
     }
 }

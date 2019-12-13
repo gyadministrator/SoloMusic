@@ -25,6 +25,7 @@ import com.example.gy.musicgame.helper.DialogHelper;
 import com.example.gy.musicgame.helper.LoadingDialogHelper;
 import com.example.gy.musicgame.helper.RetrofitHelper;
 import com.example.gy.musicgame.listener.DialogListener;
+import com.example.gy.musicgame.listener.InputDialogListener;
 import com.example.gy.musicgame.model.ApkModel;
 import com.example.gy.musicgame.model.ItemModel;
 import com.example.gy.musicgame.utils.DataCleanManager;
@@ -33,6 +34,8 @@ import com.example.gy.musicgame.utils.UpdateManager;
 import com.example.gy.musicgame.view.GlideImageLoader;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.hyphenate.chat.EMClient;
+import com.hyphenate.exceptions.HyphenateException;
 import com.lzy.imagepicker.ImagePicker;
 import com.lzy.imagepicker.view.CropImageView;
 import com.yzq.zxinglibrary.android.CaptureActivity;
@@ -222,10 +225,32 @@ public class SettingActivity extends BaseActivity implements AdapterView.OnItemC
             if (data != null) {
                 String content = data.getStringExtra(Constant.CODED_CONTENT);
                 if (content != null) {
-                    ToastUtils.showShort(content);
+                    if (!content.contains("gy")) {
+                        ToastUtils.showShort("二维码不合法！");
+                        return;
+                    }
+                    content = content.substring(2);
+                    addFriend(content);
                 }
             }
         }
+    }
+
+    private void addFriend(final String username) {
+        DialogHelper dialogHelper = DialogHelper.getInstance();
+        dialogHelper.showInputDialog(mActivity, "请输入添加" + username + "的理由", new InputDialogListener() {
+            @Override
+            public void sure(String result) {
+                //参数为要添加的好友的username和添加理由
+                try {
+                    EMClient.getInstance().contactManager().addContact(username, result);
+                    ToastUtils.showShort("发送请求成功");
+                } catch (HyphenateException e) {
+                    e.printStackTrace();
+                    ToastUtils.showShort("添加好友失败：" + e.getErrorCode() + e.getMessage());
+                }
+            }
+        });
     }
 
     private void clean() {

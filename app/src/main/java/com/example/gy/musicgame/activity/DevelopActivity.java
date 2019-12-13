@@ -23,7 +23,7 @@ public class DevelopActivity extends BaseActivity implements View.OnLongClickLis
     private ImageView ivAli;
     private Bitmap bitmap;
     private final String[] PERMISSIONS = new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE};
-    private final int REQUEST_CODE = 1001;
+    private final int REQUEST_CODE = 1006;
     private String name;
 
     @Override
@@ -91,7 +91,7 @@ public class DevelopActivity extends BaseActivity implements View.OnLongClickLis
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == REQUEST_CODE) {
-            ImgUtils.saveImageToGallery(DevelopActivity.this, bitmap, name);
+            ImgUtils.saveImageToGallery(mActivity, bitmap, name);
         }
     }
 }

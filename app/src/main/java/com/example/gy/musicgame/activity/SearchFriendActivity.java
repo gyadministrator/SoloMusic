@@ -1,6 +1,5 @@
 package com.example.gy.musicgame.activity;
 
-import android.content.SharedPreferences;
 import android.os.Build;
 import android.text.Editable;
 import android.text.TextUtils;

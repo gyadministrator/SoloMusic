@@ -21,6 +21,7 @@ import com.example.gy.musicgame.R;
 import com.example.gy.musicgame.activity.MainActivity;
 import com.example.gy.musicgame.constant.Constants;
 import com.example.gy.musicgame.model.BottomBarVo;
+import com.example.gy.musicgame.model.NewFriendVo;
 import com.example.gy.musicgame.service.MusicService;
 
 import static android.app.Notification.VISIBILITY_SECRET;
@@ -51,7 +52,7 @@ public class NotificationUtils {
 
     @TargetApi(Build.VERSION_CODES.O)
     public static void sendCustomNotification(Context context, BottomBarVo bottomBarVo, Bitmap bitmap, int image) {
-        if (bottomBarVo == null)return;
+        if (bottomBarVo == null) return;
         Notification.Builder builder = getNotificationBuilder(context);
         remoteViews = new RemoteViews(context.getPackageName(), R.layout.back_view);
         if (bitmap != null) {
@@ -79,6 +80,30 @@ public class NotificationUtils {
         PendingIntent playIntent = PendingIntent.getService(context, 2, service, PendingIntent.FLAG_UPDATE_CURRENT);
         remoteViews.setOnClickPendingIntent(R.id.back_play, playIntent);
 
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.O_MR1) {
+            builder.setCustomContentView(remoteViews);
+        } else {
+            builder.setContent(remoteViews);
+        }
+        builder.setOngoing(true);
+        Notification notification = builder.build();
+        notification.flags = Notification.FLAG_ONGOING_EVENT;
+        getManager(context).notify(1, notification);
+    }
+
+    @TargetApi(Build.VERSION_CODES.O)
+    public static void sendApplyCustomNotification(Context context, NewFriendVo newFriendVo) {
+        if (newFriendVo == null) return;
+        Notification.Builder builder = getNotificationBuilder(context);
+        remoteViews = new RemoteViews(context.getPackageName(), R.layout.back_apply_view);
+        String title = newFriendVo.getUsername();
+        if (title.length() > 20) {
+            title = title.substring(0, 17) + "...";
+        }
+        remoteViews.setTextViewText(R.id.tv_name, title);
+        remoteViews.setTextViewText(R.id.tv_reason, newFriendVo.getReason());
+        PendingIntent intent = PendingIntent.getActivity(context, -1, new Intent(context, MainActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
+        remoteViews.setOnClickPendingIntent(R.id.ll_content, intent);
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.O_MR1) {
             builder.setCustomContentView(remoteViews);
         } else {
@@ -123,11 +148,11 @@ public class NotificationUtils {
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @SuppressLint("ObsoleteSdkInt")
-    public static void showNotification(Context context, BottomBarVo bottomBarVo) {
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
+    public static void showNotification(Context context) {
+        Notification.Builder builder = getNotificationBuilder(context);
         builder.setSmallIcon(R.mipmap.logo);
-        builder.setContentTitle(bottomBarVo.getName());
-        builder.setContentText(bottomBarVo.getAuthor());
+        builder.setContentTitle(context.getResources().getString(R.string.app_name));
+        builder.setContentText("程序正在后台运行");
         // 需要VIBRATE权限
         builder.setPriority(Notification.PRIORITY_DEFAULT);
         builder.setOngoing(true);

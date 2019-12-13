@@ -160,6 +160,8 @@
             android:exported="true" /> <!-- 接受消息服务 -->
         <service android:name=".service.AcceptMessageService" />
 
+        <service android:name=".service.AcceptApplyService" />
+
         <activity
             android:name=".activity.LauncherActivity"
             android:screenOrientation="portrait"

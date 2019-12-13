@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -18,6 +19,7 @@ import android.view.View;
 import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
 
 import com.blankj.utilcode.util.CleanUtils;
@@ -27,8 +29,11 @@ import com.example.gy.musicgame.event.FriendChangeEvent;
 import com.example.gy.musicgame.event.NewFriendEvent;
 import com.example.gy.musicgame.event.NewFriendListEvent;
 import com.example.gy.musicgame.model.NewFriendVo;
+import com.example.gy.musicgame.service.AcceptApplyService;
 import com.example.gy.musicgame.utils.LogUtils;
 import com.example.gy.musicgame.utils.NetWorkUtils;
+import com.example.gy.musicgame.utils.NotificationPermissionUtil;
+import com.example.gy.musicgame.utils.NotificationUtils;
 import com.hyphenate.EMCallBack;
 import com.hyphenate.EMConnectionListener;
 import com.hyphenate.EMError;
@@ -116,7 +121,9 @@ public abstract class BaseActivity extends SwipeBackActivity {
                 newFriendVo.setReason(acceptReason);
                 newFriendVo.setUsername(acceptUserName);
                 newFriendVoList.add(newFriendVo);
-
+                if (NotificationPermissionUtil.isNotificationEnabled(getApplicationContext())) {
+                    NotificationUtils.sendApplyCustomNotification(getApplicationContext(), newFriendVo);
+                }
                 acceptApply();
             }
         }
@@ -182,6 +189,7 @@ public abstract class BaseActivity extends SwipeBackActivity {
         isNet = true;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
@@ -198,6 +206,11 @@ public abstract class BaseActivity extends SwipeBackActivity {
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 intent.addCategory(Intent.CATEGORY_HOME);
                 startActivity(intent);
+
+                NotificationUtils.showNotification(mActivity);
+                //启动接受好友申请的服务
+                Intent acceptApplyService = new Intent(mActivity, AcceptApplyService.class);
+                startService(acceptApplyService);
             }
             return true;
         }
