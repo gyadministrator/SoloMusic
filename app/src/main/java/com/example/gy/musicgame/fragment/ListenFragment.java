@@ -105,7 +105,7 @@ public class ListenFragment extends Fragment implements OnRefreshListener, Title
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     private void initAction() {
-        mainPresenter = new MainPresenter<MainView>(this);
+        mainPresenter = new MainPresenter<>(this);
         mainPresenter.getRecommendList();
         mShimmerRecyclerView.showShimmerAdapter();
         recyclerView.setLayoutManager(new LinearLayoutManager(mActivity));
@@ -114,16 +114,9 @@ public class ListenFragment extends Fragment implements OnRefreshListener, Title
         mainAdapter.setOnMainAdapterListener(this);
         recyclerView.setAdapter(mainAdapter);
 
-        SharedPreferenceUtil<String> preferenceUtil = new SharedPreferenceUtil<>();
+        SharedPreferenceUtil preferenceUtil = new SharedPreferenceUtil();
         token = preferenceUtil.getObject(mActivity, Constants.CURRENT_TOKEN);
-        if (TextUtils.isEmpty(token)) {
-            goLogin();
-        } else {
-            if (!isRefresh) {
-                checkUpdate();
-            }
-            getUserInfo(token);
-        }
+        checkUpdate();
     }
 
     @Override
@@ -133,60 +126,6 @@ public class ListenFragment extends Fragment implements OnRefreshListener, Title
             UpdateManager mUpdateManager = new UpdateManager(mActivity);
             mUpdateManager.checkUpdateInfo(apkModel);
         }
-    }
-
-    private void getUserInfo(String token) {
-        RetrofitHelper retrofitHelper = RetrofitHelper.getInstance();
-        Api api = retrofitHelper.initRetrofit(Constants.SERVER_URL);
-        Observable<Map> observable = api.userInfo(token);
-        observable.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<Map>() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
-
-                    }
-
-                    @Override
-                    public void onNext(Map map) {
-                        boolean handler = HandlerUtils.isHandler(map, mActivity);
-                        if (!handler) {
-                            Map<String, Object> data = (Map<String, Object>) map.get("data");
-                            UserInfoVo userInfoVo = new UserInfoVo();
-                            if (data != null) {
-                                if (data.containsKey("username")) {
-                                    String username = (String) data.get("username");
-                                    userInfoVo.setUserName(username);
-                                }
-                                if (data.containsKey("avatar")) {
-                                    String avatar = (String) data.get("avatar");
-                                    userInfoVo.setAvatarUrl(avatar);
-                                }
-                                if (data.containsKey("mobile")) {
-                                    String mobile = (String) data.get("mobile");
-                                    userInfoVo.setMobile(mobile);
-                                }
-                            }
-                            UserManager.setUserInfoVo(userInfoVo, mActivity);
-                        }
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        goLogin();
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
-                });
-    }
-
-    /**
-     * 去登录
-     */
-    private void goLogin() {
-        LoginActivity.startActivity(mActivity);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)

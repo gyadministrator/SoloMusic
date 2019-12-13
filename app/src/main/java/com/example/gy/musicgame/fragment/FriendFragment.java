@@ -24,13 +24,19 @@ import androidx.lifecycle.ViewModelProviders;
 
 import com.blankj.utilcode.util.ToastUtils;
 import com.example.gy.musicgame.R;
+import com.example.gy.musicgame.activity.LoginActivity;
 import com.example.gy.musicgame.activity.MainActivity;
 import com.example.gy.musicgame.activity.SearchFriendActivity;
+import com.example.gy.musicgame.api.Api;
 import com.example.gy.musicgame.chatui.ui.activity.ChatActivity;
+import com.example.gy.musicgame.constant.Constants;
 import com.example.gy.musicgame.friend.SideBar;
 import com.example.gy.musicgame.friend.SortAdapter;
+import com.example.gy.musicgame.helper.RetrofitHelper;
 import com.example.gy.musicgame.model.UserModel;
+import com.example.gy.musicgame.utils.HandlerUtils;
 import com.example.gy.musicgame.utils.LogUtils;
+import com.example.gy.musicgame.utils.SharedPreferenceUtil;
 import com.example.gy.musicgame.view.TitleView;
 import com.hyphenate.EMCallBack;
 import com.hyphenate.EMError;
@@ -40,6 +46,13 @@ import com.hyphenate.exceptions.HyphenateException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+
+import io.reactivex.Observable;
+import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -117,7 +130,9 @@ public class FriendFragment extends Fragment implements AdapterView.OnItemClickL
     }
 
     private void initAction() {
-        loginIM();
+        SharedPreferenceUtil preferenceUtil = new SharedPreferenceUtil();
+        String token = (String) preferenceUtil.getObject(mActivity, Constants.CURRENT_TOKEN);
+        getUserInfo(token);
     }
 
     private void initData() {
@@ -167,6 +182,37 @@ public class FriendFragment extends Fragment implements AdapterView.OnItemClickL
             }
         });
         listView.setOnItemClickListener(this);
+    }
+
+    private void getUserInfo(String token) {
+        RetrofitHelper retrofitHelper = RetrofitHelper.getInstance();
+        Api api = retrofitHelper.initRetrofit(Constants.SERVER_URL);
+        Observable<Map> observable = api.userInfo(token);
+        observable.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<Map>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(Map map) {
+                        boolean handler = HandlerUtils.isHandler(map, mActivity);
+                        if (!handler) {
+                            loginIM();
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        LoginActivity.startActivity(mActivity);
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
     }
 
     private void loginIM() {

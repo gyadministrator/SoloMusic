@@ -13,6 +13,8 @@ import com.example.gy.musicgame.api.Api;
 import com.example.gy.musicgame.constant.Constants;
 import com.example.gy.musicgame.helper.RetrofitHelper;
 import com.example.gy.musicgame.model.SplashModel;
+import com.example.gy.musicgame.utils.HandlerUtils;
+import com.example.gy.musicgame.utils.SharedPreferenceUtil;
 import com.gyf.barlibrary.ImmersionBar;
 
 import java.text.SimpleDateFormat;
@@ -32,6 +34,7 @@ public class SplashActivity extends BaseActivity implements View.OnClickListener
     private TextView tv_copy;
     private ImmersionBar immersionBar;
     private static Map<String, Object> params = new HashMap<>();
+    private int target = 0;
 
     @Override
     public void onClick(View v) {
@@ -61,6 +64,9 @@ public class SplashActivity extends BaseActivity implements View.OnClickListener
 
     @Override
     protected void initAction() {
+        SharedPreferenceUtil preferenceUtil = new SharedPreferenceUtil();
+        String token = (String) preferenceUtil.getObject(mActivity, Constants.CURRENT_TOKEN);
+        getUserInfo(token);
         initLogo();
         getSplash();
         countDownTimer.start();
@@ -69,9 +75,40 @@ public class SplashActivity extends BaseActivity implements View.OnClickListener
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (immersionBar!=null){
+        if (immersionBar != null) {
             immersionBar.destroy();
         }
+    }
+
+    private void getUserInfo(String token) {
+        RetrofitHelper retrofitHelper = RetrofitHelper.getInstance();
+        Api api = retrofitHelper.initRetrofit(Constants.SERVER_URL);
+        Observable<Map> observable = api.userInfo(token);
+        observable.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<Map>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(Map map) {
+                        boolean handler = HandlerUtils.isHandler(map, mActivity);
+                        if (!handler) {
+                            target = 1;
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        target = 0;
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
     }
 
     private void getSplash() {
@@ -144,7 +181,12 @@ public class SplashActivity extends BaseActivity implements View.OnClickListener
     };
 
     private void jumpActivity() {
-        Intent intent = new Intent(mActivity, MainActivity.class);
+        Intent intent = null;
+        if (target == 1) {
+            intent = new Intent(mActivity, MainActivity.class);
+        } else if (target == 0) {
+            intent = new Intent(mActivity, LoginActivity.class);
+        }
         startActivity(intent);
         finish();
     }

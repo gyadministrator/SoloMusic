@@ -28,6 +28,7 @@ import com.example.gy.musicgame.utils.MusicUtils;
 import com.example.gy.musicgame.utils.NotificationPermissionUtil;
 import com.example.gy.musicgame.utils.NotificationUtils;
 import com.example.gy.musicgame.utils.SharedPreferenceUtil;
+import com.google.gson.Gson;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -90,8 +91,9 @@ public class BottomBarView extends LinearLayout {
     }
 
     public void play(final BottomBarVo bottomBarVo) {
-        SharedPreferenceUtil<BottomBarVo> preferenceUtil = new SharedPreferenceUtil<>();
-        preferenceUtil.saveObject(bottomBarVo, mContext, Constants.CURRENT_BOTTOM_VO);
+        SharedPreferenceUtil preferenceUtil = new SharedPreferenceUtil();
+        String json = new Gson().toJson(bottomBarVo);
+        preferenceUtil.saveObject(json, mContext, Constants.CURRENT_BOTTOM_VO);
         MusicUtils.play(bottomBarVo.getPath(), mContext, new MusicUtils.IMusicListener() {
             @Override
             public void success() {

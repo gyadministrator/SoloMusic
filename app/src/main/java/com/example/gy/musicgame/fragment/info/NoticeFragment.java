@@ -89,8 +89,8 @@ public class NoticeFragment extends Fragment implements AdapterView.OnItemClickL
     }
 
     private void getNoticeList() {
-        SharedPreferenceUtil<String> preferenceUtil = new SharedPreferenceUtil<>();
-        String token = preferenceUtil.getObject(mActivity, Constants.CURRENT_TOKEN);
+        SharedPreferenceUtil preferenceUtil = new SharedPreferenceUtil();
+        String token = (String) preferenceUtil.getObject(mActivity, Constants.CURRENT_TOKEN);
         if (TextUtils.isEmpty(token)) {
             LoginActivity.startActivity(mActivity);
         } else {

@@ -102,12 +102,21 @@ public class MeFragment extends Fragment implements View.OnClickListener {
         preferences = mActivity.getSharedPreferences("myFragment", MODE_PRIVATE);
         int localMusicSize = preferences.getInt("localMusicSize", 0);
         tvLocalMusic.setText(String.valueOf(localMusicSize));
+
+        setUserInfo();
+    }
+
+    private void setUserInfo() {
+        UserInfoVo userInfoVo = UserManager.getUserInfoVo(mActivity);
+        if (userInfoVo != null) {
+            Glide.with(mActivity).load(userInfoVo.getAvatarUrl()).into(ivUser);
+            tvName.setText(userInfoVo.getNickName());
+        }
     }
 
     private void initAction() {
-        SharedPreferenceUtil<String> preferenceUtil = new SharedPreferenceUtil<>();
+        SharedPreferenceUtil preferenceUtil = new SharedPreferenceUtil();
         token = preferenceUtil.getObject(mActivity, Constants.CURRENT_TOKEN);
-        getUserInfo(token);
     }
 
 
@@ -126,27 +135,18 @@ public class MeFragment extends Fragment implements View.OnClickListener {
                     public void onNext(Map map) {
                         boolean handler = HandlerUtils.isHandler(map, mActivity);
                         if (!handler) {
-                            Map<String, Object> data = (Map<String, Object>) map.get("data");
-                            UserInfoVo userInfoVo = new UserInfoVo();
-                            if (data != null) {
-                                if (data.containsKey("username")) {
-                                    String username = (String) data.get("username");
-                                    userInfoVo.setUserName(username);
-                                }
-                                if (data.containsKey("avatar")) {
-                                    String avatar = (String) data.get("avatar");
-                                    userInfoVo.setAvatarUrl(avatar);
-                                }
-                                if (data.containsKey("mobile")) {
-                                    String mobile = (String) data.get("mobile");
-                                    userInfoVo.setMobile(mobile);
-                                }
+                            Gson gson = new Gson();
+                            String json = gson.toJson(map.get("data"));
+                            Type type = new TypeToken<UserInfoVo>() {
+                            }.getType();
+                            UserInfoVo userInfoVo = gson.fromJson(json, type);
+                            UserManager.setUserInfoVo(json, mActivity);
+                            if (userInfoVo != null) {
+                                tvName.setText(userInfoVo.getNickName());
                             }
-                            tvName.setText(userInfoVo.getUserName());
-                            if (!TextUtils.isEmpty(userInfoVo.getAvatarUrl())) {
+                            if (userInfoVo != null && !TextUtils.isEmpty(userInfoVo.getAvatarUrl())) {
                                 Glide.with(mActivity).load(userInfoVo.getAvatarUrl()).into(ivUser);
                             }
-                            UserManager.setUserInfoVo(userInfoVo, mActivity);
                         }
                     }
 
@@ -228,7 +228,7 @@ public class MeFragment extends Fragment implements View.OnClickListener {
                 ChangePasswordActivity.startActivity(mActivity, token);
                 break;
             case R.id.iv_refresh:
-                initAction();
+                getUserInfo(token);
                 break;
             case R.id.iv_user:
                 List<String> items = new ArrayList<>();

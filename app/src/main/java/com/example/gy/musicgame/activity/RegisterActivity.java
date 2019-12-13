@@ -138,7 +138,7 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
                                     if (!TextUtils.isEmpty(token)) {
                                         //设置IM账号数据
                                         setIMData(registerVo.getUsername(), registerVo.getPassword());
-                                        SharedPreferenceUtil<String> preferenceUtil = new SharedPreferenceUtil<>();
+                                        SharedPreferenceUtil preferenceUtil = new SharedPreferenceUtil();
                                         preferenceUtil.saveObject(token, mActivity, Constants.CURRENT_TOKEN);
                                         startActivity(new Intent(mActivity, MainActivity.class));
                                         finish();

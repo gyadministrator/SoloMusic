@@ -113,7 +113,7 @@ public class ChangePasswordActivity extends BaseActivity implements View.OnClick
                             double errno = (double) map.get("errno");
                             if (errno == 0) {
                                 //修改成功，重新登录
-                                SharedPreferenceUtil<String> preferenceUtil = new SharedPreferenceUtil<>();
+                                SharedPreferenceUtil preferenceUtil = new SharedPreferenceUtil();
                                 preferenceUtil.saveObject(null, mActivity, Constants.CURRENT_TOKEN);
                                 LoginActivity.startActivity(mActivity);
                             }

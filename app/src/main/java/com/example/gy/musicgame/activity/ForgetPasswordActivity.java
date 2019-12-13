@@ -102,7 +102,7 @@ public class ForgetPasswordActivity extends BaseActivity implements View.OnClick
                             double errno = (double) map.get("errno");
                             if (errno == 0) {
                                 //重置成功，重新登录
-                                SharedPreferenceUtil<String> preferenceUtil = new SharedPreferenceUtil<>();
+                                SharedPreferenceUtil preferenceUtil = new SharedPreferenceUtil();
                                 preferenceUtil.saveObject(null, mActivity, Constants.CURRENT_TOKEN);
                                 ActivityUtils.finishActivity(MobileActivity.class);
                                 finish();

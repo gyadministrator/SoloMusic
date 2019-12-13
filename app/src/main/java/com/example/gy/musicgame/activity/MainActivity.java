@@ -112,8 +112,8 @@ public class MainActivity extends BaseActivity {
     }
 
     private void setBottomBarData() {
-        SharedPreferenceUtil<BottomBarVo> preferenceUtil = new SharedPreferenceUtil<>();
-        String json = preferenceUtil.getObjectJson(mActivity, Constants.CURRENT_BOTTOM_VO);
+        SharedPreferenceUtil preferenceUtil = new SharedPreferenceUtil();
+        String json = preferenceUtil.getObject(mActivity, Constants.CURRENT_BOTTOM_VO);
         Type type = new TypeToken<BottomBarVo>() {
         }.getType();
         BottomBarVo bottomBarVo = new Gson().fromJson(json, type);

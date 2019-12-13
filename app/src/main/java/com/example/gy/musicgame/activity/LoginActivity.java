@@ -24,12 +24,12 @@ import com.blankj.utilcode.util.ToastUtils;
 import com.example.gy.musicgame.R;
 import com.example.gy.musicgame.api.Api;
 import com.example.gy.musicgame.constant.Constants;
-import com.example.gy.musicgame.helper.KeyboardHelper;
 import com.example.gy.musicgame.helper.LoadingDialogHelper;
 import com.example.gy.musicgame.helper.RetrofitHelper;
 import com.example.gy.musicgame.model.LoginVo;
 import com.example.gy.musicgame.model.UserInfoVo;
 import com.example.gy.musicgame.utils.SharedPreferenceUtil;
+import com.example.gy.musicgame.utils.UserManager;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -52,7 +52,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     private TextView tvLogin;
     private TextView tvForget;
     private TextView tvRegister;
-    private SharedPreferenceUtil<String> preferenceUtil;
+    private SharedPreferenceUtil preferenceUtil;
 
     @Override
     protected void initView() {
@@ -73,9 +73,9 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
      * @param activity 活动
      */
     public static void startActivity(Activity activity) {
-        if (ActivityUtils.isActivityExistsInStack(LoginActivity.class)) return;
+        ActivityUtils.finishAllActivitiesExceptNewest();
         Intent intent = new Intent(activity, LoginActivity.class);
-        //intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         activity.startActivity(intent);
         activity.finish();
     }
@@ -90,9 +90,8 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
     @Override
     protected void initData() {
-        KeyboardHelper.getInstance().openKeyBoard(etUser, mActivity);
-        preferenceUtil = new SharedPreferenceUtil<>();
-        String username = preferenceUtil.getObject(mActivity, Constants.CURRENT_USER_NAME);
+        preferenceUtil = new SharedPreferenceUtil();
+        String username = (String) preferenceUtil.getObject(mActivity, Constants.CURRENT_USER_NAME);
         if (!TextUtils.isEmpty(username)) {
             etUser.setText(username);
         }
@@ -165,6 +164,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
                     @Override
                     public void onNext(Map map) {
+                        LoadingDialogHelper.dismiss();
                         boolean handler = isHandler(map, mActivity);
                         if (!handler) {
                             Map<String, Object> data = (Map<String, Object>) map.get("data");
@@ -172,10 +172,11 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                                 if (data.containsKey("token")) {
                                     String token = (String) data.get("token");
                                     Gson gson = new Gson();
-                                    String json = gson.toJson(map.get("userInfo"));
+                                    String json = gson.toJson(data.get("userInfo"));
                                     Type type = new TypeToken<UserInfoVo>() {
                                     }.getType();
                                     UserInfoVo userInfoVo = gson.fromJson(json, type);
+                                    UserManager.setUserInfoVo(json, mActivity);
                                     if (!TextUtils.isEmpty(token) && userInfoVo != null) {
                                         //设置IM账号数据
                                         setIMData(userInfoVo.getNickName(), password);
