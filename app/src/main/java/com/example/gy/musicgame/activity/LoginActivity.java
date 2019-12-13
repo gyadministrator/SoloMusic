@@ -28,8 +28,12 @@ import com.example.gy.musicgame.helper.KeyboardHelper;
 import com.example.gy.musicgame.helper.LoadingDialogHelper;
 import com.example.gy.musicgame.helper.RetrofitHelper;
 import com.example.gy.musicgame.model.LoginVo;
+import com.example.gy.musicgame.model.UserInfoVo;
 import com.example.gy.musicgame.utils.SharedPreferenceUtil;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
 import java.util.Map;
 import java.util.Objects;
 
@@ -167,9 +171,14 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                             if (data != null) {
                                 if (data.containsKey("token")) {
                                     String token = (String) data.get("token");
-                                    if (!TextUtils.isEmpty(token)) {
+                                    Gson gson = new Gson();
+                                    String json = gson.toJson(map.get("userInfo"));
+                                    Type type = new TypeToken<UserInfoVo>() {
+                                    }.getType();
+                                    UserInfoVo userInfoVo = gson.fromJson(json, type);
+                                    if (!TextUtils.isEmpty(token) && userInfoVo != null) {
                                         //设置IM账号数据
-                                        setIMData(user, password);
+                                        setIMData(userInfoVo.getNickName(), password);
                                         preferenceUtil.saveObject(token, mActivity, Constants.CURRENT_TOKEN);
                                         preferenceUtil.saveObject(user, mActivity, Constants.CURRENT_USER_NAME);
                                         startActivity(new Intent(mActivity, MainActivity.class));

@@ -6,29 +6,13 @@ package com.example.gy.musicgame.model;
  * Created Time on 2019/12/7 13:54
  */
 public class UserInfoVo {
-    private String userName;
+    private String nickName;
     private String avatarUrl;
     private String country;
     private String province;
     private String city;
-    private String mobile;
+    private String language;
     private Byte gender;
-
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
-
-    public String getAvatarUrl() {
-        return avatarUrl;
-    }
-
-    public void setAvatarUrl(String avatarUrl) {
-        this.avatarUrl = avatarUrl;
-    }
 
     public String getCountry() {
         return country;
@@ -54,12 +38,12 @@ public class UserInfoVo {
         this.city = city;
     }
 
-    public String getMobile() {
-        return mobile;
+    public String getLanguage() {
+        return language;
     }
 
-    public void setMobile(String mobile) {
-        this.mobile = mobile;
+    public void setLanguage(String language) {
+        this.language = language;
     }
 
     public Byte getGender() {
@@ -68,5 +52,21 @@ public class UserInfoVo {
 
     public void setGender(Byte gender) {
         this.gender = gender;
+    }
+
+    public String getNickName() {
+        return nickName;
+    }
+
+    public void setNickName(String nickName) {
+        this.nickName = nickName;
+    }
+
+    public String getAvatarUrl() {
+        return avatarUrl;
+    }
+
+    public void setAvatarUrl(String avatarUrl) {
+        this.avatarUrl = avatarUrl;
     }
 }
