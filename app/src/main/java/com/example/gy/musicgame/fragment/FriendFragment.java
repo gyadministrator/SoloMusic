@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -32,6 +33,7 @@ import com.example.gy.musicgame.activity.SearchFriendActivity;
 import com.example.gy.musicgame.api.Api;
 import com.example.gy.musicgame.chatui.ui.activity.ChatActivity;
 import com.example.gy.musicgame.constant.Constants;
+import com.example.gy.musicgame.event.NewFriendEvent;
 import com.example.gy.musicgame.friend.SideBar;
 import com.example.gy.musicgame.friend.SortAdapter;
 import com.example.gy.musicgame.helper.RetrofitHelper;
@@ -45,6 +47,10 @@ import com.hyphenate.EMCallBack;
 import com.hyphenate.EMError;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.exceptions.HyphenateException;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -71,6 +77,7 @@ public class FriendFragment extends Fragment implements AdapterView.OnItemClickL
     private MyReceiver myReceiver;
     private TitleView titleView;
     private SortAdapter adapter;
+    private TextView tvNum;
 
     @SuppressLint("HandlerLeak")
     private Handler mHandler = new Handler() {
@@ -99,12 +106,17 @@ public class FriendFragment extends Fragment implements AdapterView.OnItemClickL
         adapter = new SortAdapter(mActivity, list);
         listView.setAdapter(adapter);
         @SuppressLint("InflateParams") View header = LayoutInflater.from(mActivity).inflate(R.layout.friend_header, null);
-        LinearLayout llNewFriend=header.findViewById(R.id.ll_new_friend);
-        LinearLayout llGroup=header.findViewById(R.id.ll_group);
+        LinearLayout llNewFriend = header.findViewById(R.id.ll_new_friend);
+        LinearLayout llGroup = header.findViewById(R.id.ll_group);
+        tvNum = header.findViewById(R.id.tv_num);
         llNewFriend.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
             @Override
             public void onClick(View v) {
                 //新朋友
+                tvNum.setText("");
+                tvNum.setVisibility(View.GONE);
+                ((MainActivity) mActivity).clearMsgPoint(2);
                 startActivity(new Intent(mActivity, NewFriendActivity.class));
             }
         });
@@ -124,12 +136,17 @@ public class FriendFragment extends Fragment implements AdapterView.OnItemClickL
         adapter = new SortAdapter(mActivity, list);
         listView.setAdapter(adapter);
         @SuppressLint("InflateParams") View view = LayoutInflater.from(mActivity).inflate(R.layout.friend_header, null);
-        LinearLayout llNewFriend=view.findViewById(R.id.ll_new_friend);
-        LinearLayout llGroup=view.findViewById(R.id.ll_group);
+        LinearLayout llNewFriend = view.findViewById(R.id.ll_new_friend);
+        LinearLayout llGroup = view.findViewById(R.id.ll_group);
+        tvNum = view.findViewById(R.id.tv_num);
         llNewFriend.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
             @Override
             public void onClick(View v) {
                 //新朋友
+                tvNum.setText("");
+                tvNum.setVisibility(View.GONE);
+                ((MainActivity) mActivity).clearMsgPoint(2);
                 startActivity(new Intent(mActivity, NewFriendActivity.class));
             }
         });
@@ -182,6 +199,22 @@ public class FriendFragment extends Fragment implements AdapterView.OnItemClickL
         });
     }
 
+    @SuppressLint("SetTextI18n")
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(Object o) {
+        if (o instanceof NewFriendEvent) {
+            NewFriendEvent newFriendEvent = (NewFriendEvent) o;
+            if (newFriendEvent.getNum() != 0) {
+                tvNum.setVisibility(View.VISIBLE);
+                if (newFriendEvent.getNum() > 99) {
+                    tvNum.setText("99+");
+                } else {
+                    tvNum.setText(String.valueOf(newFriendEvent.getNum()));
+                }
+            }
+        }
+    }
+
     private void getContactList() {
         new Thread(new Runnable() {
             @Override
@@ -215,6 +248,8 @@ public class FriendFragment extends Fragment implements AdapterView.OnItemClickL
             }
         });
         listView.setOnItemClickListener(this);
+
+        EventBus.getDefault().register(this);
     }
 
     private void getUserInfo(String token) {
@@ -308,6 +343,7 @@ public class FriendFragment extends Fragment implements AdapterView.OnItemClickL
         if (mHandler != null) {
             mHandler.removeCallbacksAndMessages(null);
         }
+        EventBus.getDefault().unregister(this);
     }
 
     @Override

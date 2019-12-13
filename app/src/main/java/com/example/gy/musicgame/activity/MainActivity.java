@@ -135,6 +135,18 @@ public class MainActivity extends BaseActivity {
         }
     }
 
+    public void clearMsgPoint(int position){
+        if (navigationBar!=null){
+            navigationBar.clearMsgPoint(position);
+        }
+    }
+
+    public void clearHintPoint(int position){
+        if (navigationBar!=null){
+            navigationBar.clearHintPoint(position);
+        }
+    }
+
     /**
      * 设置消息圆点
      *

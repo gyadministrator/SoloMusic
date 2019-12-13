@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -20,12 +21,27 @@
             android:src="@mipmap/new_friend" />
 
         <TextView
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_marginStart="@dimen/btn_margin"
             android:layout_marginLeft="@dimen/btn_margin"
             android:gravity="center_vertical"
             android:text="@string/new_friend" />
+
+        <TextView
+            android:id="@+id/tv_num"
+            android:layout_width="@dimen/dp_20"
+            android:layout_height="@dimen/dp_20"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="@dimen/dp_12"
+            android:layout_marginEnd="@dimen/dp_12"
+            android:layout_marginRight="@dimen/dp_12"
+            android:background="@drawable/msg_show"
+            android:gravity="center"
+            android:textColor="@color/white"
+            android:textSize="8sp"
+            android:visibility="gone"
+            tools:ignore="SmallSp" />
     </LinearLayout>
 
     <View

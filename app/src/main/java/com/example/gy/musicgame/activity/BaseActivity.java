@@ -23,6 +23,7 @@ import androidx.core.app.ActivityCompat;
 import com.blankj.utilcode.util.CleanUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.example.gy.musicgame.R;
+import com.example.gy.musicgame.event.NewFriendEvent;
 import com.example.gy.musicgame.model.NewFriendVo;
 import com.example.gy.musicgame.utils.LogUtils;
 import com.example.gy.musicgame.utils.NetWorkUtils;
@@ -214,6 +215,9 @@ public abstract class BaseActivity extends SwipeBackActivity {
         if (musicReceiver != null) {
             unregisterReceiver(musicReceiver);
         }
+        if (friendReceiver!=null){
+            unregisterReceiver(friendReceiver);
+        }
         //解绑eventBus
         EventBus.getDefault().unregister(this);
     }
@@ -274,7 +278,11 @@ public abstract class BaseActivity extends SwipeBackActivity {
     }
 
     protected void acceptApply() {
-
+        NewFriendEvent newFriendEvent = new NewFriendEvent();
+        if (newFriendVoList != null && newFriendVoList.size() > 0) {
+            newFriendEvent.setNum(newFriendVoList.size());
+            EventBus.getDefault().post(newFriendEvent);
+        }
     }
 
     private class FriendReceiver extends BroadcastReceiver {
