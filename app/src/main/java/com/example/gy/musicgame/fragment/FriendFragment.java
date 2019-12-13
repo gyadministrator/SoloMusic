@@ -33,10 +33,14 @@ import com.example.gy.musicgame.activity.SearchFriendActivity;
 import com.example.gy.musicgame.api.Api;
 import com.example.gy.musicgame.chatui.ui.activity.ChatActivity;
 import com.example.gy.musicgame.constant.Constants;
+import com.example.gy.musicgame.event.FriendChangeEvent;
 import com.example.gy.musicgame.event.NewFriendEvent;
 import com.example.gy.musicgame.friend.SideBar;
 import com.example.gy.musicgame.friend.SortAdapter;
+import com.example.gy.musicgame.helper.DialogHelper;
 import com.example.gy.musicgame.helper.RetrofitHelper;
+import com.example.gy.musicgame.listener.DialogListener;
+import com.example.gy.musicgame.listener.SheetDialogListener;
 import com.example.gy.musicgame.model.UserModel;
 import com.example.gy.musicgame.service.AcceptMessageService;
 import com.example.gy.musicgame.utils.HandlerUtils;
@@ -65,7 +69,7 @@ import io.reactivex.schedulers.Schedulers;
 
 import static android.content.Context.MODE_PRIVATE;
 
-public class FriendFragment extends Fragment implements AdapterView.OnItemClickListener {
+public class FriendFragment extends Fragment implements AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener {
 
     private FriendViewModel mViewModel;
     private Activity mActivity;
@@ -87,9 +91,15 @@ public class FriendFragment extends Fragment implements AdapterView.OnItemClickL
             super.handleMessage(msg);
             if (msg.what == 0) {
                 if (friendList != null && friendList.size() > 0) {
+                    list = new ArrayList<>();
+                    for (String username : friendList) {
+                        UserModel userModel = new UserModel(username);
+                        userModel.setBoot(false);
+                        list.add(userModel);
+                    }
                     setData();
                     //设置未读消息
-                    ((MainActivity) mActivity).setMsgPoint(2, 6);
+                    //((MainActivity) mActivity).setMsgPoint(2, 6);
                 } else {
                     setEmpty();
                 }
@@ -212,6 +222,8 @@ public class FriendFragment extends Fragment implements AdapterView.OnItemClickL
                     tvNum.setText(String.valueOf(newFriendEvent.getNum()));
                 }
             }
+        } else if (o instanceof FriendChangeEvent) {
+            getContactList();
         }
     }
 
@@ -248,7 +260,7 @@ public class FriendFragment extends Fragment implements AdapterView.OnItemClickL
             }
         });
         listView.setOnItemClickListener(this);
-
+        listView.setOnItemLongClickListener(this);
         EventBus.getDefault().register(this);
     }
 
@@ -351,6 +363,42 @@ public class FriendFragment extends Fragment implements AdapterView.OnItemClickL
         if (position != 0) {
             startActivity(new Intent(mActivity, ChatActivity.class));
         }
+    }
+
+    @Override
+    public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+        UserModel userModel = list.get(position-1);
+        List<String> items = new ArrayList<>();
+        items.add("删除好友");
+        DialogHelper.getInstance().showBottomDialog(mActivity, items, new SheetDialogListener() {
+            @Override
+            public void selectPosition(int position) {
+                if (position == 0) {
+                    deleteFriend(userModel.getName());
+                }
+            }
+        });
+        return true;
+    }
+
+    private void deleteFriend(String username) {
+        DialogHelper.getInstance().showSureDialog(mActivity, "温馨提示", "你确定要删除" + username + "吗？", new DialogListener() {
+            @Override
+            public void clickSure() {
+                try {
+                    EMClient.getInstance().contactManager().deleteContact(username);
+                    getContactList();
+                } catch (HyphenateException e) {
+                    e.printStackTrace();
+                    ToastUtils.showShort("删除好友失败");
+                }
+            }
+
+            @Override
+            public void clickCancel() {
+
+            }
+        });
     }
 
     private class MyReceiver extends BroadcastReceiver {

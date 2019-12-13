@@ -25,6 +25,15 @@ import java.util.List;
 public class NewFriendItemAdapter extends BaseAdapter {
     private List<NewFriendVo> list;
     private Context context;
+    private OnNewFriendListener onNewFriendListener;
+
+    public void setOnNewFriendListener(OnNewFriendListener onNewFriendListener) {
+        this.onNewFriendListener = onNewFriendListener;
+    }
+
+    public interface OnNewFriendListener {
+        void handler();
+    }
 
     public NewFriendItemAdapter(List<NewFriendVo> list, Context context) {
         this.list = list;
@@ -46,7 +55,7 @@ public class NewFriendItemAdapter extends BaseAdapter {
         return position;
     }
 
-    @SuppressLint("InflateParams")
+    @SuppressLint({"InflateParams", "SetTextI18n"})
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder viewHolder;
@@ -64,7 +73,7 @@ public class NewFriendItemAdapter extends BaseAdapter {
         NewFriendVo newFriendVo = list.get(position);
         if (newFriendVo != null) {
             viewHolder.tvTitle.setText(newFriendVo.getTitle());
-            viewHolder.tvReason.setText(newFriendVo.getReason());
+            viewHolder.tvReason.setText("理由：" + newFriendVo.getReason());
         }
 
         viewHolder.tvAccept.setOnClickListener(new View.OnClickListener() {
@@ -79,6 +88,9 @@ public class NewFriendItemAdapter extends BaseAdapter {
                     }
                     list.remove(position);
                     notifyDataSetChanged();
+                    if (onNewFriendListener != null) {
+                        onNewFriendListener.handler();
+                    }
                 } catch (HyphenateException e) {
                     e.printStackTrace();
                     ToastUtils.showShort("发生了异常，请稍后再试...");
@@ -98,6 +110,9 @@ public class NewFriendItemAdapter extends BaseAdapter {
                     }
                     list.remove(position);
                     notifyDataSetChanged();
+                    if (onNewFriendListener != null) {
+                        onNewFriendListener.handler();
+                    }
                 } catch (HyphenateException e) {
                     e.printStackTrace();
                     ToastUtils.showShort("发生了异常，请稍后再试...");

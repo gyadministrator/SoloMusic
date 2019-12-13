@@ -127,6 +127,7 @@ public class SortAdapter extends BaseAdapter {
                                 if (imVo != null && !TextUtils.isEmpty(imVo.getAvatar())) {
                                     Glide.with(mContext).load(imVo.getAvatar()).into(image);
                                 }
+                                notifyDataSetChanged();
                             }
 
                             @RequiresApi(api = Build.VERSION_CODES.KITKAT)

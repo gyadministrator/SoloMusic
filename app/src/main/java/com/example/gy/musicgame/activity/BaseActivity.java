@@ -23,7 +23,9 @@ import androidx.core.app.ActivityCompat;
 import com.blankj.utilcode.util.CleanUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.example.gy.musicgame.R;
+import com.example.gy.musicgame.event.FriendChangeEvent;
 import com.example.gy.musicgame.event.NewFriendEvent;
+import com.example.gy.musicgame.event.NewFriendListEvent;
 import com.example.gy.musicgame.model.NewFriendVo;
 import com.example.gy.musicgame.utils.LogUtils;
 import com.example.gy.musicgame.utils.NetWorkUtils;
@@ -97,7 +99,7 @@ public abstract class BaseActivity extends SwipeBackActivity {
     }
 
     //处理eventBus事件
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
     public void onEvent(Object object) {
 
     }
@@ -119,10 +121,6 @@ public abstract class BaseActivity extends SwipeBackActivity {
             }
         }
     };
-
-    public List<NewFriendVo> getNewFriendVoList() {
-        return newFriendVoList;
-    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -215,7 +213,7 @@ public abstract class BaseActivity extends SwipeBackActivity {
         if (musicReceiver != null) {
             unregisterReceiver(musicReceiver);
         }
-        if (friendReceiver!=null){
+        if (friendReceiver != null) {
             unregisterReceiver(friendReceiver);
         }
         //解绑eventBus
@@ -282,6 +280,19 @@ public abstract class BaseActivity extends SwipeBackActivity {
         if (newFriendVoList != null && newFriendVoList.size() > 0) {
             newFriendEvent.setNum(newFriendVoList.size());
             EventBus.getDefault().post(newFriendEvent);
+            NewFriendListEvent newFriendListEvent = new NewFriendListEvent();
+            newFriendListEvent.setList(newFriendVoList);
+            EventBus.getDefault().postSticky(newFriendListEvent);
+        }
+    }
+
+    public List<NewFriendVo> getNewFriendVoList() {
+        return newFriendVoList;
+    }
+
+    protected void clearMsgList() {
+        if (newFriendVoList != null) {
+            newFriendVoList.clear();
         }
     }
 
@@ -312,6 +323,7 @@ public abstract class BaseActivity extends SwipeBackActivity {
                         if (!TextUtils.isEmpty(msg)) {
                             showStatusMsg(msg);
                         }
+                        EventBus.getDefault().postSticky(new FriendChangeEvent());
                         break;
                 }
             }

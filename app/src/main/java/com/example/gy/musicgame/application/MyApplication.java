@@ -36,7 +36,7 @@ public class MyApplication extends Application {
         // 初始化MultiDex
         MultiDex.install(this);
         Utils.init(this);
-        Bugly.init(getApplicationContext(), Constants.BUGLY_APPID, false);
+        Bugly.init(getApplicationContext(), Constants.BUGLY_APPID, Constants.isDebug);
         initIM();
         initScreenSize();
         if (Constants.isDebug) {
