@@ -7,10 +7,10 @@
     android:orientation="vertical">
 
     <com.example.gy.musicgame.view.TitleView
+        android:id="@+id/titleView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:showRight="false"
-        app:title="admin" />
+        app:showRight="false" />
 
     <com.jude.easyrecyclerview.EasyRecyclerView
         android:id="@+id/chat_list"

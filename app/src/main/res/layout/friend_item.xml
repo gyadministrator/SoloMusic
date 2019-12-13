@@ -19,14 +19,13 @@
         android:layout_height="@dimen/btn_height"
         android:orientation="horizontal">
 
-        <ImageView
+        <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/iv_image"
             android:layout_width="@dimen/icon_size"
             android:layout_height="@dimen/icon_size"
             android:layout_gravity="center"
             android:layout_marginStart="6dp"
             android:layout_marginLeft="6dp"
-            android:scaleType="fitXY"
             android:src="@mipmap/logo" />
 
         <TextView

@@ -1,11 +1,13 @@
 package com.example.gy.musicgame.chatui.adapter.holder;
 
 import android.os.Handler;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
 import com.bumptech.glide.Glide;
 import com.example.gy.musicgame.R;
 import com.example.gy.musicgame.chatui.adapter.ChatAdapter;
@@ -51,7 +53,11 @@ public class ChatAcceptViewHolder extends BaseViewHolder<MessageInfo> {
     @Override
     public void setData(MessageInfo data) {
         chatItemDate.setText(data.getTime() != null ? data.getTime() : "");
-        Glide.with(getContext()).load(data.getHeader()).into(chatItemHeader);
+        if (TextUtils.isEmpty(data.getHeader())){
+            chatItemHeader.setImageResource(R.mipmap.default_user);
+        }else {
+            Glide.with(getContext()).load(data.getHeader()).into(chatItemHeader);
+        }
         chatItemHeader.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -1,5 +1,6 @@
 package com.example.gy.musicgame.chatui.ui.activity;
 
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -37,7 +38,10 @@ import com.example.gy.musicgame.chatui.widget.NoScrollViewPager;
 import com.example.gy.musicgame.chatui.widget.StateButton;
 import com.example.gy.musicgame.listener.IMessageListener;
 import com.example.gy.musicgame.model.User;
+import com.example.gy.musicgame.model.UserInfoVo;
 import com.example.gy.musicgame.utils.MessageUtils;
+import com.example.gy.musicgame.utils.UserManager;
+import com.example.gy.musicgame.view.TitleView;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMConversation;
 import com.hyphenate.chat.EMImageMessageBody;
@@ -81,6 +85,8 @@ public class ChatActivity extends BaseActivity {
     NoScrollViewPager viewpager;
     @BindView(R.id.emotion_layout)
     RelativeLayout emotionLayout;
+    @BindView(R.id.titleView)
+    TitleView titleView;
 
     private EmotionInputDetector mDetector;
     private ArrayList<Fragment> fragments;
@@ -96,10 +102,9 @@ public class ChatActivity extends BaseActivity {
     int res = 0;
     AnimationDrawable animationDrawable = null;
     private ImageView animView;
-    private User currentUser;
+    private UserInfoVo userInfoVo;
     private String username;
     private MessageReceiver messageReceiver;
-    private final String DEFAULT_HEADER_URL = "https://gyapp.oss-cn-beijing.aliyuncs.com/splash/2018.12.24-fbab92c3-4afb-4417-ac17-bc0655f9ccef.jpg";
 
 
     @Override
@@ -115,12 +120,22 @@ public class ChatActivity extends BaseActivity {
 
     @Override
     protected void initData() {
-
+        Intent intent = getIntent();
+        username = intent.getStringExtra("username");
+        userInfoVo = UserManager.getUserInfoVo(mActivity);
+        titleView.setTitle(username);
     }
 
     @Override
     protected void initAction() {
 
+    }
+
+
+    public static void startActivity(Activity activity, String username) {
+        Intent intent = new Intent(activity, ChatActivity.class);
+        intent.putExtra("username", username);
+        activity.startActivity(intent);
     }
 
     @Override
@@ -268,11 +283,11 @@ public class ChatActivity extends BaseActivity {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void MessageEventBus(final MessageInfo messageInfo) {
         Log.e("result", "MessageEventBus: " + messageInfo.getMsgType());
-        if (currentUser != null && currentUser.getData() != null) {
-            if (currentUser.getData() != null && !TextUtils.isEmpty(currentUser.getData().getImage())) {
-                messageInfo.setHeader(currentUser.getData().getImage());
+        if (userInfoVo != null) {
+            if (!TextUtils.isEmpty(userInfoVo.getAvatarUrl())) {
+                messageInfo.setHeader(userInfoVo.getAvatarUrl());
             } else {
-                messageInfo.setHeader(DEFAULT_HEADER_URL);
+                messageInfo.setHeader(null);
             }
             messageInfo.setType(Constants.CHAT_ITEM_TYPE_RIGHT);
             messageInfo.setSendState(Constants.CHAT_ITEM_SENDING);
@@ -364,7 +379,7 @@ public class ChatActivity extends BaseActivity {
         } else if (emMessage.direct() == EMMessage.Direct.RECEIVE) {
             message.setType(Constants.CHAT_ITEM_TYPE_LEFT);
         }
-        message.setHeader(DEFAULT_HEADER_URL);
+        message.setHeader(null);
         messageInfos.add(message);
         chatAdapter.add(message);
         chatList.scrollToPosition(chatAdapter.getCount() - 1);

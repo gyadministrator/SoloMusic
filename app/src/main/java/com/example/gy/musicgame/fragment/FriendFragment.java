@@ -361,13 +361,14 @@ public class FriendFragment extends Fragment implements AdapterView.OnItemClickL
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         if (position != 0) {
-            startActivity(new Intent(mActivity, ChatActivity.class));
+            UserModel userModel = list.get(position - 1);
+            ChatActivity.startActivity(mActivity, userModel.getName());
         }
     }
 
     @Override
     public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-        UserModel userModel = list.get(position-1);
+        UserModel userModel = list.get(position - 1);
         List<String> items = new ArrayList<>();
         items.add("删除好友");
         DialogHelper.getInstance().showBottomDialog(mActivity, items, new SheetDialogListener() {

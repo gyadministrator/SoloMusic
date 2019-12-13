@@ -218,6 +218,7 @@ public abstract class BaseActivity extends SwipeBackActivity {
         }
         //解绑eventBus
         EventBus.getDefault().unregister(this);
+        EventBus.getDefault().removeStickyEvent(this);
     }
 
     @Override

@@ -1,7 +1,6 @@
 package com.example.gy.musicgame.friend;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Context;
 import android.os.Build;
 import android.text.TextUtils;
@@ -22,7 +21,6 @@ import com.example.gy.musicgame.constant.Constants;
 import com.example.gy.musicgame.helper.RetrofitHelper;
 import com.example.gy.musicgame.model.IMVo;
 import com.example.gy.musicgame.model.UserModel;
-import com.example.gy.musicgame.utils.HandlerUtils;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -31,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import io.reactivex.Observable;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -97,12 +96,18 @@ public class SortAdapter extends BaseAdapter {
                 Glide.with(mContext).load(R.mipmap.default_user).into(viewHolder.image);
             }
         }
-        requestImage(viewHolder.image, user.getName());
+        requestImage(position, user.getName());
         return view;
 
     }
 
-    private void requestImage(final ImageView image, final String name) {
+    private void updateImage(int position, String image) {
+        UserModel userModel = list.get(position);
+        userModel.setImage(image);
+        notifyDataSetChanged();
+    }
+
+    private void requestImage(int position, final String name) {
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -125,9 +130,8 @@ public class SortAdapter extends BaseAdapter {
                                 IMVo imVo = gson.fromJson(json, type);
 
                                 if (imVo != null && !TextUtils.isEmpty(imVo.getAvatar())) {
-                                    Glide.with(mContext).load(imVo.getAvatar()).into(image);
+                                    updateImage(position, imVo.getAvatar());
                                 }
-                                notifyDataSetChanged();
                             }
 
                             @RequiresApi(api = Build.VERSION_CODES.KITKAT)
@@ -148,7 +152,7 @@ public class SortAdapter extends BaseAdapter {
     final static class ViewHolder {
         TextView catalog;
         TextView name;
-        ImageView image;
+        CircleImageView image;
         View view;
     }
 
