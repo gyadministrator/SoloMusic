@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/rl_rootview"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="15dp"
+    android:fitsSystemWindows="true"
+    android:padding="2dp">
+
+    <RelativeLayout
+        android:id="@+id/header_toast"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/shape_header_toast_background"
+        android:paddingStart="20dp"
+        android:paddingLeft="20dp"
+        android:paddingTop="5dp"
+        android:paddingEnd="20sp"
+        android:paddingRight="20sp"
+        android:paddingBottom="5dp"
+        tools:ignore="RtlHardcoded,UselessParent">
+
+        <RelativeLayout
+            android:id="@+id/header_toast_re"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            tools:ignore="RelativeOverlap">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/header_toast_smallimg"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_centerVertical="true"
+                android:src="@mipmap/default_user" />
+
+            <TextView
+                android:id="@+id/header_toast_title"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="5dp"
+                android:layout_marginLeft="5dp"
+                android:layout_toEndOf="@+id/header_toast_smallimg"
+                android:layout_toRightOf="@+id/header_toast_smallimg"
+                android:gravity="center_vertical"
+                android:text="Jack"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                tools:ignore="HardcodedText" />
+
+            <TextView
+                android:id="@+id/header_toast_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="5dp"
+                android:layout_marginLeft="5dp"
+                android:layout_toEndOf="@+id/header_toast_title"
+                android:layout_toRightOf="@+id/header_toast_title"
+                android:text=""
+                android:textColor="#999"
+                android:textSize="12sp" />
+        </RelativeLayout>
+
+
+        <TextView
+            android:id="@+id/header_toast_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/header_toast_re"
+            android:layout_marginTop="5dp"
+            android:text="你干嘛去了?"
+            android:textColor="@color/white"
+            android:textSize="15sp"
+            tools:ignore="HardcodedText" />
+    </RelativeLayout>
+</LinearLayout>

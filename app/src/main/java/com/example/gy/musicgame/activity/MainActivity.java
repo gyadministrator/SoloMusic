@@ -22,6 +22,8 @@ import com.example.gy.musicgame.fragment.ListenFragment;
 import com.example.gy.musicgame.fragment.MeFragment;
 import com.example.gy.musicgame.fragment.RecipeFragment;
 import com.example.gy.musicgame.model.BottomBarVo;
+import com.example.gy.musicgame.model.NewFriendVo;
+import com.example.gy.musicgame.topmessage.utils.FloatWindowManager;
 import com.example.gy.musicgame.utils.NotificationPermissionUtil;
 import com.example.gy.musicgame.utils.SharedPreferenceUtil;
 import com.example.gy.musicgame.view.BottomBarView;
@@ -89,6 +91,7 @@ public class MainActivity extends BaseActivity {
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     private void checkPermission() {
         NotificationPermissionUtil.checkNotificationEnable(mActivity);
+        FloatWindowManager.getInstance().applyOrShowFloatWindow(this);
     }
 
     public void play(BottomBarVo bottomBarVo) {
@@ -140,6 +143,15 @@ public class MainActivity extends BaseActivity {
     public void setHintPoint(int position) {
         if (navigationBar != null) {
             navigationBar.setHintPoint(position, true);
+        }
+    }
+
+    @Override
+    protected void acceptApply() {
+        super.acceptApply();
+        List<NewFriendVo> newFriendVoList = getNewFriendVoList();
+        if (newFriendVoList != null && newFriendVoList.size() > 0) {
+            setMsgPoint(2, newFriendVoList.size());
         }
     }
 

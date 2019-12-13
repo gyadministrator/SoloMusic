@@ -8,10 +8,10 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.android.recipe.chatui.enity.MessageInfo;
 import com.bumptech.glide.Glide;
 import com.example.gy.musicgame.R;
 import com.example.gy.musicgame.chatui.adapter.ChatAdapter;
+import com.example.gy.musicgame.chatui.enity.MessageInfo;
 import com.example.gy.musicgame.chatui.util.Constants;
 import com.example.gy.musicgame.chatui.util.Utils;
 import com.example.gy.musicgame.chatui.widget.BubbleImageView;

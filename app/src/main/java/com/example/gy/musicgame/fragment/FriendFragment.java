@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 
 import androidx.annotation.NonNull;
@@ -26,6 +27,7 @@ import com.blankj.utilcode.util.ToastUtils;
 import com.example.gy.musicgame.R;
 import com.example.gy.musicgame.activity.LoginActivity;
 import com.example.gy.musicgame.activity.MainActivity;
+import com.example.gy.musicgame.activity.NewFriendActivity;
 import com.example.gy.musicgame.activity.SearchFriendActivity;
 import com.example.gy.musicgame.api.Api;
 import com.example.gy.musicgame.chatui.ui.activity.ChatActivity;
@@ -34,6 +36,7 @@ import com.example.gy.musicgame.friend.SideBar;
 import com.example.gy.musicgame.friend.SortAdapter;
 import com.example.gy.musicgame.helper.RetrofitHelper;
 import com.example.gy.musicgame.model.UserModel;
+import com.example.gy.musicgame.service.AcceptMessageService;
 import com.example.gy.musicgame.utils.HandlerUtils;
 import com.example.gy.musicgame.utils.LogUtils;
 import com.example.gy.musicgame.utils.SharedPreferenceUtil;
@@ -96,6 +99,21 @@ public class FriendFragment extends Fragment implements AdapterView.OnItemClickL
         adapter = new SortAdapter(mActivity, list);
         listView.setAdapter(adapter);
         @SuppressLint("InflateParams") View header = LayoutInflater.from(mActivity).inflate(R.layout.friend_header, null);
+        LinearLayout llNewFriend=header.findViewById(R.id.ll_new_friend);
+        LinearLayout llGroup=header.findViewById(R.id.ll_group);
+        llNewFriend.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //新朋友
+                startActivity(new Intent(mActivity, NewFriendActivity.class));
+            }
+        });
+        llGroup.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //群聊
+            }
+        });
         listView.addHeaderView(header);
     }
 
@@ -106,6 +124,21 @@ public class FriendFragment extends Fragment implements AdapterView.OnItemClickL
         adapter = new SortAdapter(mActivity, list);
         listView.setAdapter(adapter);
         @SuppressLint("InflateParams") View view = LayoutInflater.from(mActivity).inflate(R.layout.friend_header, null);
+        LinearLayout llNewFriend=view.findViewById(R.id.ll_new_friend);
+        LinearLayout llGroup=view.findViewById(R.id.ll_group);
+        llNewFriend.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //新朋友
+                startActivity(new Intent(mActivity, NewFriendActivity.class));
+            }
+        });
+        llGroup.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //群聊
+            }
+        });
         listView.addHeaderView(view);
     }
 
@@ -131,7 +164,7 @@ public class FriendFragment extends Fragment implements AdapterView.OnItemClickL
 
     private void initAction() {
         SharedPreferenceUtil preferenceUtil = new SharedPreferenceUtil();
-        String token = (String) preferenceUtil.getObject(mActivity, Constants.CURRENT_TOKEN);
+        String token = preferenceUtil.getObject(mActivity, Constants.CURRENT_TOKEN);
         getUserInfo(token);
     }
 
@@ -229,6 +262,10 @@ public class FriendFragment extends Fragment implements AdapterView.OnItemClickL
                         EMClient.getInstance().chatManager().loadAllConversations();
                         LogUtils.d("success", "连接IM成功");
                         getContactList();
+
+                        //启动服务，监听消息
+                        Intent acceptMessageService = new Intent(mActivity, AcceptMessageService.class);
+                        mActivity.startService(acceptMessageService);
                     }
 
                     @Override

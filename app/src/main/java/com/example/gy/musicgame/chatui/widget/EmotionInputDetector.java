@@ -27,8 +27,8 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.viewpager.widget.ViewPager;
 
-import com.android.recipe.chatui.enity.MessageInfo;
 import com.example.gy.musicgame.R;
+import com.example.gy.musicgame.chatui.enity.MessageInfo;
 import com.example.gy.musicgame.chatui.util.AudioRecoderUtils;
 import com.example.gy.musicgame.chatui.util.PopupWindowFactory;
 import com.example.gy.musicgame.chatui.util.Utils;

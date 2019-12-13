@@ -23,10 +23,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.recipe.chatui.adapter.CommonFragmentPagerAdapter;
 import com.android.recipe.chatui.enity.FullImageInfo;
-import com.android.recipe.chatui.enity.MessageInfo;
 import com.example.gy.musicgame.R;
 import com.example.gy.musicgame.activity.BaseActivity;
 import com.example.gy.musicgame.chatui.adapter.ChatAdapter;
+import com.example.gy.musicgame.chatui.enity.MessageInfo;
 import com.example.gy.musicgame.chatui.ui.fragment.ChatEmotionFragment;
 import com.example.gy.musicgame.chatui.ui.fragment.ChatFunctionFragment;
 import com.example.gy.musicgame.chatui.util.Constants;

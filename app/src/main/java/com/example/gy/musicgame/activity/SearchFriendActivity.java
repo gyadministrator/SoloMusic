@@ -71,22 +71,15 @@ public class SearchFriendActivity extends BaseActivity implements TextWatcher, V
         ivAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                add();
+                add(etSearch.getText().toString());
             }
         });
     }
 
-    private void add() {
-        SharedPreferences sharedPreferences = mActivity.getSharedPreferences("login", MODE_PRIVATE);
-        //TODO 设置用户数据
-        final String username = sharedPreferences.getString("username", null);
+    private void add(String username) {
         if (!TextUtils.isEmpty(username)) {
             //添加朋友
-            if (username.equals(etSearch.getText().toString().trim())) {
-                ToastUtils.showShort("不能添加自己为好友");
-            } else {
-                addFriend(username);
-            }
+            addFriend(username);
         }
     }
 

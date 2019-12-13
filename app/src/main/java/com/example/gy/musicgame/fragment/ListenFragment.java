@@ -116,7 +116,9 @@ public class ListenFragment extends Fragment implements OnRefreshListener, Title
 
         SharedPreferenceUtil preferenceUtil = new SharedPreferenceUtil();
         token = preferenceUtil.getObject(mActivity, Constants.CURRENT_TOKEN);
-        checkUpdate();
+        if (!isRefresh) {
+            checkUpdate();
+        }
     }
 
     @Override

@@ -21,9 +21,9 @@ import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-import com.android.recipe.chatui.enity.MessageInfo;
 import com.example.gy.musicgame.R;
 import com.example.gy.musicgame.chatui.base.BaseFragment;
+import com.example.gy.musicgame.chatui.enity.MessageInfo;
 import com.example.gy.musicgame.chatui.util.Constants;
 
 import org.greenrobot.eventbus.EventBus;
@@ -164,7 +164,7 @@ public class ChatFunctionFragment extends BaseFragment {
                         EventBus.getDefault().post(messageInfo);
                     } catch (Exception e) {
                         e.printStackTrace();
-                        Log.d(Constants.TAG, e.getMessage());
+                        Log.d(Constants.TAG, Objects.requireNonNull(e.getMessage()));
                     }
                 } else {
                     Log.d(Constants.TAG, "失败");

@@ -92,6 +92,7 @@ public class UpdateManager {
 
     private void showNoticeDialog(final ApkModel apkModel) {
         LoadingDialogHelper.dismiss();
+        if (apkModel == null) return;
         final ConfirmDialog confirmDialog = new ConfirmDialog(mContext);
         @SuppressLint("InflateParams") View view = LayoutInflater.from(mContext).inflate(R.layout.update_notice, null);
         TextView tvVersion = view.findViewById(R.id.tv_version);

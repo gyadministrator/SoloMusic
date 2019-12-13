@@ -5,6 +5,7 @@
     android:orientation="vertical">
 
     <LinearLayout
+        android:id="@+id/ll_new_friend"
         android:layout_width="match_parent"
         android:layout_height="@dimen/btn_height"
         android:orientation="horizontal">
@@ -35,6 +36,7 @@
         android:background="@color/normal" />
 
     <LinearLayout
+        android:id="@+id/ll_group"
         android:layout_width="match_parent"
         android:layout_height="@dimen/btn_height"
         android:orientation="horizontal">

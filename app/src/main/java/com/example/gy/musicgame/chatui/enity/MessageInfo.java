@@ -1,4 +1,4 @@
-package com.android.recipe.chatui.enity;
+package com.example.gy.musicgame.chatui.enity;
 
 /**
  * 作者：Rance on 2016/12/14 14:13

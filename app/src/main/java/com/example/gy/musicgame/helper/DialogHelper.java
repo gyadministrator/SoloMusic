@@ -1,8 +1,10 @@
 package com.example.gy.musicgame.helper;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.view.View;
 
+import com.blankj.utilcode.util.ToastUtils;
 import com.example.gy.musicgame.listener.DialogListener;
 import com.example.gy.musicgame.listener.InputDialogListener;
 import com.example.gy.musicgame.listener.SheetDialogListener;
@@ -67,8 +69,13 @@ public class DialogHelper {
         myAlertInputDialog.setPositiveButton("确认", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (TextUtils.isEmpty(myAlertInputDialog.getResult())) {
+                    ToastUtils.showShort("请输入内容");
+                    return;
+                }
                 if (dialogListener != null) {
                     dialogListener.sure(myAlertInputDialog.getResult());
+                    myAlertInputDialog.dismiss();
                 }
             }
         }).setNegativeButton("取消", new View.OnClickListener() {
