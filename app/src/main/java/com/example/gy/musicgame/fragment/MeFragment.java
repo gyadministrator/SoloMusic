@@ -1,5 +1,6 @@
 package com.example.gy.musicgame.fragment;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -10,8 +11,11 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -27,13 +31,14 @@ import com.example.gy.musicgame.activity.ChangePasswordActivity;
 import com.example.gy.musicgame.activity.CodeActivity;
 import com.example.gy.musicgame.activity.LocalMusicActivity;
 import com.example.gy.musicgame.activity.SettingActivity;
+import com.example.gy.musicgame.adapter.AlbumItemAdapter;
 import com.example.gy.musicgame.api.Api;
 import com.example.gy.musicgame.constant.Constants;
 import com.example.gy.musicgame.helper.DialogHelper;
 import com.example.gy.musicgame.helper.LoadingDialogHelper;
 import com.example.gy.musicgame.helper.RetrofitHelper;
-import com.example.gy.musicgame.listener.InputDialogListener;
 import com.example.gy.musicgame.listener.SheetDialogListener;
+import com.example.gy.musicgame.model.AlbumVo;
 import com.example.gy.musicgame.model.FileVo;
 import com.example.gy.musicgame.model.UserInfoVo;
 import com.example.gy.musicgame.utils.HandlerUtils;
@@ -44,6 +49,7 @@ import com.example.gy.musicgame.view.GlideImageLoader;
 import com.example.gy.musicgame.view.TitleView;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.hb.dialog.dialog.ConfirmDialog;
 import com.lzy.imagepicker.ImagePicker;
 import com.lzy.imagepicker.bean.ImageItem;
 import com.lzy.imagepicker.ui.ImageGridActivity;
@@ -68,7 +74,7 @@ import okhttp3.RequestBody;
 
 import static android.content.Context.MODE_PRIVATE;
 
-public class MeFragment extends Fragment implements View.OnClickListener {
+public class MeFragment extends Fragment implements View.OnClickListener, AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener {
     private MeViewModel mViewModel;
     private Activity mActivity;
     private CircleImageView ivUser;
@@ -82,6 +88,16 @@ public class MeFragment extends Fragment implements View.OnClickListener {
     private LinearLayout llLocalMusic;
     private TextView tvLocalMusic;
     private ImageView ivAdd;
+    private TextView tvNoData;
+    private ListView listView;
+    private int currentPage = 1;
+    private int PageSize = 20;
+    private List<AlbumVo> albumVoList = new ArrayList<>();
+    private AlbumItemAdapter itemAdapter;
+    private boolean isAlbum = false;
+    private String albumPath;
+    private ImageView albumIcon;
+    private TextView tvAlbumTitile;
 
     public static MeFragment newInstance() {
         return new MeFragment();
@@ -117,6 +133,62 @@ public class MeFragment extends Fragment implements View.OnClickListener {
     private void initAction() {
         SharedPreferenceUtil preferenceUtil = new SharedPreferenceUtil();
         token = preferenceUtil.getObject(mActivity, Constants.CURRENT_TOKEN);
+        getAlbumList(token);
+    }
+
+    private void getAlbumList(String token) {
+        RetrofitHelper retrofitHelper = RetrofitHelper.getInstance();
+        Api api = retrofitHelper.initRetrofit(Constants.SERVER_URL);
+        Observable<Map> observable = api.albumList(token, currentPage, PageSize);
+        observable.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<Map>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @SuppressLint("SetTextI18n")
+                    @Override
+                    public void onNext(Map map) {
+                        boolean handler = HandlerUtils.isHandler(map, mActivity);
+                        if (!handler) {
+                            Gson gson = new Gson();
+                            String json = gson.toJson(map.get("data"));
+                            Type type = new TypeToken<List<AlbumVo>>() {
+                            }.getType();
+                            albumVoList = gson.fromJson(json, type);
+                            if (albumVoList != null) {
+                                tvAlbumTitile.setText("我的歌单(" + albumVoList.size() + ")");
+                            }
+                            setAlbumData(albumVoList);
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        ToastUtils.showShort(Objects.requireNonNull(e.getMessage()));
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    private void setAlbumData(List<AlbumVo> albumVoList) {
+        if (albumVoList == null || albumVoList.size() == 0) {
+            tvNoData.setVisibility(View.VISIBLE);
+            listView.setVisibility(View.GONE);
+            return;
+        }
+        //设置adapter
+        tvNoData.setVisibility(View.GONE);
+        listView.setVisibility(View.VISIBLE);
+        itemAdapter = new AlbumItemAdapter(albumVoList, mActivity);
+        listView.setAdapter(itemAdapter);
+        listView.setOnItemClickListener(this);
+        listView.setOnItemLongClickListener(this);
     }
 
 
@@ -180,10 +252,13 @@ public class MeFragment extends Fragment implements View.OnClickListener {
         ivUser = view.findViewById(R.id.iv_user);
         TextView tv_modify = view.findViewById(R.id.tv_modify);
         tvName = view.findViewById(R.id.tv_name);
+        tvAlbumTitile = view.findViewById(R.id.tv_album_title);
         ImageView iv_refresh = view.findViewById(R.id.iv_refresh);
         titleView = view.findViewById(R.id.titleView);
         llLocalMusic = view.findViewById(R.id.ll_local_music);
         tvLocalMusic = view.findViewById(R.id.tv_local_music);
+        tvNoData = view.findViewById(R.id.tv_no_data);
+        listView = view.findViewById(R.id.listView);
         ivAdd = view.findViewById(R.id.iv_add);
         ivAdd.setOnClickListener(this);
         llLocalMusic.setOnClickListener(this);
@@ -231,38 +306,111 @@ public class MeFragment extends Fragment implements View.OnClickListener {
                 getUserInfo(token);
                 break;
             case R.id.iv_user:
-                List<String> items = new ArrayList<>();
-                items.add("拍照");
-                items.add("相册");
-                DialogHelper.getInstance().showBottomDialog(mActivity, items, new SheetDialogListener() {
-                    @Override
-                    public void selectPosition(int position) {
-                        switch (position) {
-                            case 0:
-                                //拍照
-                                takePhoto();
-                                break;
-                            case 1:
-                                //相册
-                                selectAlbum();
-                                break;
-                        }
-                    }
-                });
+                showBottom();
                 break;
             case R.id.ll_local_music:
                 //本地音乐
                 startActivity(new Intent(mActivity, LocalMusicActivity.class));
                 break;
             case R.id.iv_add:
-                DialogHelper.getInstance().showInputDialog(mActivity, "新建歌单", new InputDialogListener() {
-                    @Override
-                    public void sure(String result) {
-
-                    }
-                });
+                addAlbum();
                 break;
         }
+    }
+
+    private void showBottom() {
+        List<String> items = new ArrayList<>();
+        items.add("拍照");
+        items.add("相册");
+        DialogHelper.getInstance().showBottomDialog(mActivity, items, new SheetDialogListener() {
+            @Override
+            public void selectPosition(int position) {
+                switch (position) {
+                    case 0:
+                        //拍照
+                        takePhoto();
+                        break;
+                    case 1:
+                        //相册
+                        selectAlbum();
+                        break;
+                }
+            }
+        });
+    }
+
+    private void addAlbum() {
+        isAlbum = true;
+        ConfirmDialog confirmDialog = new ConfirmDialog(mActivity);
+        @SuppressLint("InflateParams") View view = LayoutInflater.from(mActivity).inflate(R.layout.add_album, null);
+        EditText etAlbum = view.findViewById(R.id.et_album);
+        albumIcon = view.findViewById(R.id.iv_icon);
+        TextView tvSave = view.findViewById(R.id.tv_save);
+        TextView tvCancel = view.findViewById(R.id.tv_cancel);
+        confirmDialog.setContentView(view);
+        tvCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                confirmDialog.dismiss();
+            }
+        });
+        albumIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showBottom();
+            }
+        });
+
+        tvSave.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (TextUtils.isEmpty(etAlbum.getText().toString())) {
+                    ToastUtils.showShort("请输入内容");
+                } else {
+                    confirmDialog.dismiss();
+                    albumSave(etAlbum.getText().toString(), albumPath);
+                }
+            }
+        });
+        confirmDialog.setCanceledOnTouchOutside(false);
+        confirmDialog.setCancelable(false);
+        confirmDialog.show();
+    }
+
+    private void albumSave(String result, String albumPath) {
+        LoadingDialogHelper.show(mActivity, "保存歌单中...");
+        RetrofitHelper retrofitHelper = RetrofitHelper.getInstance();
+        Api api = retrofitHelper.initRetrofit(Constants.SERVER_URL);
+        Observable<Map> observable = api.albumAdd(token, result, albumPath);
+        observable.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<Map>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(Map map) {
+                        HandlerUtils.isHandler(map, mActivity);
+                        if (map.containsKey("errno")) {
+                            double code = (double) map.get("errno");
+                            if (code == 0) {
+                                getAlbumList(token);
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        LoadingDialogHelper.dismiss();
+                        ToastUtils.showShort(Objects.requireNonNull(e.getMessage()));
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        LoadingDialogHelper.dismiss();
+                    }
+                });
     }
 
     private void selectAlbum() {
@@ -345,10 +493,14 @@ public class MeFragment extends Fragment implements View.OnClickListener {
                             FileVo fileVo = gson.fromJson(json, type);
                             if (fileVo != null) {
                                 if (!TextUtils.isEmpty(fileVo.getUrl())) {
-                                    Glide.with(mActivity).load(fileVo.getUrl()).into(ivUser);
-
-                                    //更新用户信息
-                                    updateUserInfo(fileVo.getUrl());
+                                    if (isAlbum) {
+                                        Glide.with(mActivity).load(fileVo.getUrl()).into(albumIcon);
+                                        albumPath = fileVo.getUrl();
+                                    } else {
+                                        Glide.with(mActivity).load(fileVo.getUrl()).into(ivUser);
+                                        //更新用户信息
+                                        updateUserInfo(fileVo.getUrl());
+                                    }
                                 }
                             }
                         }
@@ -393,6 +545,70 @@ public class MeFragment extends Fragment implements View.OnClickListener {
                     @Override
                     public void onComplete() {
                         LoadingDialogHelper.dismiss();
+                    }
+                });
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+        if (albumVoList != null && albumVoList.size() > 0) {
+            AlbumVo albumVo = albumVoList.get(i);
+
+        }
+    }
+
+    @Override
+    public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+        if (albumVoList != null && albumVoList.size() > 0) {
+            AlbumVo albumVo = albumVoList.get(i);
+            deleteAlbum(albumVo.getId());
+        }
+        return true;
+    }
+
+    private void deleteAlbum(Integer id) {
+        List<String> items = new ArrayList<>();
+        items.add("删除歌单");
+        DialogHelper.getInstance().showBottomDialog(mActivity, items, new SheetDialogListener() {
+            @Override
+            public void selectPosition(int position) {
+                if (position == 0) {
+                    deleteAlbumById(id);
+                }
+            }
+        });
+    }
+
+    private void deleteAlbumById(Integer id) {
+        RetrofitHelper retrofitHelper = RetrofitHelper.getInstance();
+        Api api = retrofitHelper.initRetrofit(Constants.SERVER_URL);
+        Observable<Map> observable = api.albumDelete(token, id);
+        observable.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<Map>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(Map map) {
+                        HandlerUtils.isHandler(map, mActivity);
+                        if (map.containsKey("errno")) {
+                            double code = (double) map.get("errno");
+                            if (code == 0) {
+                                getAlbumList(token);
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        ToastUtils.showShort(Objects.requireNonNull(e.getMessage()));
+                    }
+
+                    @Override
+                    public void onComplete() {
+
                     }
                 });
     }

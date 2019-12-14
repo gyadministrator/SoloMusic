@@ -234,4 +234,36 @@ public interface Api {
      */
     @GET("message/list")
     Observable<Map> noticeList(@Header("back-manager-token") String token, @Query("currentPage") Integer currentPage, @Query("pageSize") Integer pageSize);
+
+    /**
+     * 歌单列表
+     *
+     * @param token
+     * @param currentPage
+     * @param pageSize
+     * @return
+     */
+    @GET("album/list")
+    Observable<Map> albumList(@Header("back-manager-token") String token, @Query("currentPage") Integer currentPage, @Query("pageSize") Integer pageSize);
+
+    /**
+     * 添加歌单
+     *
+     * @param token
+     * @param album
+     * @return
+     */
+    @GET("album/add")
+    Observable<Map> albumAdd(@Header("back-manager-token") String token, @Query("album") String album, @Query("image") String image);
+
+    /**
+     * 删除歌单
+     *
+     * @param token
+     * @param id
+     * @return
+     */
+    @GET("album/delete")
+    Observable<Map> albumDelete(@Header("back-manager-token") String token, @Query("id") Integer id);
+
 }
