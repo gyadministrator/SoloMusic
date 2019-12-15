@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -171,8 +172,11 @@ public class ListenFragment extends Fragment implements OnRefreshListener, Title
                             apkModel = gson.fromJson(Objects.requireNonNull(gson.toJson(map.get("data"))), type);
                             if (apkModel != null) {
                                 showNotice(apkModel);
-                            } else {
-                                ToastUtils.showShort("获取更新数据异常");
+
+                                SharedPreferences preferences = mActivity.getSharedPreferences("apk", Context.MODE_PRIVATE);
+                                SharedPreferences.Editor edit = preferences.edit();
+                                edit.putString("downloadUrl", apkModel.getDownloadUrl());
+                                edit.apply();
                             }
                         }
                     }

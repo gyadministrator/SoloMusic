@@ -174,7 +174,7 @@ public class SettingActivity extends BaseActivity implements AdapterView.OnItemC
                             if (apkModel != null) {
                                 showNotice(apkModel);
                             } else {
-                                ToastUtils.showShort("获取更新数据异常");
+                                ToastUtils.showShort("没有版本可更新！");
                             }
                         }
                     }
