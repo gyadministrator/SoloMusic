@@ -37,8 +37,6 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
-;
-
 /**
  * Description: CustomerMusic
  * Created by gy(1984629668@qq.com)

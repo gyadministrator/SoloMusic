@@ -32,6 +32,13 @@ public class AlbumItemAdapter extends BaseAdapter {
         this.context = context;
     }
 
+    public void addLoad(List<AlbumVo> loadMore) {
+        if (loadMore != null && loadMore.size() > 0) {
+            list.addAll(loadMore);
+            notifyDataSetChanged();
+        }
+    }
+
     @Override
     public int getCount() {
         return list.size();

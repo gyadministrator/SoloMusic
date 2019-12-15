@@ -1,36 +1,55 @@
 package com.example.gy.musicgame.activity;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Build;
 import android.text.TextUtils;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ImageView;
+import android.widget.ListView;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 
 import com.blankj.utilcode.util.ToastUtils;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.gy.musicgame.R;
+import com.example.gy.musicgame.adapter.AlbumItemAdapter;
 import com.example.gy.musicgame.api.Api;
 import com.example.gy.musicgame.constant.Constants;
 import com.example.gy.musicgame.helper.DialogHelper;
 import com.example.gy.musicgame.helper.LoadingDialogHelper;
 import com.example.gy.musicgame.helper.RetrofitHelper;
 import com.example.gy.musicgame.listener.SheetDialogListener;
+import com.example.gy.musicgame.model.AlbumVo;
+import com.example.gy.musicgame.model.LoveAlbumVo;
 import com.example.gy.musicgame.model.LrcModel;
 import com.example.gy.musicgame.model.SingerInfoModel;
+import com.example.gy.musicgame.model.UserAlbumVo;
+import com.example.gy.musicgame.utils.HandlerUtils;
 import com.example.gy.musicgame.utils.MusicUtils;
+import com.example.gy.musicgame.utils.SharedPreferenceUtil;
+import com.example.gy.musicgame.utils.Utility;
 import com.example.gy.musicgame.view.ILrcBuilder;
 import com.example.gy.musicgame.view.ILrcViewListener;
 import com.example.gy.musicgame.view.TitleView;
 import com.example.gy.musicgame.view.impl.DefaultLrcBuilder;
 import com.example.gy.musicgame.view.impl.LrcRow;
 import com.example.gy.musicgame.view.impl.LrcView;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.gyf.barlibrary.ImmersionBar;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -45,7 +64,7 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import jp.wasabeef.glide.transformations.BlurTransformation;
 
-public class LrcActivity extends BaseActivity {
+public class LrcActivity extends BaseActivity implements AdapterView.OnItemClickListener, OnLoadMoreListener {
     private String songId;
     private LrcView mLrcView;
     private String title;
@@ -59,6 +78,17 @@ public class LrcActivity extends BaseActivity {
     private Timer mTimer;
     //更新歌词的定时任务
     private TimerTask mTask;
+    private String author;
+    private String path;
+    private String token;
+    private List<AlbumVo> albumVoList;
+    private Integer currentPage = 1;
+    private Integer PageSize = 20;
+    private ListView listView;
+    private AlbumItemAdapter itemAdapter;
+    private BottomSheetDialog bottomSheetDialog;
+    private boolean isLoad = false;
+    private SmartRefreshLayout refreshLayout;
 
     @Override
     protected void initView() {
@@ -72,6 +102,7 @@ public class LrcActivity extends BaseActivity {
                 List<String> items = new ArrayList<>();
                 items.add("查看歌手");
                 items.add("收藏音乐");
+                items.add("加入我喜欢");
                 DialogHelper.getInstance().showBottomDialog(mActivity, items, new SheetDialogListener() {
                     @Override
                     public void selectPosition(int position) {
@@ -81,6 +112,9 @@ public class LrcActivity extends BaseActivity {
                         } else if (position == 1) {
                             //收藏音乐
                             collectMusic();
+                        } else if (position == 2) {
+                            //加入我喜欢
+                            addAlbumLove();
                         }
                     }
                 });
@@ -93,9 +127,116 @@ public class LrcActivity extends BaseActivity {
         });
     }
 
-    private void collectMusic() {
+    private void addAlbumLove() {
+        LoveAlbumVo loveAlbumVo = new LoveAlbumVo();
+        loveAlbumVo.setAuthor(author);
+        loveAlbumVo.setImage(pic);
+        loveAlbumVo.setPath(path);
+        loveAlbumVo.setSongId(songId);
+        loveAlbumVo.setTitle(title);
+        loveAlbumVo.setTingUid(tingUid);
+        LoadingDialogHelper.show(mActivity, "添加到我喜欢中...");
+        RetrofitHelper retrofitHelper = RetrofitHelper.getInstance();
+        Api api = retrofitHelper.initRetrofit(Constants.SERVER_URL);
+        Observable<Map> observable = api.albumLoveAdd(token, loveAlbumVo);
+        observable.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<Map>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
 
+                    }
+
+                    @Override
+                    public void onNext(Map map) {
+                        HandlerUtils.isHandler(map, mActivity);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        LoadingDialogHelper.dismiss();
+                        ToastUtils.showShort(Objects.requireNonNull(e.getMessage()));
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        LoadingDialogHelper.dismiss();
+                    }
+                });
     }
+
+    private void collectMusic() {
+        bottomSheetDialog = new BottomSheetDialog(mActivity);
+        @SuppressLint("InflateParams") View view = LayoutInflater.from(mActivity).inflate(R.layout.bottom_album_list, null);
+        ImageView ivClose = view.findViewById(R.id.iv_close);
+        refreshLayout = view.findViewById(R.id.refreshLayout);
+        listView = view.findViewById(R.id.listView);
+        bottomSheetDialog.setContentView(view);
+        bottomSheetDialog.setCanceledOnTouchOutside(false);
+        bottomSheetDialog.setCancelable(false);
+        bottomSheetDialog.show();
+        ivClose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                bottomSheetDialog.dismiss();
+            }
+        });
+        refreshLayout.setOnLoadMoreListener(this);
+        getAlbumList(token);
+    }
+
+    private void getAlbumList(String token) {
+        RetrofitHelper retrofitHelper = RetrofitHelper.getInstance();
+        Api api = retrofitHelper.initRetrofit(Constants.SERVER_URL);
+        Observable<Map> observable = api.albumList(token, currentPage, PageSize);
+        observable.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<Map>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @SuppressLint("SetTextI18n")
+                    @Override
+                    public void onNext(Map map) {
+                        refreshLayout.finishLoadMore(1500);
+                        boolean handler = HandlerUtils.isHandler(map, mActivity);
+                        if (!handler) {
+                            Gson gson = new Gson();
+                            String json = gson.toJson(map.get("data"));
+                            Type type = new TypeToken<List<AlbumVo>>() {
+                            }.getType();
+                            albumVoList = gson.fromJson(json, type);
+                            if (albumVoList != null && albumVoList.size() > 0) {
+                                if (isLoad) {
+                                    itemAdapter.addLoad(albumVoList);
+                                } else {
+                                    setAlbumData(albumVoList);
+                                }
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        refreshLayout.finishLoadMore(1500);
+                        ToastUtils.showShort(Objects.requireNonNull(e.getMessage()));
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    private void setAlbumData(List<AlbumVo> albumVoList) {
+        itemAdapter = new AlbumItemAdapter(albumVoList, mActivity);
+        listView.setAdapter(itemAdapter);
+        //重新计算ListView的高度
+        Utility.setListViewHeightBasedOnChildren(listView);
+        listView.setOnItemClickListener(this);
+    }
+
 
     private void findSingerInFo() {
         if (TextUtils.isEmpty(tingUid)) {
@@ -111,6 +252,59 @@ public class LrcActivity extends BaseActivity {
         if (immersionBar != null) {
             immersionBar.destroy();
         }
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+        bottomSheetDialog.dismiss();
+        AlbumVo albumVo = albumVoList.get(i);
+        UserAlbumVo userAlbumVo = new UserAlbumVo();
+        userAlbumVo.setAuthor(author);
+        userAlbumVo.setImage(pic);
+        userAlbumVo.setPath(path);
+        userAlbumVo.setTingUid(tingUid);
+        userAlbumVo.setSongId(songId);
+        userAlbumVo.setTitle(title);
+        userAlbumVo.setAlbumId(albumVo.getId());
+
+        addUserAlbum(userAlbumVo);
+    }
+
+    private void addUserAlbum(UserAlbumVo userAlbumVo) {
+        LoadingDialogHelper.show(mActivity, "添加到歌单中...");
+        RetrofitHelper retrofitHelper = RetrofitHelper.getInstance();
+        Api api = retrofitHelper.initRetrofit(Constants.SERVER_URL);
+        Observable<Map> observable = api.albumUserAdd(token, userAlbumVo);
+        observable.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<Map>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(Map map) {
+                        HandlerUtils.isHandler(map, mActivity);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        LoadingDialogHelper.dismiss();
+                        ToastUtils.showShort(Objects.requireNonNull(e.getMessage()));
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        LoadingDialogHelper.dismiss();
+                    }
+                });
+    }
+
+    @Override
+    public void onLoadMore(@NonNull RefreshLayout refreshLayout) {
+        isLoad = true;
+        currentPage += 1;
+        getAlbumList(token);
     }
 
     /**
@@ -184,19 +378,26 @@ public class LrcActivity extends BaseActivity {
         title = intent.getStringExtra("title");
         pic = intent.getStringExtra("pic");
         tingUid = intent.getStringExtra("tingUid");
+        path = intent.getStringExtra("path");
+        author = intent.getStringExtra("author");
         titleView.setTitle(title);
+
+        SharedPreferenceUtil preferenceUtil = new SharedPreferenceUtil();
+        token = preferenceUtil.getObject(mActivity, Constants.CURRENT_TOKEN);
 
         Glide.with(this).load(pic)
                 .apply(RequestOptions.bitmapTransform(new BlurTransformation(25, 10)))
                 .into(ivBg);
     }
 
-    public static void startActivity(Activity activity, String title, String songId, String pic, String tingUid) {
+    public static void startActivity(Activity activity, String title, String songId, String pic, String tingUid, String author, String path) {
         Intent intent = new Intent(activity, LrcActivity.class);
         intent.putExtra("songId", songId);
         intent.putExtra("title", title);
         intent.putExtra("pic", pic);
         intent.putExtra("tingUid", tingUid);
+        intent.putExtra("path", path);
+        intent.putExtra("author", author);
         activity.startActivity(intent);
     }
 

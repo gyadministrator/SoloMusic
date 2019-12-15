@@ -51,6 +51,12 @@
         android:theme="@style/AppTheme"
         tools:ignore="UnusedAttribute">
         <activity
+            android:name=".activity.AlbumLoveActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.SongAlbumActivity"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".activity.NewFriendActivity"
             android:screenOrientation="portrait" />
         <activity
@@ -159,7 +165,6 @@
             android:enabled="true"
             android:exported="true" /> <!-- 接受消息服务 -->
         <service android:name=".service.AcceptMessageService" />
-
         <service android:name=".service.AcceptApplyService" />
 
         <activity

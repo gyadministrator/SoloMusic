@@ -2,6 +2,7 @@ package com.example.gy.musicgame.api;
 
 
 import com.example.gy.musicgame.model.LoginVo;
+import com.example.gy.musicgame.model.LoveAlbumVo;
 import com.example.gy.musicgame.model.LrcModel;
 import com.example.gy.musicgame.model.MusicModel;
 import com.example.gy.musicgame.model.PlayMusicModel;
@@ -13,6 +14,7 @@ import com.example.gy.musicgame.model.RegisterVo;
 import com.example.gy.musicgame.model.SearchMusicModel;
 import com.example.gy.musicgame.model.SingerInfoModel;
 import com.example.gy.musicgame.model.SplashModel;
+import com.example.gy.musicgame.model.UserAlbumVo;
 
 import java.io.File;
 import java.util.Map;
@@ -265,5 +267,68 @@ public interface Api {
      */
     @GET("album/delete")
     Observable<Map> albumDelete(@Header("back-manager-token") String token, @Query("id") Integer id);
+
+    /**
+     * 我的歌单曲目添加
+     *
+     * @param token
+     * @param userAlbumVo
+     * @return
+     */
+    @POST("album/user/add")
+    Observable<Map> albumUserAdd(@Header("back-manager-token") String token, @Body UserAlbumVo userAlbumVo);
+
+    /**
+     * 从我的歌单曲目列表移除
+     *
+     * @param token
+     * @param id
+     * @return
+     */
+    @GET("album/user/delete")
+    Observable<Map> albumUserDelete(@Header("back-manager-token") String token, @Query("id") Integer id);
+
+    /**
+     * 我的歌单曲目列表
+     *
+     * @param token
+     * @param albumId
+     * @param currentPage
+     * @param pageSize
+     * @return
+     */
+    @GET("album/user/list")
+    Observable<Map> albumUserList(@Header("back-manager-token") String token, @Query("albumId") Integer albumId, @Query("currentPage") Integer currentPage, @Query("pageSize") Integer pageSize);
+
+    /**
+     * 添加到我喜欢
+     *
+     * @param token
+     * @param loveAlbumVo
+     * @return
+     */
+    @POST("album/love/add")
+    Observable<Map> albumLoveAdd(@Header("back-manager-token") String token, @Body LoveAlbumVo loveAlbumVo);
+
+    /**
+     * 从我喜欢移除
+     *
+     * @param token
+     * @param id
+     * @return
+     */
+    @GET("album/love/delete")
+    Observable<Map> albumLoveDelete(@Header("back-manager-token") String token, @Query("id") Integer id);
+
+    /**
+     * 我喜欢列表
+     *
+     * @param token
+     * @param currentPage
+     * @param pageSize
+     * @return
+     */
+    @GET("album/love/list")
+    Observable<Map> albumLoveList(@Header("back-manager-token") String token, @Query("currentPage") Integer currentPage, @Query("pageSize") Integer pageSize);
 
 }

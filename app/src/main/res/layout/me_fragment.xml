@@ -140,6 +140,7 @@
                     android:orientation="horizontal">
 
                     <LinearLayout
+                        android:id="@+id/ll_love"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
@@ -211,6 +212,7 @@
                     android:orientation="horizontal">
 
                     <TextView
+                        android:id="@+id/tv_love_num"
                         android:layout_width="@dimen/item_size"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -234,7 +236,7 @@
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:orientation="horizontal">
 
                     <TextView
@@ -280,14 +282,30 @@
                     android:text="@string/data_empty"
                     android:visibility="gone" />
 
-                <ListView
-                    android:id="@+id/listView"
+                <com.scwang.smartrefresh.layout.SmartRefreshLayout
+                    android:id="@+id/refreshLayout"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_margin="@dimen/dp_20"
-                    android:divider="@color/normal"
-                    android:dividerHeight="0.2dp"
-                    android:scrollbars="none" />
+                    app:srlEnablePreviewInEditMode="true">
+                    <!--srlAccentColor srlPrimaryColor 将会改变 Header 和 Footer 的主题颜色-->
+                    <!--srlEnablePreviewInEditMode 可以开启和关闭预览功能-->
+                    <com.scwang.smartrefresh.layout.header.ClassicsHeader
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
+                    <ListView
+                        android:id="@+id/listView"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_margin="@dimen/dp_20"
+                        android:divider="@color/normal"
+                        android:dividerHeight="0.2dp"
+                        android:scrollbars="none" />
+
+                    <com.scwang.smartrefresh.layout.footer.ClassicsFooter
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+                </com.scwang.smartrefresh.layout.SmartRefreshLayout>
             </LinearLayout>
         </ScrollView>
     </LinearLayout>

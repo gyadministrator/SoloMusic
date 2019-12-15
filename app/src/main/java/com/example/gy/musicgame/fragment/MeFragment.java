@@ -27,10 +27,12 @@ import androidx.lifecycle.ViewModelProviders;
 import com.blankj.utilcode.util.ToastUtils;
 import com.bumptech.glide.Glide;
 import com.example.gy.musicgame.R;
+import com.example.gy.musicgame.activity.AlbumLoveActivity;
 import com.example.gy.musicgame.activity.ChangePasswordActivity;
 import com.example.gy.musicgame.activity.CodeActivity;
 import com.example.gy.musicgame.activity.LocalMusicActivity;
 import com.example.gy.musicgame.activity.SettingActivity;
+import com.example.gy.musicgame.activity.SongAlbumActivity;
 import com.example.gy.musicgame.adapter.AlbumItemAdapter;
 import com.example.gy.musicgame.api.Api;
 import com.example.gy.musicgame.constant.Constants;
@@ -55,6 +57,10 @@ import com.lzy.imagepicker.ImagePicker;
 import com.lzy.imagepicker.bean.ImageItem;
 import com.lzy.imagepicker.ui.ImageGridActivity;
 import com.lzy.imagepicker.view.CropImageView;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
 import java.io.File;
 import java.lang.reflect.Type;
@@ -75,7 +81,7 @@ import okhttp3.RequestBody;
 
 import static android.content.Context.MODE_PRIVATE;
 
-public class MeFragment extends Fragment implements View.OnClickListener, AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener {
+public class MeFragment extends Fragment implements View.OnClickListener, AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener, OnRefreshListener, OnLoadMoreListener {
     private MeViewModel mViewModel;
     private Activity mActivity;
     private CircleImageView ivUser;
@@ -98,7 +104,12 @@ public class MeFragment extends Fragment implements View.OnClickListener, Adapte
     private boolean isAlbum = false;
     private String albumPath;
     private ImageView albumIcon;
-    private TextView tvAlbumTitile;
+    private TextView tvAlbumTitle;
+    private TextView tvLoveNum;
+    private LinearLayout llLove;
+    private boolean isLoad = false;
+    private SmartRefreshLayout refreshLayout;
+    private int albumSize = 0;
 
     public static MeFragment newInstance() {
         return new MeFragment();
@@ -119,7 +130,8 @@ public class MeFragment extends Fragment implements View.OnClickListener, Adapte
         preferences = mActivity.getSharedPreferences("myFragment", MODE_PRIVATE);
         int localMusicSize = preferences.getInt("localMusicSize", 0);
         tvLocalMusic.setText(String.valueOf(localMusicSize));
-
+        int loveAlbum = preferences.getInt("loveAlbum", 0);
+        tvLoveNum.setText(String.valueOf(loveAlbum));
         setUserInfo();
     }
 
@@ -151,6 +163,8 @@ public class MeFragment extends Fragment implements View.OnClickListener, Adapte
                     @SuppressLint("SetTextI18n")
                     @Override
                     public void onNext(Map map) {
+                        refreshLayout.finishLoadMore(1500);
+                        refreshLayout.finishRefresh(1500);
                         boolean handler = HandlerUtils.isHandler(map, mActivity);
                         if (!handler) {
                             Gson gson = new Gson();
@@ -158,15 +172,23 @@ public class MeFragment extends Fragment implements View.OnClickListener, Adapte
                             Type type = new TypeToken<List<AlbumVo>>() {
                             }.getType();
                             albumVoList = gson.fromJson(json, type);
-                            if (albumVoList != null) {
-                                tvAlbumTitile.setText("我的歌单(" + albumVoList.size() + ")");
+                            if (albumVoList != null && albumVoList.size() > 0) {
+                                albumSize = albumVoList.size();
+                                tvAlbumTitle.setText("我的歌单(" + albumSize + ")");
+                                if (isLoad) {
+                                    albumSize += albumVoList.size();
+                                    itemAdapter.addLoad(albumVoList);
+                                } else {
+                                    setAlbumData(albumVoList);
+                                }
                             }
-                            setAlbumData(albumVoList);
                         }
                     }
 
                     @Override
                     public void onError(Throwable e) {
+                        refreshLayout.finishLoadMore(false);
+                        refreshLayout.finishRefresh(false);
                         ToastUtils.showShort(Objects.requireNonNull(e.getMessage()));
                     }
 
@@ -255,7 +277,10 @@ public class MeFragment extends Fragment implements View.OnClickListener, Adapte
         ivUser = view.findViewById(R.id.iv_user);
         TextView tv_modify = view.findViewById(R.id.tv_modify);
         tvName = view.findViewById(R.id.tv_name);
-        tvAlbumTitile = view.findViewById(R.id.tv_album_title);
+        tvLoveNum = view.findViewById(R.id.tv_love_num);
+        llLove = view.findViewById(R.id.ll_love);
+        tvAlbumTitle = view.findViewById(R.id.tv_album_title);
+        refreshLayout = view.findViewById(R.id.refreshLayout);
         ImageView iv_refresh = view.findViewById(R.id.iv_refresh);
         titleView = view.findViewById(R.id.titleView);
         llLocalMusic = view.findViewById(R.id.ll_local_music);
@@ -265,6 +290,8 @@ public class MeFragment extends Fragment implements View.OnClickListener, Adapte
         ivAdd = view.findViewById(R.id.iv_add);
         ivAdd.setOnClickListener(this);
         llLocalMusic.setOnClickListener(this);
+        refreshLayout.setOnRefreshListener(this);
+        refreshLayout.setOnLoadMoreListener(this);
         titleView.setRightClickListener(new TitleView.OnRightClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
             @Override
@@ -281,6 +308,7 @@ public class MeFragment extends Fragment implements View.OnClickListener, Adapte
         iv_code.setOnClickListener(this);
         tv_modify.setOnClickListener(this);
         iv_refresh.setOnClickListener(this);
+        llLove.setOnClickListener(this);
     }
 
     @Override
@@ -317,6 +345,9 @@ public class MeFragment extends Fragment implements View.OnClickListener, Adapte
                 break;
             case R.id.iv_add:
                 addAlbum();
+                break;
+            case R.id.ll_love:
+                AlbumLoveActivity.startActivity(mActivity, token);
                 break;
         }
     }
@@ -557,7 +588,7 @@ public class MeFragment extends Fragment implements View.OnClickListener, Adapte
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
         if (albumVoList != null && albumVoList.size() > 0) {
             AlbumVo albumVo = albumVoList.get(i);
-
+            SongAlbumActivity.startActivity(mActivity, token, albumVo.getId(), albumVo.getAlbum());
         }
     }
 
@@ -615,5 +646,20 @@ public class MeFragment extends Fragment implements View.OnClickListener, Adapte
 
                     }
                 });
+    }
+
+    @Override
+    public void onRefresh(@NonNull RefreshLayout refreshLayout) {
+        isLoad = false;
+        currentPage = 1;
+        albumVoList.clear();
+        getAlbumList(token);
+    }
+
+    @Override
+    public void onLoadMore(@NonNull RefreshLayout refreshLayout) {
+        isLoad = true;
+        currentPage += 1;
+        getAlbumList(token);
     }
 }

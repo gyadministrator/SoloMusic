@@ -175,7 +175,8 @@ public class BottomBarView extends LinearLayout {
             public void onClick(View v) {
                 if (MusicUtils.getMediaPlayer() == null) return;
                 if (MusicUtils.isPlaying()) {
-                    LrcActivity.startActivity((Activity) mContext, bottomBarVo.getName(), bottomBarVo.getSongId(), bottomBarVo.getImage(), bottomBarVo.getTingUid());
+                    LrcActivity.startActivity((Activity) mContext, bottomBarVo.getName(), bottomBarVo.getSongId(), bottomBarVo.getImage(), bottomBarVo.getTingUid()
+                            , bottomBarVo.getAuthor(), bottomBarVo.getPath());
                 }
             }
         });
