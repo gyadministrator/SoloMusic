@@ -8,7 +8,6 @@ import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -191,11 +190,6 @@ public class MeFragment extends Fragment implements View.OnClickListener, Adapte
         listView.setAdapter(itemAdapter);
         //重新计算ListView的高度
         Utility.setListViewHeightBasedOnChildren(listView);
-        TextView footer=new TextView(mActivity);
-        footer.setText("我也是有底的！");
-        footer.setGravity(Gravity.CENTER);
-        footer.setTextSize(16);
-        listView.addFooterView(footer);
         listView.setOnItemClickListener(this);
         listView.setOnItemLongClickListener(this);
     }
