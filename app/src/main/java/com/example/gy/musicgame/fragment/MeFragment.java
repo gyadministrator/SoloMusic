@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,6 +46,7 @@ import com.example.gy.musicgame.utils.HandlerUtils;
 import com.example.gy.musicgame.utils.LogUtils;
 import com.example.gy.musicgame.utils.SharedPreferenceUtil;
 import com.example.gy.musicgame.utils.UserManager;
+import com.example.gy.musicgame.utils.Utility;
 import com.example.gy.musicgame.view.GlideImageLoader;
 import com.example.gy.musicgame.view.TitleView;
 import com.google.gson.Gson;
@@ -187,6 +189,13 @@ public class MeFragment extends Fragment implements View.OnClickListener, Adapte
         listView.setVisibility(View.VISIBLE);
         itemAdapter = new AlbumItemAdapter(albumVoList, mActivity);
         listView.setAdapter(itemAdapter);
+        //重新计算ListView的高度
+        Utility.setListViewHeightBasedOnChildren(listView);
+        TextView footer=new TextView(mActivity);
+        footer.setText("我也是有底的！");
+        footer.setGravity(Gravity.CENTER);
+        footer.setTextSize(16);
+        listView.addFooterView(footer);
         listView.setOnItemClickListener(this);
         listView.setOnItemLongClickListener(this);
     }
@@ -368,7 +377,7 @@ public class MeFragment extends Fragment implements View.OnClickListener, Adapte
                     ToastUtils.showShort("请输入内容");
                 } else {
                     confirmDialog.dismiss();
-                    albumSave(etAlbum.getText().toString(), albumPath);
+                    albumSave(etAlbum.getText().toString());
                 }
             }
         });
@@ -377,7 +386,7 @@ public class MeFragment extends Fragment implements View.OnClickListener, Adapte
         confirmDialog.show();
     }
 
-    private void albumSave(String result, String albumPath) {
+    private void albumSave(String result) {
         LoadingDialogHelper.show(mActivity, "保存歌单中...");
         RetrofitHelper retrofitHelper = RetrofitHelper.getInstance();
         Api api = retrofitHelper.initRetrofit(Constants.SERVER_URL);
@@ -395,6 +404,7 @@ public class MeFragment extends Fragment implements View.OnClickListener, Adapte
                         if (map.containsKey("errno")) {
                             double code = (double) map.get("errno");
                             if (code == 0) {
+                                albumPath = "";
                                 getAlbumList(token);
                             }
                         }

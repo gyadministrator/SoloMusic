@@ -8,6 +8,9 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Build;
+import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
@@ -27,6 +30,7 @@ import com.example.gy.musicgame.topmessage.utils.FloatWindowManager;
 import com.example.gy.musicgame.utils.NotificationPermissionUtil;
 import com.example.gy.musicgame.utils.SharedPreferenceUtil;
 import com.example.gy.musicgame.view.BottomBarView;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.next.easynavigation.view.EasyNavigationBar;
@@ -48,13 +52,32 @@ public class MainActivity extends BaseActivity {
     private EasyNavigationBar navigationBar;
     private MyMusicReceiver musicReceiver;
     private BottomBarView bottomBarView;
+    private FloatingActionButton floatBtn;
     private final String[] PERMISSIONS = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE
             , Manifest.permission.CAMERA};
+    private Animation showAnimation, hideAnimation;
 
     @Override
     protected void initView() {
         navigationBar = fd(R.id.navigationBar);
         bottomBarView = fd(R.id.bottom_bar_view);
+        floatBtn = fd(R.id.float_btn);
+        showAnimation = AnimationUtils.loadAnimation(mActivity, R.anim.show);
+        hideAnimation = AnimationUtils.loadAnimation(mActivity, R.anim.hide);
+        floatBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (bottomBarView.getVisibility() == View.VISIBLE) {
+                    bottomBarView.setVisibility(View.GONE);
+                    bottomBarView.startAnimation(hideAnimation);
+                    floatBtn.setImageResource(R.mipmap.show);
+                } else if (bottomBarView.getVisibility() == View.GONE) {
+                    bottomBarView.setVisibility(View.VISIBLE);
+                    bottomBarView.startAnimation(showAnimation);
+                    floatBtn.setImageResource(R.mipmap.hide);
+                }
+            }
+        });
     }
 
     public BottomBarView getBottomBarView() {

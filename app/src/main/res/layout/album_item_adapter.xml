@@ -9,8 +9,8 @@
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/iv_album"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="@dimen/btn_height"
+        android:layout_height="@dimen/btn_height"
         android:src="@mipmap/logo" />
 
     <TextView

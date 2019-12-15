@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -12,11 +14,31 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginBottom="60dp"
-        android:gravity="bottom">
+        android:gravity="bottom"
+        android:orientation="vertical">
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/float_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:layout_margin="@dimen/btn_margin"
+            android:background="@color/transparent"
+            android:backgroundTint="@color/mainColor"
+            android:elevation="8dp"
+            android:foregroundGravity="center"
+            android:scaleType="fitXY"
+            android:src="@mipmap/show"
+            app:borderWidth="0dp"
+            app:fabCustomSize="@dimen/dp_40"
+            app:pressedTranslationZ="@dimen/dp_12"
+            app:rippleColor="@color/mainColor"
+            tools:ignore="UnusedAttribute" />
 
         <com.example.gy.musicgame.view.BottomBarView
             android:id="@+id/bottom_bar_view"
             android:layout_width="match_parent"
-            android:layout_height="60dp" />
+            android:layout_height="60dp"
+            android:visibility="gone" />
     </LinearLayout>
 </FrameLayout>
