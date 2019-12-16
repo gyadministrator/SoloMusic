@@ -1,12 +1,14 @@
 package com.example.gy.musicgame.model;
 
+import java.io.Serializable;
+
 /**
  * Date:2019/12/11
  * TIME:15:30
  * author:fldserver
  * email:1984629668@qq.com
  **/
-public class NoticeVo {
+public class NoticeVo implements Serializable {
 
     /**
      * id : 1

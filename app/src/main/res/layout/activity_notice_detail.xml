@@ -24,29 +24,37 @@
             android:orientation="vertical">
 
             <TextView
+                android:id="@+id/tv_notice_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/dp_12"
                 android:gravity="center"
-                android:text="标题"
                 android:textSize="20sp"
                 tools:ignore="HardcodedText" />
 
             <TextView
+                android:id="@+id/tv_time"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/dp_12"
                 android:gravity="center"
-                android:text="12:15"
                 android:textSize="16sp"
                 tools:ignore="HardcodedText" />
 
             <TextView
+                android:id="@+id/tv_content"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/dp_12"
-                android:text="详情"
                 android:textSize="18sp" />
+
+            <ImageView
+                android:id="@+id/iv_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_margin="@dimen/btn_margin"
+                android:scaleType="fitXY" />
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

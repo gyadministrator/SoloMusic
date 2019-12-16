@@ -65,7 +65,7 @@ public class NoticeItemAdapter extends RecyclerView.Adapter<NoticeItemAdapter.Vi
                 @Override
                 public void onClick(View v) {
                     if (TextUtils.isEmpty(noticeVo.getUrl())) {
-                        NoticeDetailActivity.startActivity((Activity) context, noticeVo.getId());
+                        NoticeDetailActivity.startActivity((Activity) context,noticeVo);
                     } else {
                         WebActivity.startActivity((Activity) context, noticeVo.getUrl());
                     }
