@@ -24,12 +24,11 @@ public class HandlerUtils {
                 }
             }
             if (!map.containsKey("data")) {
-                if (map.containsKey("errmsg")) {
+                if (map.containsKey("errmsg") && map.containsKey("errno")) {
                     String errmsg = (String) map.get("errmsg");
-                    if (errmsg != null) {
+                    double code = (double) map.get("errno");
+                    if (errmsg != null && code != 0) {
                         ToastUtils.showShort(errmsg);
-                    } else {
-                        ToastUtils.showShort("数据异常");
                     }
                 }
                 return true;

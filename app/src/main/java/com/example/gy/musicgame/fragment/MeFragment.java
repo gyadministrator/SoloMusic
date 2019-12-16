@@ -173,6 +173,8 @@ public class MeFragment extends Fragment implements View.OnClickListener, XRecyc
                                 @Override
                                 public void run() {
                                     if (albumVoList != null && albumVoList.size() > 0) {
+                                        tvNoData.setVisibility(View.GONE);
+                                        recyclerView.setVisibility(View.VISIBLE);
                                         albumSize = albumVoList.size();
                                         tvAlbumTitle.setText("我的歌单(" + albumSize + ")");
                                         if (isLoad) {
@@ -190,6 +192,9 @@ public class MeFragment extends Fragment implements View.OnClickListener, XRecyc
                                     } else {
                                         if (isLoad) {
                                             recyclerView.setNoMore(true);
+                                        }else {
+                                            tvNoData.setVisibility(View.VISIBLE);
+                                            recyclerView.setVisibility(View.GONE);
                                         }
                                     }
                                 }

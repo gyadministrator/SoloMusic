@@ -171,11 +171,14 @@ public class SettingActivity extends BaseActivity implements AdapterView.OnItemC
                             }.getType();
                             Gson gson = new Gson();
                             apkModel = gson.fromJson(Objects.requireNonNull(gson.toJson(map.get("data"))), type);
-                            if (apkModel != null) {
+                            int appVersionCode = AppUtils.getAppVersionCode();
+                            if (apkModel != null && apkModel.getApkCode() > appVersionCode) {
                                 showNotice(apkModel);
                             } else {
                                 ToastUtils.showShort("没有版本可更新！");
                             }
+                        } else {
+                            ToastUtils.showShort("没有版本可更新！");
                         }
                     }
 

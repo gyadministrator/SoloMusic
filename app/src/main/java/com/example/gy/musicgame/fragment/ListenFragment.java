@@ -171,8 +171,10 @@ public class ListenFragment extends Fragment implements OnRefreshListener, Title
                             Gson gson = new Gson();
                             apkModel = gson.fromJson(Objects.requireNonNull(gson.toJson(map.get("data"))), type);
                             if (apkModel != null) {
-                                showNotice(apkModel);
-
+                                int appVersionCode = AppUtils.getAppVersionCode();
+                                if (apkModel.getApkCode() > appVersionCode) {
+                                    showNotice(apkModel);
+                                }
                                 SharedPreferences preferences = mActivity.getSharedPreferences("apk", Context.MODE_PRIVATE);
                                 SharedPreferences.Editor edit = preferences.edit();
                                 edit.putString("downloadUrl", apkModel.getDownloadUrl());
