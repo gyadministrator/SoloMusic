@@ -2,9 +2,10 @@ package com.example.gy.musicgame.activity;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.view.View;
+import android.widget.LinearLayout;
 
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.blankj.utilcode.util.ToastUtils;
 import com.example.gy.musicgame.R;
@@ -13,12 +14,18 @@ import com.example.gy.musicgame.api.Api;
 import com.example.gy.musicgame.constant.Constants;
 import com.example.gy.musicgame.helper.LoadingDialogHelper;
 import com.example.gy.musicgame.helper.RetrofitHelper;
+import com.example.gy.musicgame.listener.OnItemClickListener;
+import com.example.gy.musicgame.model.BaseAlbumUserVo;
+import com.example.gy.musicgame.model.BottomBarVo;
+import com.example.gy.musicgame.utils.HandlerUtils;
+import com.example.gy.musicgame.utils.MusicUtils;
 import com.example.gy.musicgame.view.TitleView;
-import com.scwang.smartrefresh.layout.SmartRefreshLayout;
-import com.scwang.smartrefresh.layout.api.RefreshLayout;
-import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener;
-import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import com.jcodecraeer.xrecyclerview.XRecyclerView;
 
+import java.lang.reflect.Type;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -28,10 +35,9 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
-public class SongAlbumActivity extends BaseActivity implements OnRefreshListener, OnLoadMoreListener {
+public class SongAlbumActivity extends BaseActivity implements XRecyclerView.LoadingListener, OnItemClickListener {
     private TitleView titleView;
-    private SmartRefreshLayout refreshLayout;
-    private RecyclerView recyclerView;
+    private XRecyclerView recyclerView;
     private AlbumUserLinearAdapter userLinearAdapter;
     private boolean isLoad = false;
     private String token;
@@ -39,15 +45,16 @@ public class SongAlbumActivity extends BaseActivity implements OnRefreshListener
     private Integer currentPage = 1;
     private Integer pageSize = 20;
     private String album;
+    private boolean isRefresh=false;
+    private List<BaseAlbumUserVo> list;
+    private LinearLayout llNoData;
 
     @Override
     protected void initView() {
         titleView = fd(R.id.titleView);
-        refreshLayout = fd(R.id.refreshLayout);
         recyclerView = fd(R.id.rv_linear);
-
-        refreshLayout.setOnLoadMoreListener(this);
-        refreshLayout.setOnRefreshListener(this);
+        llNoData = fd(R.id.ll_no_data);
+        recyclerView.setLoadingListener(this);
     }
 
     public static void startActivity(Activity activity, String token, Integer albumId, String album) {
@@ -89,7 +96,42 @@ public class SongAlbumActivity extends BaseActivity implements OnRefreshListener
 
                     @Override
                     public void onNext(Map map) {
-
+                        boolean handler = HandlerUtils.isHandler(map, mActivity);
+                        if (!handler) {
+                            Gson gson = new Gson();
+                            String json = gson.toJson(map.get("data"));
+                            Type type = new TypeToken<List<BaseAlbumUserVo>>() {
+                            }.getType();
+                            list = gson.fromJson(json, type);
+                            if (list != null && list.size() > 0) {
+                                if (isLoad) {
+                                    userLinearAdapter.addData(list);
+                                    recyclerView.loadMoreComplete();
+                                } else {
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            if (isRefresh) {
+                                                recyclerView.refreshComplete();
+                                            }
+                                            setData(list);
+                                        }
+                                    });
+                                }
+                            } else {
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        if (!isLoad) {
+                                            llNoData.setVisibility(View.VISIBLE);
+                                            recyclerView.setVisibility(View.GONE);
+                                        } else {
+                                            recyclerView.setNoMore(true);
+                                        }
+                                    }
+                                });
+                            }
+                        }
                     }
 
                     @Override
@@ -109,22 +151,50 @@ public class SongAlbumActivity extends BaseActivity implements OnRefreshListener
                 });
     }
 
+    private void setData(List<BaseAlbumUserVo> list) {
+        userLinearAdapter = new AlbumUserLinearAdapter(mActivity, list);
+        recyclerView.setLayoutManager(new LinearLayoutManager(mActivity));
+        recyclerView.setAdapter(userLinearAdapter);
+        userLinearAdapter.setOnItemClickListener(this);
+        recyclerView.setLoadingListener(this);
+    }
+
+
     @Override
     protected int getContentView() {
         return R.layout.activity_song_album;
     }
 
+
     @Override
-    public void onRefresh(@NonNull RefreshLayout refreshLayout) {
+    public void onRefresh() {
         isLoad = false;
+        isRefresh=true;
         currentPage = 1;
         getAlbumUser(false);
     }
 
     @Override
-    public void onLoadMore(@NonNull RefreshLayout refreshLayout) {
+    public void onLoadMore() {
         isLoad = true;
         currentPage += 1;
         getAlbumUser(false);
+    }
+
+    @Override
+    public void play(BottomBarVo bottomBarVo) {
+        if (bottomBarVo != null) {
+            MusicUtils.play(bottomBarVo.getPath(), mActivity, new MusicUtils.IMusicListener() {
+                @Override
+                public void success() {
+
+                }
+
+                @Override
+                public void error(String msg) {
+                    ToastUtils.showShort(msg);
+                }
+            });
+        }
     }
 }

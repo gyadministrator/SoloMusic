@@ -7,7 +7,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -16,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.gy.musicgame.R;
 import com.example.gy.musicgame.listener.OnItemClickListener;
+import com.example.gy.musicgame.model.BaseAlbumUserVo;
 import com.example.gy.musicgame.model.BottomBarVo;
 import com.example.gy.musicgame.model.UserAlbumVo;
 
@@ -29,27 +29,19 @@ import java.util.List;
 public class AlbumUserLinearAdapter extends RecyclerView.Adapter<AlbumUserLinearAdapter.ViewHolder> {
     private Context mContext;
     private View mItemView;
-    private RecyclerView mRecyclerView;
-    private boolean isCalculationRvHeight;
-    private List<UserAlbumVo> list;
-    private boolean isFlag;
+    private List<BaseAlbumUserVo> list;
     private OnItemClickListener onItemClickListener;
 
    public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
         this.onItemClickListener = onItemClickListener;
     }
 
-    public void setList(List<UserAlbumVo> list, boolean isFlag) {
-        this.list = list;
-        this.isFlag = isFlag;
-    }
-
-    public AlbumUserLinearAdapter(Context mContext, RecyclerView mRecyclerView) {
+    public AlbumUserLinearAdapter(Context mContext,List<BaseAlbumUserVo> list) {
         this.mContext = mContext;
-        this.mRecyclerView = mRecyclerView;
+        this.list = list;
     }
 
-    public void setData(List<UserAlbumVo> more) {
+    public void addData(List<BaseAlbumUserVo> more) {
         list.addAll(more);
         notifyDataSetChanged();
         notifyItemChanged(list.size() - more.size());
@@ -65,9 +57,6 @@ public class AlbumUserLinearAdapter extends RecyclerView.Adapter<AlbumUserLinear
     @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        if (isFlag) {
-            setRecyclerViewHeight();
-        }
         UserAlbumVo userAlbumVo = list.get(position);
         holder.tvAuthor.setText(userAlbumVo.getAuthor());
         final String title = userAlbumVo.getTitle();
@@ -99,17 +88,6 @@ public class AlbumUserLinearAdapter extends RecyclerView.Adapter<AlbumUserLinear
         if (onItemClickListener != null) {
             onItemClickListener.play(bottomBarVo);
         }
-    }
-
-    private void setRecyclerViewHeight() {
-        if (isCalculationRvHeight || mRecyclerView == null) return;
-        isCalculationRvHeight = true;
-        RecyclerView.LayoutParams itemViewLp = (RecyclerView.LayoutParams) mItemView.getLayoutParams();
-        int itemCount = getItemCount();
-        int recyclerViewHeight = itemViewLp.height * itemCount;
-        LinearLayout.LayoutParams rvLp = (LinearLayout.LayoutParams) mRecyclerView.getLayoutParams();
-        rvLp.height = recyclerViewHeight;
-        mRecyclerView.setLayoutParams(rvLp);
     }
 
     @Override

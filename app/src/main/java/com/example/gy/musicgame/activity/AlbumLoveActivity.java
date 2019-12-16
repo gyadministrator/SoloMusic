@@ -6,9 +6,7 @@ import android.content.SharedPreferences;
 import android.view.View;
 import android.widget.LinearLayout;
 
-import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.blankj.utilcode.util.ToastUtils;
 import com.example.gy.musicgame.R;
@@ -50,7 +48,7 @@ public class AlbumLoveActivity extends BaseActivity implements OnItemClickListen
     private List<BaseAlbumLoveVo> list;
     private int loveSize = 0;
     private LinearLayout llNoData;
-    private boolean isRefresh=false;
+    private boolean isRefresh = false;
 
     @Override
     protected void initView() {
@@ -100,27 +98,32 @@ public class AlbumLoveActivity extends BaseActivity implements OnItemClickListen
                             if (list != null && list.size() > 0) {
                                 if (isLoad) {
                                     loveSize += list.size();
-                                    loveLinearAdapter.setData(list);
+                                    loveLinearAdapter.addData(list);
                                     recyclerView.loadMoreComplete();
                                 } else {
-                                    if (isRefresh) {
-                                        recyclerView.refreshComplete();
-                                    }
                                     loveSize = list.size();
                                     runOnUiThread(new Runnable() {
                                         @Override
                                         public void run() {
+                                            if (isRefresh) {
+                                                recyclerView.refreshComplete();
+                                            }
                                             setData(list);
                                         }
                                     });
                                 }
                             } else {
-                                if (!isLoad) {
-                                    llNoData.setVisibility(View.VISIBLE);
-                                    recyclerView.setVisibility(View.GONE);
-                                }else {
-                                    recyclerView.setNoMore(true);
-                                }
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        if (!isLoad) {
+                                            llNoData.setVisibility(View.VISIBLE);
+                                            recyclerView.setVisibility(View.GONE);
+                                        } else {
+                                            recyclerView.setNoMore(true);
+                                        }
+                                    }
+                                });
                             }
                         }
                         SharedPreferences preferences = mActivity.getSharedPreferences("myFragment", MODE_PRIVATE);
@@ -147,10 +150,8 @@ public class AlbumLoveActivity extends BaseActivity implements OnItemClickListen
     }
 
     private void setData(List<BaseAlbumLoveVo> list) {
-        loveLinearAdapter = new AlbumLoveLinearAdapter(mActivity, recyclerView);
-        loveLinearAdapter.setList(list, false);
+        loveLinearAdapter = new AlbumLoveLinearAdapter(mActivity, list);
         recyclerView.setLayoutManager(new LinearLayoutManager(mActivity));
-        recyclerView.addItemDecoration(new DividerItemDecoration(mActivity, RecyclerView.VERTICAL));
         recyclerView.setAdapter(loveLinearAdapter);
         loveLinearAdapter.setOnItemClickListener(this);
         recyclerView.setLoadingListener(this);
@@ -186,7 +187,7 @@ public class AlbumLoveActivity extends BaseActivity implements OnItemClickListen
     @Override
     public void onRefresh() {
         isLoad = false;
-        isRefresh=true;
+        isRefresh = true;
         currentPage = 1;
         getAlbumLove(false);
     }
