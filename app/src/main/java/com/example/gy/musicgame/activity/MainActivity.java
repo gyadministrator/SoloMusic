@@ -33,6 +33,7 @@ import com.example.gy.musicgame.view.BottomBarView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.hyphenate.chat.EMClient;
 import com.next.easynavigation.view.EasyNavigationBar;
 
 import java.lang.reflect.Type;
@@ -109,6 +110,15 @@ public class MainActivity extends BaseActivity {
         IntentFilter filter = new IntentFilter();
         filter.addAction("mainMusic");
         registerReceiver(musicReceiver, filter);
+
+        getUnreadMsg();
+    }
+
+    private void getUnreadMsg() {
+        int unreadMessageCount = EMClient.getInstance().chatManager().getUnreadMessageCount();
+        if (unreadMessageCount > 0) {
+            setMsgPoint(3, unreadMessageCount);
+        }
     }
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)

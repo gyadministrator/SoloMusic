@@ -49,13 +49,15 @@
         android:layout_height="0.2dp"
         android:layout_marginStart="@dimen/btn_height"
         android:layout_marginLeft="@dimen/btn_height"
-        android:background="@color/normal" />
+        android:background="@color/normal"
+        android:visibility="gone" />
 
     <LinearLayout
         android:id="@+id/ll_group"
         android:layout_width="match_parent"
         android:layout_height="@dimen/btn_height"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:visibility="gone">
 
         <ImageView
             android:layout_width="@dimen/icon_size"

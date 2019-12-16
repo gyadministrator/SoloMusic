@@ -19,5 +19,15 @@
         android:layout_height="wrap_content"
         android:divider="@color/normal"
         android:dividerHeight="0.2dp"
+        android:visibility="gone"
         android:scrollbars="none" />
+
+    <LinearLayout
+        android:id="@+id/ll_no_data"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="visible">
+
+        <include layout="@layout/empty_data" />
+    </LinearLayout>
 </LinearLayout>

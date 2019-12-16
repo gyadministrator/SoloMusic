@@ -1,35 +1,47 @@
 package com.example.gy.musicgame.fragment.info;
 
-import androidx.lifecycle.ViewModelProviders;
-
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
+import android.os.Build;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.LinearLayoutManager;
+
 import com.example.gy.musicgame.R;
+import com.example.gy.musicgame.activity.MainActivity;
 import com.example.gy.musicgame.adapter.InfoItemAdapter;
 import com.example.gy.musicgame.model.MsgVo;
+import com.hyphenate.chat.EMClient;
+import com.hyphenate.chat.EMConversation;
+import com.hyphenate.chat.EMMessage;
+import com.hyphenate.chat.EMTextMessageBody;
+import com.jcodecraeer.xrecyclerview.ProgressStyle;
+import com.jcodecraeer.xrecyclerview.XRecyclerView;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
-public class MessageFragment extends Fragment {
+public class MessageFragment extends Fragment implements XRecyclerView.LoadingListener, InfoItemAdapter.OnInfoItemListener {
 
     private MessageViewModel mViewModel;
     private Activity mActivity;
     private TextView tvNoInfo;
-    private ListView listView;
     private InfoItemAdapter itemAdapter;
+    private XRecyclerView recyclerView;
+    private boolean isLoad = false;
 
     public static MessageFragment newInstance() {
         return new MessageFragment();
@@ -52,15 +64,40 @@ public class MessageFragment extends Fragment {
     }
 
     private void initAction() {
-        getMessageList();
+        mActivity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                getMessageList();
+            }
+        });
     }
 
     private void getMessageList() {
         List<MsgVo> list = new ArrayList<>();
-        list.add(new MsgVo("", "jack", "你好", "11:25"));
-        list.add(new MsgVo("", "王菲", "你好！！！", "13:25"));
-        itemAdapter = new InfoItemAdapter(list, mActivity);
-        listView.setAdapter(itemAdapter);
+        Map<String, EMConversation> conversations = EMClient.getInstance().chatManager().getAllConversations();
+        for (Map.Entry<String, EMConversation> m : conversations.entrySet()) {
+            String key = m.getKey();
+            EMConversation conversation = m.getValue();
+            List<EMMessage> allMessages = conversation.getAllMessages();
+            for (EMMessage message : allMessages) {
+                @SuppressLint("SimpleDateFormat") SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                String time = sdf.format(new Date(message.getMsgTime()));
+                MsgVo msgVo = new MsgVo("", message.getUserName(), ((EMTextMessageBody) message.getBody()).getMessage(), time);
+                list.add(msgVo);
+            }
+        }
+        recyclerView.refreshComplete();
+        if (list.size() == 0) {
+            tvNoInfo.setVisibility(View.VISIBLE);
+            recyclerView.setVisibility(View.GONE);
+        } else {
+            tvNoInfo.setVisibility(View.GONE);
+            recyclerView.setVisibility(View.VISIBLE);
+            itemAdapter = new InfoItemAdapter(list, mActivity);
+            recyclerView.setAdapter(itemAdapter);
+
+            itemAdapter.setItemListener(this);
+        }
     }
 
     private void initData() {
@@ -69,7 +106,12 @@ public class MessageFragment extends Fragment {
 
     private void initView(View view) {
         tvNoInfo = view.findViewById(R.id.tv_no_info);
-        listView = view.findViewById(R.id.listView);
+        recyclerView = view.findViewById(R.id.rv_linear);
+        recyclerView.setRefreshProgressStyle(ProgressStyle.BallSpinFadeLoader);
+        recyclerView.setLoadingMoreProgressStyle(ProgressStyle.Pacman);
+        recyclerView.setLayoutManager(new LinearLayoutManager(mActivity));
+        recyclerView.setLoadingMoreEnabled(false);
+        recyclerView.setLoadingListener(this);
     }
 
     @Override
@@ -79,4 +121,20 @@ public class MessageFragment extends Fragment {
         // TODO: Use the ViewModel
     }
 
+    @Override
+    public void onRefresh() {
+        isLoad = false;
+        initAction();
+    }
+
+    @Override
+    public void onLoadMore() {
+        isLoad = true;
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
+    @Override
+    public void onItemClick(int position) {
+        ((MainActivity) mActivity).clearMsgPoint(3);
+    }
 }

@@ -16,11 +16,9 @@
         android:visibility="gone"
         tools:ignore="HardcodedText" />
 
-    <ListView
-        android:id="@+id/listView"
+    <com.jcodecraeer.xrecyclerview.XRecyclerView
+        android:id="@+id/rv_linear"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:divider="@color/transparent"
-        android:scrollbars="none" />
+        android:layout_height="match_parent" />
 
 </FrameLayout>
