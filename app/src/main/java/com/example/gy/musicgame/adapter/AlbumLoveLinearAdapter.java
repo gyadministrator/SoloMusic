@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.gy.musicgame.R;
 import com.example.gy.musicgame.listener.OnItemClickListener;
+import com.example.gy.musicgame.model.BaseAlbumLoveVo;
 import com.example.gy.musicgame.model.BottomBarVo;
 import com.example.gy.musicgame.model.LoveAlbumVo;
 import com.example.gy.musicgame.model.UserAlbumVo;
@@ -32,7 +33,7 @@ public class AlbumLoveLinearAdapter extends RecyclerView.Adapter<AlbumLoveLinear
     private View mItemView;
     private RecyclerView mRecyclerView;
     private boolean isCalculationRvHeight;
-    private List<LoveAlbumVo> list;
+    private List<BaseAlbumLoveVo> list;
     private boolean isFlag;
     private OnItemClickListener onItemClickListener;
 
@@ -40,7 +41,7 @@ public class AlbumLoveLinearAdapter extends RecyclerView.Adapter<AlbumLoveLinear
         this.onItemClickListener = onItemClickListener;
     }
 
-    public void setList(List<LoveAlbumVo> list, boolean isFlag) {
+    public void setList(List<BaseAlbumLoveVo> list, boolean isFlag) {
         this.list = list;
         this.isFlag = isFlag;
     }
@@ -50,7 +51,7 @@ public class AlbumLoveLinearAdapter extends RecyclerView.Adapter<AlbumLoveLinear
         this.mRecyclerView = mRecyclerView;
     }
 
-    public void setData(List<LoveAlbumVo> more) {
+    public void setData(List<BaseAlbumLoveVo> more) {
         list.addAll(more);
         notifyDataSetChanged();
         notifyItemChanged(list.size() - more.size());

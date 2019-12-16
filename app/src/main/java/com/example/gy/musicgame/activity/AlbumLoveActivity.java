@@ -3,8 +3,11 @@ package com.example.gy.musicgame.activity;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.view.View;
+import android.widget.LinearLayout;
 
-import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.blankj.utilcode.util.ToastUtils;
@@ -14,13 +17,19 @@ import com.example.gy.musicgame.api.Api;
 import com.example.gy.musicgame.constant.Constants;
 import com.example.gy.musicgame.helper.LoadingDialogHelper;
 import com.example.gy.musicgame.helper.RetrofitHelper;
+import com.example.gy.musicgame.listener.OnItemClickListener;
+import com.example.gy.musicgame.model.BaseAlbumLoveVo;
+import com.example.gy.musicgame.model.BottomBarVo;
 import com.example.gy.musicgame.utils.HandlerUtils;
+import com.example.gy.musicgame.utils.MusicUtils;
 import com.example.gy.musicgame.view.TitleView;
-import com.scwang.smartrefresh.layout.SmartRefreshLayout;
-import com.scwang.smartrefresh.layout.api.RefreshLayout;
-import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener;
-import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import com.jcodecraeer.xrecyclerview.ProgressStyle;
+import com.jcodecraeer.xrecyclerview.XRecyclerView;
 
+import java.lang.reflect.Type;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -30,35 +39,37 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
-public class AlbumLoveActivity extends BaseActivity implements OnLoadMoreListener, OnRefreshListener {
+public class AlbumLoveActivity extends BaseActivity implements OnItemClickListener, XRecyclerView.LoadingListener {
     private TitleView titleView;
-    private SmartRefreshLayout refreshLayout;
-    private RecyclerView recyclerView;
+    private XRecyclerView recyclerView;
     private AlbumLoveLinearAdapter loveLinearAdapter;
     private boolean isLoad = false;
     private String token;
     private Integer currentPage = 1;
     private Integer pageSize = 20;
+    private List<BaseAlbumLoveVo> list;
+    private int loveSize = 0;
+    private LinearLayout llNoData;
+    private boolean isRefresh=false;
 
     @Override
     protected void initView() {
         titleView = fd(R.id.titleView);
-        refreshLayout = fd(R.id.refreshLayout);
         recyclerView = fd(R.id.rv_linear);
+        llNoData = fd(R.id.ll_no_data);
 
-        refreshLayout.setOnLoadMoreListener(this);
-        refreshLayout.setOnRefreshListener(this);
+        recyclerView.setRefreshProgressStyle(ProgressStyle.BallSpinFadeLoader);
+        recyclerView.setLoadingMoreProgressStyle(ProgressStyle.Pacman);
     }
 
     @Override
     protected void initData() {
         Intent intent = getIntent();
         token = intent.getStringExtra("token");
-        titleView.setTitle(getResources().getString(R.string.my_love));
     }
 
     public static void startActivity(Activity activity, String token) {
-        Intent intent = new Intent(activity, SongAlbumActivity.class);
+        Intent intent = new Intent(activity, AlbumLoveActivity.class);
         intent.putExtra("token", token);
         activity.startActivity(intent);
     }
@@ -81,11 +92,40 @@ public class AlbumLoveActivity extends BaseActivity implements OnLoadMoreListene
                     public void onNext(Map map) {
                         boolean handler = HandlerUtils.isHandler(map, mActivity);
                         if (!handler) {
-
+                            Gson gson = new Gson();
+                            String json = gson.toJson(map.get("data"));
+                            Type type = new TypeToken<List<BaseAlbumLoveVo>>() {
+                            }.getType();
+                            list = gson.fromJson(json, type);
+                            if (list != null && list.size() > 0) {
+                                if (isLoad) {
+                                    loveSize += list.size();
+                                    loveLinearAdapter.setData(list);
+                                    recyclerView.loadMoreComplete();
+                                } else {
+                                    if (isRefresh) {
+                                        recyclerView.refreshComplete();
+                                    }
+                                    loveSize = list.size();
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            setData(list);
+                                        }
+                                    });
+                                }
+                            } else {
+                                if (!isLoad) {
+                                    llNoData.setVisibility(View.VISIBLE);
+                                    recyclerView.setVisibility(View.GONE);
+                                }else {
+                                    recyclerView.setNoMore(true);
+                                }
+                            }
                         }
                         SharedPreferences preferences = mActivity.getSharedPreferences("myFragment", MODE_PRIVATE);
                         SharedPreferences.Editor edit = preferences.edit();
-                        edit.putInt("loveAlbum", 0);
+                        edit.putInt("loveAlbum", loveSize);
                         edit.apply();
                     }
 
@@ -106,6 +146,16 @@ public class AlbumLoveActivity extends BaseActivity implements OnLoadMoreListene
                 });
     }
 
+    private void setData(List<BaseAlbumLoveVo> list) {
+        loveLinearAdapter = new AlbumLoveLinearAdapter(mActivity, recyclerView);
+        loveLinearAdapter.setList(list, false);
+        recyclerView.setLayoutManager(new LinearLayoutManager(mActivity));
+        recyclerView.addItemDecoration(new DividerItemDecoration(mActivity, RecyclerView.VERTICAL));
+        recyclerView.setAdapter(loveLinearAdapter);
+        loveLinearAdapter.setOnItemClickListener(this);
+        recyclerView.setLoadingListener(this);
+    }
+
     @Override
     protected void initAction() {
         getAlbumLove(true);
@@ -117,16 +167,34 @@ public class AlbumLoveActivity extends BaseActivity implements OnLoadMoreListene
     }
 
     @Override
-    public void onLoadMore(@NonNull RefreshLayout refreshLayout) {
-        isLoad = true;
-        currentPage += 1;
+    public void play(BottomBarVo bottomBarVo) {
+        if (bottomBarVo != null) {
+            MusicUtils.play(bottomBarVo.getPath(), mActivity, new MusicUtils.IMusicListener() {
+                @Override
+                public void success() {
+
+                }
+
+                @Override
+                public void error(String msg) {
+                    ToastUtils.showShort(msg);
+                }
+            });
+        }
+    }
+
+    @Override
+    public void onRefresh() {
+        isLoad = false;
+        isRefresh=true;
+        currentPage = 1;
         getAlbumLove(false);
     }
 
     @Override
-    public void onRefresh(@NonNull RefreshLayout refreshLayout) {
-        isLoad = false;
-        currentPage = 1;
+    public void onLoadMore() {
+        isLoad = true;
+        currentPage += 1;
         getAlbumLove(false);
     }
 }
