@@ -1,30 +1,25 @@
 package com.example.gy.musicgame.fragment.info;
 
-import androidx.annotation.RequiresApi;
-import androidx.lifecycle.ViewModelProviders;
-
 import android.app.Activity;
 import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ListView;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.blankj.utilcode.util.ToastUtils;
 import com.example.gy.musicgame.R;
 import com.example.gy.musicgame.activity.LoginActivity;
-import com.example.gy.musicgame.activity.NoticeDetailActivity;
-import com.example.gy.musicgame.activity.WebActivity;
 import com.example.gy.musicgame.adapter.NoticeItemAdapter;
 import com.example.gy.musicgame.api.Api;
 import com.example.gy.musicgame.constant.Constants;
@@ -34,10 +29,8 @@ import com.example.gy.musicgame.utils.HandlerUtils;
 import com.example.gy.musicgame.utils.SharedPreferenceUtil;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.scwang.smartrefresh.layout.SmartRefreshLayout;
-import com.scwang.smartrefresh.layout.api.RefreshLayout;
-import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
-import com.scwang.smartrefresh.layout.listener.OnRefreshLoadMoreListener;
+import com.jcodecraeer.xrecyclerview.ProgressStyle;
+import com.jcodecraeer.xrecyclerview.XRecyclerView;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -51,18 +44,17 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
-public class NoticeFragment extends Fragment implements AdapterView.OnItemClickListener, OnRefreshListener, OnRefreshLoadMoreListener {
+public class NoticeFragment extends Fragment implements XRecyclerView.LoadingListener {
 
     private NoticeViewModel mViewModel;
     private Activity mActivity;
-    private ListView listView;
     private TextView tvNotice;
     private NoticeItemAdapter itemAdapter;
     private List<NoticeVo> list = new ArrayList<>();
     private int currentPage = 1;
     private int pageSize = 20;
-    private SmartRefreshLayout refreshLayout;
     private boolean isLoadMore;
+    private XRecyclerView recyclerView;
 
     public static NoticeFragment newInstance() {
         return new NoticeFragment();
@@ -90,7 +82,7 @@ public class NoticeFragment extends Fragment implements AdapterView.OnItemClickL
 
     private void getNoticeList() {
         SharedPreferenceUtil preferenceUtil = new SharedPreferenceUtil();
-        String token = (String) preferenceUtil.getObject(mActivity, Constants.CURRENT_TOKEN);
+        String token = preferenceUtil.getObject(mActivity, Constants.CURRENT_TOKEN);
         if (TextUtils.isEmpty(token)) {
             LoginActivity.startActivity(mActivity);
         } else {
@@ -117,13 +109,25 @@ public class NoticeFragment extends Fragment implements AdapterView.OnItemClickL
                             String json = gson.toJson(map.get("data"));
                             Type type = new TypeToken<List<NoticeVo>>() {
                             }.getType();
-                            list = gson.fromJson(json, type);
-
-                            if (isLoadMore) {
-                                itemAdapter.addData(list);
-                            } else {
-                                setData(list);
-                            }
+                            mActivity.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    if (!isLoadMore) {
+                                        list = gson.fromJson(json, type);
+                                        recyclerView.refreshComplete();
+                                    }
+                                    if (isLoadMore) {
+                                        recyclerView.loadMoreComplete();
+                                        List<NoticeVo> list = gson.fromJson(json, type);
+                                        itemAdapter.addData(list);
+                                        if (list == null || list.size() == 0) {
+                                            recyclerView.setNoMore(true);
+                                        }
+                                    } else {
+                                        setData(list);
+                                    }
+                                }
+                            });
                         }
                     }
 
@@ -131,14 +135,10 @@ public class NoticeFragment extends Fragment implements AdapterView.OnItemClickL
                     @Override
                     public void onError(Throwable e) {
                         ToastUtils.showShort(Objects.requireNonNull(e.getMessage()));
-                        refreshLayout.finishRefresh(false);
-                        refreshLayout.finishLoadMore(false);
                     }
 
                     @Override
                     public void onComplete() {
-                        refreshLayout.finishRefresh(1500);
-                        refreshLayout.finishLoadMore(1500);
                     }
                 });
     }
@@ -146,8 +146,7 @@ public class NoticeFragment extends Fragment implements AdapterView.OnItemClickL
     private void setData(List<NoticeVo> list) {
         if (list == null || list.size() == 0) tvNotice.setVisibility(View.VISIBLE);
         itemAdapter = new NoticeItemAdapter(list, mActivity);
-        listView.setAdapter(itemAdapter);
-        listView.setOnItemClickListener(this);
+        recyclerView.setAdapter(itemAdapter);
     }
 
     private void initData() {
@@ -156,10 +155,11 @@ public class NoticeFragment extends Fragment implements AdapterView.OnItemClickL
 
     private void initView(View view) {
         tvNotice = view.findViewById(R.id.tv_notice);
-        listView = view.findViewById(R.id.listView);
-        refreshLayout = view.findViewById(R.id.refreshLayout);
-        refreshLayout.setOnRefreshListener(this);
-        refreshLayout.setOnRefreshLoadMoreListener(this);
+        recyclerView = view.findViewById(R.id.rv_linear);
+        recyclerView.setRefreshProgressStyle(ProgressStyle.BallSpinFadeLoader);
+        recyclerView.setLoadingMoreProgressStyle(ProgressStyle.Pacman);
+        recyclerView.setLayoutManager(new LinearLayoutManager(mActivity));
+        recyclerView.setLoadingListener(this);
     }
 
     @Override
@@ -170,24 +170,14 @@ public class NoticeFragment extends Fragment implements AdapterView.OnItemClickL
     }
 
     @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        NoticeVo noticeVo = list.get(position);
-        if (TextUtils.isEmpty(noticeVo.getUrl())) {
-            NoticeDetailActivity.startActivity(mActivity, noticeVo.getId());
-        } else {
-            WebActivity.startActivity(mActivity, noticeVo.getUrl());
-        }
-    }
-
-    @Override
-    public void onRefresh(@NonNull RefreshLayout refreshLayout) {
+    public void onRefresh() {
         currentPage = 1;
         getNoticeList();
         isLoadMore = false;
     }
 
     @Override
-    public void onLoadMore(@NonNull RefreshLayout refreshLayout) {
+    public void onLoadMore() {
         currentPage += 1;
         isLoadMore = true;
         getNoticeList();

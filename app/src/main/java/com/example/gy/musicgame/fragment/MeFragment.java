@@ -21,7 +21,9 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.blankj.utilcode.util.ToastUtils;
 import com.bumptech.glide.Glide;
@@ -164,7 +166,9 @@ public class MeFragment extends Fragment implements View.OnClickListener, XRecyc
                             String json = gson.toJson(map.get("data"));
                             Type type = new TypeToken<List<AlbumVo>>() {
                             }.getType();
-                            albumVoList = gson.fromJson(json, type);
+                            if (!isLoad) {
+                                albumVoList = gson.fromJson(json, type);
+                            }
                             mActivity.runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
@@ -174,7 +178,11 @@ public class MeFragment extends Fragment implements View.OnClickListener, XRecyc
                                         if (isLoad) {
                                             recyclerView.loadMoreComplete();
                                             albumSize += albumVoList.size();
-                                            itemAdapter.addLoad(albumVoList);
+                                            List<AlbumVo> list = gson.fromJson(json, type);
+                                            itemAdapter.addLoad(list);
+                                            if (list == null || list.size() == 0) {
+                                                recyclerView.setNoMore(true);
+                                            }
                                         } else {
                                             recyclerView.refreshComplete();
                                             setAlbumData(albumVoList);
@@ -635,7 +643,6 @@ public class MeFragment extends Fragment implements View.OnClickListener, XRecyc
     public void onRefresh() {
         isLoad = false;
         currentPage = 1;
-        albumVoList.clear();
         getAlbumList(token);
     }
 

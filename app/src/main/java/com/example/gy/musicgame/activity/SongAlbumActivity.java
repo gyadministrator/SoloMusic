@@ -46,7 +46,7 @@ public class SongAlbumActivity extends BaseActivity implements XRecyclerView.Loa
     private Integer currentPage = 1;
     private Integer pageSize = 20;
     private String album;
-    private boolean isRefresh=false;
+    private boolean isRefresh = false;
     private List<BaseAlbumUserVo> list;
     private LinearLayout llNoData;
 
@@ -172,7 +172,7 @@ public class SongAlbumActivity extends BaseActivity implements XRecyclerView.Loa
     @Override
     public void onRefresh() {
         isLoad = false;
-        isRefresh=true;
+        isRefresh = true;
         currentPage = 1;
         getAlbumUser(false);
     }
