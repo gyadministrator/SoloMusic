@@ -2,12 +2,14 @@ package com.example.gy.musicgame.activity;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Build;
 import android.view.KeyEvent;
 import android.view.View;
 import android.webkit.WebView;
 import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 
 import com.example.gy.musicgame.R;
 import com.example.gy.musicgame.helper.LoadingDialogHelper;
@@ -73,11 +75,14 @@ public class WebActivity extends BaseActivity implements OnRefreshListener {
         return R.layout.activity_web;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (agentWeb == null) return super.onKeyDown(keyCode, event);
-        if (agentWeb.handleKeyEvent(keyCode, event)) {
-            return true;
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            if (agentWeb == null) return super.onKeyDown(keyCode, event);
+            if (agentWeb.handleKeyEvent(keyCode, event)) {
+                return true;
+            }
         }
         return super.onKeyDown(keyCode, event);
     }

@@ -97,6 +97,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
@@ -241,8 +242,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
         @Override
         public void onClick(@NonNull View view) {
-            ToastUtils.showShort("用户协议");
-            WebActivity.startActivity(mActivity, "http://www.baidu.com/");
+            WebActivity.startActivity(mActivity, "file:///android_asset/userProtocol.html");
         }
     }
 
@@ -258,7 +258,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
         @Override
         public void onClick(@NonNull View view) {
-            ToastUtils.showShort("隐私政策");
+           WebActivity.startActivity(mActivity,"file:///android_asset/userSecret.html");
         }
     }
 
