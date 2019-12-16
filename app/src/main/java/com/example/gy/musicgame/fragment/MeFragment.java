@@ -11,11 +11,9 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -23,6 +21,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.blankj.utilcode.util.ToastUtils;
 import com.bumptech.glide.Glide;
@@ -33,7 +32,7 @@ import com.example.gy.musicgame.activity.CodeActivity;
 import com.example.gy.musicgame.activity.LocalMusicActivity;
 import com.example.gy.musicgame.activity.SettingActivity;
 import com.example.gy.musicgame.activity.SongAlbumActivity;
-import com.example.gy.musicgame.adapter.AlbumItemAdapter;
+import com.example.gy.musicgame.adapter.AlbumRecyclerItemAdapter;
 import com.example.gy.musicgame.api.Api;
 import com.example.gy.musicgame.constant.Constants;
 import com.example.gy.musicgame.helper.DialogHelper;
@@ -47,20 +46,17 @@ import com.example.gy.musicgame.utils.HandlerUtils;
 import com.example.gy.musicgame.utils.LogUtils;
 import com.example.gy.musicgame.utils.SharedPreferenceUtil;
 import com.example.gy.musicgame.utils.UserManager;
-import com.example.gy.musicgame.utils.Utility;
 import com.example.gy.musicgame.view.GlideImageLoader;
 import com.example.gy.musicgame.view.TitleView;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.hb.dialog.dialog.ConfirmDialog;
+import com.jcodecraeer.xrecyclerview.ProgressStyle;
+import com.jcodecraeer.xrecyclerview.XRecyclerView;
 import com.lzy.imagepicker.ImagePicker;
 import com.lzy.imagepicker.bean.ImageItem;
 import com.lzy.imagepicker.ui.ImageGridActivity;
 import com.lzy.imagepicker.view.CropImageView;
-import com.scwang.smartrefresh.layout.SmartRefreshLayout;
-import com.scwang.smartrefresh.layout.api.RefreshLayout;
-import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener;
-import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
 import java.io.File;
 import java.lang.reflect.Type;
@@ -81,7 +77,7 @@ import okhttp3.RequestBody;
 
 import static android.content.Context.MODE_PRIVATE;
 
-public class MeFragment extends Fragment implements View.OnClickListener, AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener, OnRefreshListener, OnLoadMoreListener {
+public class MeFragment extends Fragment implements View.OnClickListener, XRecyclerView.LoadingListener, AlbumRecyclerItemAdapter.OnAlbumItemListener {
     private MeViewModel mViewModel;
     private Activity mActivity;
     private CircleImageView ivUser;
@@ -96,11 +92,11 @@ public class MeFragment extends Fragment implements View.OnClickListener, Adapte
     private TextView tvLocalMusic;
     private ImageView ivAdd;
     private TextView tvNoData;
-    private ListView listView;
+    private XRecyclerView recyclerView;
     private int currentPage = 1;
     private int PageSize = 20;
     private List<AlbumVo> albumVoList = new ArrayList<>();
-    private AlbumItemAdapter itemAdapter;
+    private AlbumRecyclerItemAdapter itemAdapter;
     private boolean isAlbum = false;
     private String albumPath;
     private ImageView albumIcon;
@@ -108,7 +104,6 @@ public class MeFragment extends Fragment implements View.OnClickListener, Adapte
     private TextView tvLoveNum;
     private LinearLayout llLove;
     private boolean isLoad = false;
-    private SmartRefreshLayout refreshLayout;
     private int albumSize = 0;
 
     public static MeFragment newInstance() {
@@ -163,8 +158,6 @@ public class MeFragment extends Fragment implements View.OnClickListener, Adapte
                     @SuppressLint("SetTextI18n")
                     @Override
                     public void onNext(Map map) {
-                        refreshLayout.finishLoadMore(1500);
-                        refreshLayout.finishRefresh(1500);
                         boolean handler = HandlerUtils.isHandler(map, mActivity);
                         if (!handler) {
                             Gson gson = new Gson();
@@ -172,23 +165,32 @@ public class MeFragment extends Fragment implements View.OnClickListener, Adapte
                             Type type = new TypeToken<List<AlbumVo>>() {
                             }.getType();
                             albumVoList = gson.fromJson(json, type);
-                            if (albumVoList != null && albumVoList.size() > 0) {
-                                albumSize = albumVoList.size();
-                                tvAlbumTitle.setText("我的歌单(" + albumSize + ")");
-                                if (isLoad) {
-                                    albumSize += albumVoList.size();
-                                    itemAdapter.addLoad(albumVoList);
-                                } else {
-                                    setAlbumData(albumVoList);
+                            mActivity.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    if (albumVoList != null && albumVoList.size() > 0) {
+                                        albumSize = albumVoList.size();
+                                        tvAlbumTitle.setText("我的歌单(" + albumSize + ")");
+                                        if (isLoad) {
+                                            recyclerView.loadMoreComplete();
+                                            albumSize += albumVoList.size();
+                                            itemAdapter.addLoad(albumVoList);
+                                        } else {
+                                            recyclerView.refreshComplete();
+                                            setAlbumData(albumVoList);
+                                        }
+                                    } else {
+                                        if (isLoad) {
+                                            recyclerView.setNoMore(true);
+                                        }
+                                    }
                                 }
-                            }
+                            });
                         }
                     }
 
                     @Override
                     public void onError(Throwable e) {
-                        refreshLayout.finishLoadMore(false);
-                        refreshLayout.finishRefresh(false);
                         ToastUtils.showShort(Objects.requireNonNull(e.getMessage()));
                     }
 
@@ -202,18 +204,18 @@ public class MeFragment extends Fragment implements View.OnClickListener, Adapte
     private void setAlbumData(List<AlbumVo> albumVoList) {
         if (albumVoList == null || albumVoList.size() == 0) {
             tvNoData.setVisibility(View.VISIBLE);
-            listView.setVisibility(View.GONE);
+            recyclerView.setVisibility(View.GONE);
             return;
         }
         //设置adapter
         tvNoData.setVisibility(View.GONE);
-        listView.setVisibility(View.VISIBLE);
-        itemAdapter = new AlbumItemAdapter(albumVoList, mActivity);
-        listView.setAdapter(itemAdapter);
-        //重新计算ListView的高度
-        Utility.setListViewHeightBasedOnChildren(listView);
-        listView.setOnItemClickListener(this);
-        listView.setOnItemLongClickListener(this);
+        recyclerView.setVisibility(View.VISIBLE);
+        recyclerView.setRefreshProgressStyle(ProgressStyle.BallSpinFadeLoader);
+        recyclerView.setLoadingMoreProgressStyle(ProgressStyle.Pacman);
+        recyclerView.setLayoutManager(new LinearLayoutManager(mActivity));
+        itemAdapter = new AlbumRecyclerItemAdapter(albumVoList, mActivity);
+        recyclerView.setAdapter(itemAdapter);
+        itemAdapter.setOnAlbumItemListener(this);
     }
 
 
@@ -280,18 +282,16 @@ public class MeFragment extends Fragment implements View.OnClickListener, Adapte
         tvLoveNum = view.findViewById(R.id.tv_love_num);
         llLove = view.findViewById(R.id.ll_love);
         tvAlbumTitle = view.findViewById(R.id.tv_album_title);
-        refreshLayout = view.findViewById(R.id.refreshLayout);
         ImageView iv_refresh = view.findViewById(R.id.iv_refresh);
         titleView = view.findViewById(R.id.titleView);
         llLocalMusic = view.findViewById(R.id.ll_local_music);
         tvLocalMusic = view.findViewById(R.id.tv_local_music);
         tvNoData = view.findViewById(R.id.tv_no_data);
-        listView = view.findViewById(R.id.listView);
+        recyclerView = view.findViewById(R.id.rv_linear);
         ivAdd = view.findViewById(R.id.iv_add);
         ivAdd.setOnClickListener(this);
         llLocalMusic.setOnClickListener(this);
-        refreshLayout.setOnRefreshListener(this);
-        refreshLayout.setOnLoadMoreListener(this);
+        recyclerView.setLoadingListener(this);
         titleView.setRightClickListener(new TitleView.OnRightClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
             @Override
@@ -584,23 +584,6 @@ public class MeFragment extends Fragment implements View.OnClickListener, Adapte
                 });
     }
 
-    @Override
-    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-        if (albumVoList != null && albumVoList.size() > 0) {
-            AlbumVo albumVo = albumVoList.get(i);
-            SongAlbumActivity.startActivity(mActivity, token, albumVo.getId(), albumVo.getAlbum());
-        }
-    }
-
-    @Override
-    public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
-        if (albumVoList != null && albumVoList.size() > 0) {
-            AlbumVo albumVo = albumVoList.get(i);
-            deleteAlbum(albumVo.getId());
-        }
-        return true;
-    }
-
     private void deleteAlbum(Integer id) {
         List<String> items = new ArrayList<>();
         items.add("删除歌单");
@@ -649,7 +632,7 @@ public class MeFragment extends Fragment implements View.OnClickListener, Adapte
     }
 
     @Override
-    public void onRefresh(@NonNull RefreshLayout refreshLayout) {
+    public void onRefresh() {
         isLoad = false;
         currentPage = 1;
         albumVoList.clear();
@@ -657,9 +640,25 @@ public class MeFragment extends Fragment implements View.OnClickListener, Adapte
     }
 
     @Override
-    public void onLoadMore(@NonNull RefreshLayout refreshLayout) {
+    public void onLoadMore() {
         isLoad = true;
         currentPage += 1;
         getAlbumList(token);
+    }
+
+    @Override
+    public void onItemClick(int position) {
+        if (albumVoList != null && albumVoList.size() > 0) {
+            AlbumVo albumVo = albumVoList.get(position);
+            SongAlbumActivity.startActivity(mActivity, token, albumVo.getId(), albumVo.getAlbum());
+        }
+    }
+
+    @Override
+    public void onItemLongClick(int position) {
+        if (albumVoList != null && albumVoList.size() > 0) {
+            AlbumVo albumVo = albumVoList.get(position);
+            deleteAlbum(albumVo.getId());
+        }
     }
 }

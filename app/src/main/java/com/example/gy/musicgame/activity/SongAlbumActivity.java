@@ -22,6 +22,7 @@ import com.example.gy.musicgame.utils.MusicUtils;
 import com.example.gy.musicgame.view.TitleView;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.jcodecraeer.xrecyclerview.ProgressStyle;
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
 
 import java.lang.reflect.Type;
@@ -153,6 +154,8 @@ public class SongAlbumActivity extends BaseActivity implements XRecyclerView.Loa
 
     private void setData(List<BaseAlbumUserVo> list) {
         userLinearAdapter = new AlbumUserLinearAdapter(mActivity, list);
+        recyclerView.setRefreshProgressStyle(ProgressStyle.BallSpinFadeLoader);
+        recyclerView.setLoadingMoreProgressStyle(ProgressStyle.Pacman);
         recyclerView.setLayoutManager(new LinearLayoutManager(mActivity));
         recyclerView.setAdapter(userLinearAdapter);
         userLinearAdapter.setOnItemClickListener(this);
