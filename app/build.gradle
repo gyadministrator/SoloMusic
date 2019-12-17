@@ -182,4 +182,6 @@ dependencies {
     implementation 'com.jakewharton:butterknife:10.0.0'
     annotationProcessor 'com.jakewharton:butterknife-compiler:10.0.0'
     implementation 'com.jude:easyrecyclerview:4.2.3'
+    //高亮引导
+    implementation 'com.isanwenyu.highlight:highlight:1.8.0'
 }

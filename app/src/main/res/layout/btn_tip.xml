@@ -10,6 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="点击此按钮，可切换显示音乐的播放底部栏展示"
+        android:textColor="@color/white"
         android:textSize="@dimen/btn_size"
         tools:ignore="HardcodedText" />
 </LinearLayout>

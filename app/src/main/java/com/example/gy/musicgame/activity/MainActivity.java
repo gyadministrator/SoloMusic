@@ -5,8 +5,10 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.graphics.RectF;
 import android.os.Build;
 import android.view.View;
 import android.view.animation.Animation;
@@ -40,6 +42,12 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
+import zhy.com.highlight.HighLight;
+import zhy.com.highlight.interfaces.HighLightInterface;
+import zhy.com.highlight.position.OnBottomPosCallback;
+import zhy.com.highlight.shape.CircleLightShape;
+import zhy.com.highlight.shape.RectLightShape;
+
 @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
 public class MainActivity extends BaseActivity {
     private static final int REQUEST_CODE = 1002;
@@ -57,6 +65,8 @@ public class MainActivity extends BaseActivity {
     private final String[] PERMISSIONS = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE
             , Manifest.permission.CAMERA};
     private Animation showAnimation, hideAnimation;
+    private SharedPreferences preferences;
+    private HighLight mHighLight;
 
     @Override
     protected void initView() {
@@ -110,8 +120,55 @@ public class MainActivity extends BaseActivity {
         IntentFilter filter = new IntentFilter();
         filter.addAction("mainMusic");
         registerReceiver(musicReceiver, filter);
-
         getUnreadMsg();
+        showTip();
+    }
+
+    /**
+     * 显示提示
+     */
+    private void showTip() {
+        preferences = getPreferences(Context.MODE_PRIVATE);
+        boolean isShowTip = preferences.getBoolean("isShowTip", true);
+        if (isShowTip) {
+            showNextTipViewOnCreated();
+            SharedPreferences.Editor edit = preferences.edit();
+            edit.putBoolean("isShowTip", false);
+            edit.apply();
+        }
+    }
+
+    /**
+     * 当界面布局完成显示next模式提示布局
+     * 显示方法必须在onLayout中调用
+     * 适用于Activity及Fragment中使用
+     * 可以直接在onCreated方法中调用
+     */
+    public void showNextTipViewOnCreated() {
+        mHighLight = new HighLight(mActivity)
+                .autoRemove(false)
+                .enableNext()
+                .setOnLayoutCallback(new HighLightInterface.OnLayoutCallback() {
+                    @Override
+                    public void onLayouted() {
+                        //mAnchor界面布局完成添加tipView
+                        mHighLight.addHighLight(R.id.float_btn, R.layout.btn_tip, new OnBottomPosCallback() {
+                            @Override
+                            public void getPosition(float rightMargin, float bottomMargin, RectF rectF, HighLight.MarginInfo marginInfo) {
+                                marginInfo.rightMargin = rectF.width() - 2 * rectF.right / 7;
+                                marginInfo.bottomMargin = bottomMargin + rectF.height();
+                            }
+                        }, new CircleLightShape(0, 0, 20));
+                        //然后显示高亮布局
+                        mHighLight.show();
+                    }
+                })
+                .setClickCallback(new HighLight.OnClickCallback() {
+                    @Override
+                    public void onClick() {
+                        mHighLight.next();
+                    }
+                });
     }
 
     private void getUnreadMsg() {
