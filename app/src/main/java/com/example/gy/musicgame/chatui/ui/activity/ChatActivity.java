@@ -118,7 +118,7 @@ public class ChatActivity extends BaseActivity {
         IntentFilter filter = new IntentFilter();
         filter.addAction("accept_message");
         registerReceiver(messageReceiver, filter);
-        getRecoredMessage(username);
+        getRecordMessage(username);
     }
 
     @Override
@@ -154,7 +154,7 @@ public class ChatActivity extends BaseActivity {
         return R.layout.activity_chat_main;
     }
 
-    private void getRecoredMessage(final String username) {
+    private void getRecordMessage(final String username) {
         new Thread(new Runnable() {
             @Override
             public void run() {
