@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.blankj.utilcode.util.ToastUtils;
 import com.example.gy.musicgame.R;
 import com.example.gy.musicgame.adapter.LocalMusicLinearAdapter;
+import com.example.gy.musicgame.dao.BottomBarDao;
 import com.example.gy.musicgame.listener.OnItemClickListener;
 import com.example.gy.musicgame.model.BottomBarVo;
 import com.example.gy.musicgame.model.LocalMusicModel;
@@ -64,7 +65,11 @@ public class LocalMusicActivity extends BaseActivity implements OnRefreshListene
                 MusicUtils.play(bottomBarVo.getPath(), mActivity, new MusicUtils.IMusicListener() {
                     @Override
                     public void success() {
-
+                        BottomBarDao bottomBarDao = new BottomBarDao(mActivity);
+                        BottomBarVo barVo = bottomBarDao.queryForId(bottomBarVo.getId());
+                        if (barVo == null) {
+                            bottomBarDao.add(bottomBarVo);
+                        }
                     }
 
                     @Override

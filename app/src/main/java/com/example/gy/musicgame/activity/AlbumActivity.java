@@ -15,6 +15,7 @@ import com.blankj.utilcode.util.ToastUtils;
 import com.example.gy.musicgame.R;
 import com.example.gy.musicgame.adapter.LinearAdapter;
 import com.example.gy.musicgame.constant.Constants;
+import com.example.gy.musicgame.dao.BottomBarDao;
 import com.example.gy.musicgame.helper.LoadingDialogHelper;
 import com.example.gy.musicgame.helper.RetrofitHelper;
 import com.example.gy.musicgame.listener.OnItemClickListener;
@@ -45,6 +46,7 @@ public class AlbumActivity extends BaseActivity implements OnRefreshListener, On
     private SmartRefreshLayout refreshLayout;
     private int offset = 0;
     private boolean isLoad;
+    private BottomBarDao bottomBarDao;
 
     @Override
     protected void initView() {
@@ -118,7 +120,11 @@ public class AlbumActivity extends BaseActivity implements OnRefreshListener, On
                                         MusicUtils.play(bottomBarVo.getPath(), mActivity, new MusicUtils.IMusicListener() {
                                             @Override
                                             public void success() {
-
+                                                bottomBarDao = new BottomBarDao(mActivity);
+                                                BottomBarVo barVo = bottomBarDao.queryForId(bottomBarVo.getId());
+                                                if (barVo == null) {
+                                                    bottomBarDao.add(bottomBarVo);
+                                                }
                                             }
 
                                             @Override

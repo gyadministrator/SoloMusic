@@ -1,20 +1,45 @@
 package com.example.gy.musicgame.chatui.enity;
 
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
+
+import java.io.Serializable;
 /**
  * 作者：Rance on 2016/12/14 14:13
  * 邮箱：rance935@163.com
  */
-public class MessageInfo {
+@DatabaseTable
+public class MessageInfo implements Serializable{
+    @DatabaseField(id = true)
+    public int id;
+    @DatabaseField
     private int type;
+    @DatabaseField
     private String content;
+    @DatabaseField
     private String filepath;
+    @DatabaseField
     private int sendState;
+    @DatabaseField
     private String time;
+    @DatabaseField
     private String header;
+    @DatabaseField
     private String imageUrl;
+    @DatabaseField
     private long voiceTime;
+    @DatabaseField
     private String msgId;
+    @DatabaseField
     private int msgType;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public int getMsgType() {
         return msgType;

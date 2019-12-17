@@ -23,6 +23,7 @@ import com.bumptech.glide.Glide;
 import com.example.gy.musicgame.R;
 import com.example.gy.musicgame.activity.LrcActivity;
 import com.example.gy.musicgame.constant.Constants;
+import com.example.gy.musicgame.dao.BottomBarDao;
 import com.example.gy.musicgame.model.BottomBarVo;
 import com.example.gy.musicgame.utils.MusicUtils;
 import com.example.gy.musicgame.utils.NotificationPermissionUtil;
@@ -97,6 +98,13 @@ public class BottomBarView extends LinearLayout {
         MusicUtils.play(bottomBarVo.getPath(), mContext, new MusicUtils.IMusicListener() {
             @Override
             public void success() {
+                BottomBarDao bottomBarDao = new BottomBarDao(mContext);
+                BottomBarVo barVo = bottomBarDao.queryForId(bottomBarVo.getId());
+                if (barVo == null) {
+                    bottomBarDao.add(bottomBarVo);
+                }
+
+
                 ivIcon.startAnimation(playAnimation);
                 ivPlay.setImageResource(R.mipmap.stop);
                 if (!TextUtils.isEmpty(bottomBarVo.getName())) {
@@ -189,7 +197,11 @@ public class BottomBarView extends LinearLayout {
                     MusicUtils.play(bottomBarVo.getPath(), mContext, new MusicUtils.IMusicListener() {
                         @Override
                         public void success() {
-
+                            BottomBarDao bottomBarDao = new BottomBarDao(mContext);
+                            BottomBarVo barVo = bottomBarDao.queryForId(bottomBarVo.getId());
+                            if (barVo == null) {
+                                bottomBarDao.add(bottomBarVo);
+                            }
                         }
 
                         @Override

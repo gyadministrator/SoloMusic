@@ -32,6 +32,7 @@ import com.example.gy.musicgame.activity.AlbumLoveActivity;
 import com.example.gy.musicgame.activity.ChangePasswordActivity;
 import com.example.gy.musicgame.activity.CodeActivity;
 import com.example.gy.musicgame.activity.LocalMusicActivity;
+import com.example.gy.musicgame.activity.LocalRecordActivity;
 import com.example.gy.musicgame.activity.SettingActivity;
 import com.example.gy.musicgame.activity.SongAlbumActivity;
 import com.example.gy.musicgame.adapter.AlbumRecyclerItemAdapter;
@@ -107,6 +108,8 @@ public class MeFragment extends Fragment implements View.OnClickListener, XRecyc
     private LinearLayout llLove;
     private boolean isLoad = false;
     private int albumSize = 0;
+    private LinearLayout llLocalRecord;
+    private TextView tvLocalRecord;
 
     public static MeFragment newInstance() {
         return new MeFragment();
@@ -129,6 +132,8 @@ public class MeFragment extends Fragment implements View.OnClickListener, XRecyc
         tvLocalMusic.setText(String.valueOf(localMusicSize));
         int loveAlbum = preferences.getInt("loveAlbum", 0);
         tvLoveNum.setText(String.valueOf(loveAlbum));
+        int localRecord = preferences.getInt("localRecord", 0);
+        tvLoveNum.setText(String.valueOf(localRecord));
         setUserInfo();
     }
 
@@ -192,7 +197,7 @@ public class MeFragment extends Fragment implements View.OnClickListener, XRecyc
                                     } else {
                                         if (isLoad) {
                                             recyclerView.setNoMore(true);
-                                        }else {
+                                        } else {
                                             tvNoData.setVisibility(View.VISIBLE);
                                             recyclerView.setVisibility(View.GONE);
                                         }
@@ -302,8 +307,11 @@ public class MeFragment extends Fragment implements View.OnClickListener, XRecyc
         tvNoData = view.findViewById(R.id.tv_no_data);
         recyclerView = view.findViewById(R.id.rv_linear);
         ivAdd = view.findViewById(R.id.iv_add);
+        llLocalRecord = view.findViewById(R.id.ll_local_record);
+        tvLocalRecord = view.findViewById(R.id.tv_local_record);
         ivAdd.setOnClickListener(this);
         llLocalMusic.setOnClickListener(this);
+        llLocalRecord.setOnClickListener(this);
         recyclerView.setLoadingListener(this);
         titleView.setRightClickListener(new TitleView.OnRightClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
@@ -361,6 +369,9 @@ public class MeFragment extends Fragment implements View.OnClickListener, XRecyc
                 break;
             case R.id.ll_love:
                 AlbumLoveActivity.startActivity(mActivity, token);
+                break;
+            case R.id.ll_local_record:
+                startActivity(new Intent(mActivity, LocalRecordActivity.class));
                 break;
         }
     }

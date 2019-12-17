@@ -12,6 +12,7 @@ import com.example.gy.musicgame.R;
 import com.example.gy.musicgame.adapter.AlbumUserLinearAdapter;
 import com.example.gy.musicgame.api.Api;
 import com.example.gy.musicgame.constant.Constants;
+import com.example.gy.musicgame.dao.BottomBarDao;
 import com.example.gy.musicgame.helper.LoadingDialogHelper;
 import com.example.gy.musicgame.helper.RetrofitHelper;
 import com.example.gy.musicgame.listener.OnItemClickListener;
@@ -190,7 +191,11 @@ public class SongAlbumActivity extends BaseActivity implements XRecyclerView.Loa
             MusicUtils.play(bottomBarVo.getPath(), mActivity, new MusicUtils.IMusicListener() {
                 @Override
                 public void success() {
-
+                    BottomBarDao bottomBarDao = new BottomBarDao(mActivity);
+                    BottomBarVo barVo = bottomBarDao.queryForId(bottomBarVo.getId());
+                    if (barVo == null) {
+                        bottomBarDao.add(bottomBarVo);
+                    }
                 }
 
                 @Override

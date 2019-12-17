@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.drawable.AnimationDrawable;
 import android.media.MediaPlayer;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -18,6 +19,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -36,6 +38,7 @@ import com.example.gy.musicgame.chatui.util.MediaManager;
 import com.example.gy.musicgame.chatui.widget.EmotionInputDetector;
 import com.example.gy.musicgame.chatui.widget.NoScrollViewPager;
 import com.example.gy.musicgame.chatui.widget.StateButton;
+import com.example.gy.musicgame.dao.MessageInfoDao;
 import com.example.gy.musicgame.listener.IMessageListener;
 import com.example.gy.musicgame.model.User;
 import com.example.gy.musicgame.model.UserInfoVo;
@@ -128,7 +131,15 @@ public class ChatActivity extends BaseActivity {
 
     @Override
     protected void initAction() {
-
+        //获取历史消息
+        //保存数据库
+        MessageInfoDao messageInfoDao = new MessageInfoDao(mActivity);
+        List<MessageInfo> list = messageInfoDao.queryForAll();
+        messageInfos.addAll(list);
+        if (chatAdapter != null) {
+            chatAdapter.addAll(messageInfos);
+            chatAdapter.notifyDataSetChanged();
+        }
     }
 
 
@@ -282,7 +293,6 @@ public class ChatActivity extends BaseActivity {
      */
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void MessageEventBus(final MessageInfo messageInfo) {
-        Log.e("result", "MessageEventBus: " + messageInfo.getMsgType());
         if (userInfoVo != null) {
             if (!TextUtils.isEmpty(userInfoVo.getAvatarUrl())) {
                 messageInfo.setHeader(userInfoVo.getAvatarUrl());
@@ -342,7 +352,9 @@ public class ChatActivity extends BaseActivity {
                 }
             });
         }
-
+        //保存数据库
+        MessageInfoDao messageInfoDao = new MessageInfoDao(mActivity);
+        messageInfoDao.add(messageInfo);
     }
 
     /**
@@ -383,8 +395,13 @@ public class ChatActivity extends BaseActivity {
         messageInfos.add(message);
         chatAdapter.add(message);
         chatList.scrollToPosition(chatAdapter.getCount() - 1);
+
+        //保存数据库
+        MessageInfoDao messageInfoDao = new MessageInfoDao(mActivity);
+        messageInfoDao.add(message);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {

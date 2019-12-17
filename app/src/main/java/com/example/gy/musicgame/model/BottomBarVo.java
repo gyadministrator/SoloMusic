@@ -1,5 +1,8 @@
 package com.example.gy.musicgame.model;
 
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
+
 import java.io.Serializable;
 
 /**
@@ -8,13 +11,30 @@ import java.io.Serializable;
  * author:fldserver
  * email:1984629668@qq.com
  **/
+@DatabaseTable
 public class BottomBarVo implements Serializable {
+    @DatabaseField(id = true)
+    public int id;
+    @DatabaseField
     private String image;
+    @DatabaseField
     private String name;
+    @DatabaseField
     private String author;
+    @DatabaseField
     private String path;
+    @DatabaseField
     private String songId;
+    @DatabaseField
     private String tingUid;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public String getTingUid() {
         return tingUid;
