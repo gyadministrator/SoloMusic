@@ -51,6 +51,9 @@
         android:theme="@style/AppTheme"
         tools:ignore="UnusedAttribute">
         <activity
+            android:name=".activity.MusicDownloadActivity"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".activity.LocalRecordActivity"
             android:screenOrientation="portrait" />
         <activity

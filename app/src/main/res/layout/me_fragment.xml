@@ -61,6 +61,7 @@
                     </LinearLayout>
 
                     <LinearLayout
+                        android:id="@+id/ll_my_download"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
@@ -120,6 +121,7 @@
                         android:text="@string/default_num" />
 
                     <TextView
+                        android:id="@+id/tv_my_download"
                         android:layout_width="@dimen/item_size"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"

@@ -4,9 +4,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 
 import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.blankj.utilcode.util.ToastUtils;
 import com.example.gy.musicgame.R;
@@ -17,23 +15,26 @@ import com.example.gy.musicgame.model.BottomBarVo;
 import com.example.gy.musicgame.model.LocalMusicModel;
 import com.example.gy.musicgame.utils.LocalMusicUtils;
 import com.example.gy.musicgame.utils.MusicUtils;
-import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.jcodecraeer.xrecyclerview.ProgressStyle;
+import com.jcodecraeer.xrecyclerview.XRecyclerView;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
 import java.util.List;
 
-public class LocalMusicActivity extends BaseActivity implements OnRefreshListener {
-    private RecyclerView recyclerView;
+public class LocalMusicActivity extends BaseActivity implements OnRefreshListener, XRecyclerView.LoadingListener {
+    private XRecyclerView recyclerView;
     private LocalMusicLinearAdapter linerAdapter;
     private List<LocalMusicModel> music;
-    private SmartRefreshLayout refreshLayout;
 
     @Override
     protected void initView() {
         recyclerView = fd(R.id.recyclerView);
-        refreshLayout = fd(R.id.refreshLayout);
-        refreshLayout.setOnRefreshListener(this);
+        recyclerView.setLayoutManager(new LinearLayoutManager(mActivity));
+        recyclerView.setRefreshProgressStyle(ProgressStyle.BallSpinFadeLoader);
+        recyclerView.setLoadingMoreEnabled(false);
+        recyclerView.setLoadingMoreProgressStyle(ProgressStyle.Pacman);
+        recyclerView.setLoadingListener(this);
     }
 
     @Override
@@ -49,9 +50,8 @@ public class LocalMusicActivity extends BaseActivity implements OnRefreshListene
         music = LocalMusicUtils.getMusic(mActivity);
         linerAdapter = new LocalMusicLinearAdapter(mActivity, music);
         recyclerView.setLayoutManager(new LinearLayoutManager(mActivity));
-        recyclerView.addItemDecoration(new DividerItemDecoration(mActivity, DividerItemDecoration.VERTICAL));
         recyclerView.setAdapter(linerAdapter);
-        refreshLayout.finishRefresh(1500);
+        recyclerView.refreshComplete();
         if (music != null) {
             SharedPreferences preferences = getSharedPreferences("myFragment", MODE_PRIVATE);
             SharedPreferences.Editor edit = preferences.edit();
@@ -97,5 +97,15 @@ public class LocalMusicActivity extends BaseActivity implements OnRefreshListene
     @Override
     public void onRefresh(@NonNull RefreshLayout refreshLayout) {
         getLocalMusic();
+    }
+
+    @Override
+    public void onRefresh() {
+        getLocalMusic();
+    }
+
+    @Override
+    public void onLoadMore() {
+
     }
 }

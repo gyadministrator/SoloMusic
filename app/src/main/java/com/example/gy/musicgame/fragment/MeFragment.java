@@ -33,6 +33,7 @@ import com.example.gy.musicgame.activity.ChangePasswordActivity;
 import com.example.gy.musicgame.activity.CodeActivity;
 import com.example.gy.musicgame.activity.LocalMusicActivity;
 import com.example.gy.musicgame.activity.LocalRecordActivity;
+import com.example.gy.musicgame.activity.MusicDownloadActivity;
 import com.example.gy.musicgame.activity.SettingActivity;
 import com.example.gy.musicgame.activity.SongAlbumActivity;
 import com.example.gy.musicgame.adapter.AlbumRecyclerItemAdapter;
@@ -110,6 +111,8 @@ public class MeFragment extends Fragment implements View.OnClickListener, XRecyc
     private int albumSize = 0;
     private LinearLayout llLocalRecord;
     private TextView tvLocalRecord;
+    private LinearLayout llMyDownload;
+    private TextView tvMyDownload;
 
     public static MeFragment newInstance() {
         return new MeFragment();
@@ -134,6 +137,8 @@ public class MeFragment extends Fragment implements View.OnClickListener, XRecyc
         tvLoveNum.setText(String.valueOf(loveAlbum));
         int localRecord = preferences.getInt("localRecord", 0);
         tvLocalRecord.setText(String.valueOf(localRecord));
+        int myDownload = preferences.getInt("myDownload", 0);
+        tvMyDownload.setText(String.valueOf(myDownload));
         setUserInfo();
     }
 
@@ -304,6 +309,8 @@ public class MeFragment extends Fragment implements View.OnClickListener, XRecyc
         titleView = view.findViewById(R.id.titleView);
         llLocalMusic = view.findViewById(R.id.ll_local_music);
         tvLocalMusic = view.findViewById(R.id.tv_local_music);
+        llMyDownload = view.findViewById(R.id.ll_my_download);
+        tvMyDownload = view.findViewById(R.id.tv_my_download);
         tvNoData = view.findViewById(R.id.tv_no_data);
         recyclerView = view.findViewById(R.id.rv_linear);
         ivAdd = view.findViewById(R.id.iv_add);
@@ -313,6 +320,7 @@ public class MeFragment extends Fragment implements View.OnClickListener, XRecyc
         llLocalMusic.setOnClickListener(this);
         llLocalRecord.setOnClickListener(this);
         recyclerView.setLoadingListener(this);
+        llMyDownload.setOnClickListener(this);
         titleView.setRightClickListener(new TitleView.OnRightClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
             @Override
@@ -372,6 +380,9 @@ public class MeFragment extends Fragment implements View.OnClickListener, XRecyc
                 break;
             case R.id.ll_local_record:
                 startActivity(new Intent(mActivity, LocalRecordActivity.class));
+                break;
+            case R.id.ll_my_download:
+                startActivity(new Intent(mActivity, MusicDownloadActivity.class));
                 break;
         }
     }

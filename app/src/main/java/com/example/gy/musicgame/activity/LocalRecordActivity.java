@@ -58,6 +58,8 @@ public class LocalRecordActivity extends BaseActivity implements XRecyclerView.L
             recyclerView.setVisibility(View.GONE);
             llNoData.setVisibility(View.VISIBLE);
         } else {
+            recyclerView.setVisibility(View.VISIBLE);
+            llNoData.setVisibility(View.GONE);
             linearAdapter = new LocalRecordLinearAdapter(mActivity, list);
             recyclerView.setAdapter(linearAdapter);
             linearAdapter.setOnItemClickListener(this);

@@ -5,6 +5,8 @@ import android.app.Activity;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Build;
+import android.os.Handler;
+import android.os.Message;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,6 +35,8 @@ import com.example.gy.musicgame.model.SingerInfoModel;
 import com.example.gy.musicgame.model.UserAlbumVo;
 import com.example.gy.musicgame.utils.HandlerUtils;
 import com.example.gy.musicgame.utils.MusicUtils;
+import com.example.gy.musicgame.utils.NotificationPermissionUtil;
+import com.example.gy.musicgame.utils.NotificationUtils;
 import com.example.gy.musicgame.utils.SharedPreferenceUtil;
 import com.example.gy.musicgame.utils.Utility;
 import com.example.gy.musicgame.view.ILrcBuilder;
@@ -49,13 +53,20 @@ import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Type;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.UUID;
 
 import io.reactivex.Observable;
 import io.reactivex.Observer;
@@ -89,6 +100,27 @@ public class LrcActivity extends BaseActivity implements AdapterView.OnItemClick
     private BottomSheetDialog bottomSheetDialog;
     private boolean isLoad = false;
     private SmartRefreshLayout refreshLayout;
+    private static final int DOWN_UPDATE = 1;
+    private static final int DOWN_OVER = 2;
+    @SuppressLint("SdCardPath")
+    private static final String savePath = "/sdcard/music_game_download/";
+    private int progress;
+    private static final String saveFileName = savePath + UUID.randomUUID().toString().replaceAll("-", "");
+    private boolean interceptFlag = false;
+    @SuppressLint("HandlerLeak")
+    private Handler mHandler = new Handler() {
+        @RequiresApi(api = Build.VERSION_CODES.O)
+        @SuppressLint("SetTextI18n")
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case DOWN_OVER:
+                    ToastUtils.showShort("下载成功！");
+                    break;
+                default:
+                    break;
+            }
+        }
+    };
 
     @Override
     protected void initView() {
@@ -103,6 +135,7 @@ public class LrcActivity extends BaseActivity implements AdapterView.OnItemClick
                 items.add("查看歌手");
                 items.add("收藏音乐");
                 items.add("加入我喜欢");
+                items.add("下载歌曲");
                 DialogHelper.getInstance().showBottomDialog(mActivity, items, new SheetDialogListener() {
                     @Override
                     public void selectPosition(int position) {
@@ -115,6 +148,15 @@ public class LrcActivity extends BaseActivity implements AdapterView.OnItemClick
                         } else if (position == 2) {
                             //加入我喜欢
                             addAlbumLove();
+                        } else if (position == 3) {
+                            //下载歌曲
+                            new Thread(new Runnable() {
+                                @RequiresApi(api = Build.VERSION_CODES.O)
+                                @Override
+                                public void run() {
+                                    downloadMusic();
+                                }
+                            }).start();
                         }
                     }
                 });
@@ -125,6 +167,57 @@ public class LrcActivity extends BaseActivity implements AdapterView.OnItemClick
 
             }
         });
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private void downloadMusic() {
+        if (TextUtils.isEmpty(path)) {
+            ToastUtils.showShort("下载链接不存在！");
+            return;
+        }
+        try {
+            URL url = new URL(path);
+
+            HttpURLConnection conn = (HttpURLConnection) url
+                    .openConnection();
+            conn.connect();
+            int length = conn.getContentLength();
+            InputStream is = conn.getInputStream();
+            File file = new File(savePath);
+            if (!file.exists()) {
+                file.mkdir();
+            }
+            File f = new File(saveFileName);
+            FileOutputStream out = new FileOutputStream(f);
+
+            int count = 0;
+            byte buf[] = new byte[1024];
+            do {
+                int read = is.read(buf);
+                count += read;
+                progress = (int) (((float) count / length) * 100);
+                // 更新进度
+                if (NotificationPermissionUtil.isNotificationEnabled(mActivity)) {
+                    NotificationUtils.sendMusicDownloadProgressCustomNotification(mActivity, progress);
+                } else {
+                    NotificationPermissionUtil.checkNotificationEnable(mActivity);
+                }
+                if (progress == 99) {
+                    NotificationUtils.closeNotification(10);
+                }
+                if (read <= 0) {
+                    // 下载完成通知
+                    mHandler.sendEmptyMessage(DOWN_OVER);
+                    break;
+                }
+                out.write(buf, 0, read);
+            } while (!interceptFlag);// 点击取消就停止下载.
+
+            out.close();
+            is.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void addAlbumLove() {
@@ -151,7 +244,7 @@ public class LrcActivity extends BaseActivity implements AdapterView.OnItemClick
                         HandlerUtils.isHandler(map, mActivity);
                         if (map.containsKey("errno")) {
                             double code = (double) map.get("errno");
-                            if (code==0){
+                            if (code == 0) {
                                 ToastUtils.showShort("添加成功");
                             }
                         }
@@ -293,7 +386,7 @@ public class LrcActivity extends BaseActivity implements AdapterView.OnItemClick
                         HandlerUtils.isHandler(map, mActivity);
                         if (map.containsKey("errno")) {
                             double code = (double) map.get("errno");
-                            if (code==0){
+                            if (code == 0) {
                                 ToastUtils.showShort("添加成功");
                             }
                         }

@@ -70,10 +70,8 @@ public class LocalMusicUtils {
                         song.setSinger(singer);
                         name = str[1];
                         song.setName(name);
-                    } else {
-                        song.setName(name);
+                        list.add(song);
                     }
-                    list.add(song);
                 }
             }
         }

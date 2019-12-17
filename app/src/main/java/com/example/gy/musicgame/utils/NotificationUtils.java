@@ -116,6 +116,26 @@ public class NotificationUtils {
     }
 
 
+    @TargetApi(Build.VERSION_CODES.O)
+    public static void sendMusicDownloadProgressCustomNotification(Context context, int progress) {
+        Notification.Builder builder = getNotificationBuilder(context);
+        remoteViews = new RemoteViews(context.getPackageName(), R.layout.download_music_progress);
+        remoteViews.setProgressBar(R.id.progress, 100, progress, false);
+        remoteViews.setTextViewText(R.id.tv_progress, "正在下载中..." + progress + "%");
+        PendingIntent intent = PendingIntent.getActivity(context, -1, new Intent(context, MainActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
+        remoteViews.setOnClickPendingIntent(R.id.ll_content, intent);
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.O_MR1) {
+            builder.setCustomContentView(remoteViews);
+        } else {
+            builder.setContent(remoteViews);
+        }
+        builder.setOngoing(true);
+        Notification notification = builder.build();
+        notification.flags = Notification.FLAG_ONGOING_EVENT;
+        getManager(context).notify(10, notification);
+    }
+
+
     @RequiresApi(api = Build.VERSION_CODES.O)
     private static Notification.Builder getNotificationBuilder(Context context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -175,6 +195,16 @@ public class NotificationUtils {
                 notificationManager.deleteNotificationChannel(CHANNEL_ID);
             }
             notificationManager.cancel(1);
+        }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    public static void closeNotification(int id) {
+        if (notificationManager != null) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                notificationManager.deleteNotificationChannel(CHANNEL_ID);
+            }
+            notificationManager.cancel(id);
         }
     }
 }

@@ -21,6 +21,7 @@ import java.util.Map;
 
 import io.reactivex.Observable;
 import okhttp3.MultipartBody;
+import okhttp3.ResponseBody;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
@@ -29,6 +30,7 @@ import retrofit2.http.POST;
 import retrofit2.http.Part;
 import retrofit2.http.Query;
 import retrofit2.http.QueryMap;
+import retrofit2.http.Url;
 
 /**
  * 数据接口
@@ -71,6 +73,30 @@ public interface Api {
      */
     @GET("v1/restserver/ting")
     Observable<PlayMusicModel> play(@QueryMap Map<String, Object> params);
+
+
+    /**
+     * method=baidu.ting.song.downWeb&songid=877578&bit=24&_t=1393123213
+     * 下载音乐
+     * songid = 877578//歌曲id
+     * <p>
+     * bit = 24, 64, 128, 192, 256, 320 ,flac//码率
+     * <p>
+     * _t = 1430215999,, //时间戳
+     *
+     * @param params 参数
+     * @return
+     */
+    @GET("v1/restserver/ting")
+    Observable<ResponseBody> download(@QueryMap Map<String, Object> params);
+
+    /**
+     * 下载音乐
+     * @param fileUrl
+     * @return
+     */
+    @GET
+    Observable<ResponseBody> downloadMusic(@Url String fileUrl);
 
     /**
      * method=baidu.ting.song.getRecommandSongList&song_id=877578&num=5
