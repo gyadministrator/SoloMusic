@@ -2,8 +2,11 @@ package com.example.gy.musicgame.activity;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.media.MediaPlayer;
+import android.media.MediaScannerConnection;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
@@ -105,7 +108,7 @@ public class LrcActivity extends BaseActivity implements AdapterView.OnItemClick
     @SuppressLint("SdCardPath")
     private static final String savePath = "/sdcard/music_game_download/";
     private int progress;
-    private static String saveFileName = savePath + "SoloMusic-";
+    private String saveFileName = savePath + "SoloMusic-";
     private boolean interceptFlag = false;
     @SuppressLint("HandlerLeak")
     private Handler mHandler = new Handler() {
@@ -114,6 +117,8 @@ public class LrcActivity extends BaseActivity implements AdapterView.OnItemClick
         public void handleMessage(Message msg) {
             if (msg.what == DOWN_OVER) {
                 ToastUtils.showShort("下载成功！");
+                scanFile(getApplicationContext(), saveFileName);
+                saveFileName = savePath + "SoloMusic-";
             }
         }
     };
@@ -218,6 +223,24 @@ public class LrcActivity extends BaseActivity implements AdapterView.OnItemClick
             out.close();
             is.close();
         } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 通知android媒体库更新文件夹
+     *
+     * @param filePath 文件绝对路径，、/sda/aaa/jjj.jpg
+     */
+    public void scanFile(Context context, String filePath) {
+        try {
+            MediaScannerConnection.scanFile(context, new String[]{filePath}, null,
+                    new MediaScannerConnection.OnScanCompletedListener() {
+                        public void onScanCompleted(String path, Uri uri) {
+
+                        }
+                    });
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

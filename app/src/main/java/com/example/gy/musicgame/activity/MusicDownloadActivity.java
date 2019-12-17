@@ -1,6 +1,10 @@
 package com.example.gy.musicgame.activity;
 
+import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
+import android.os.Environment;
 import android.widget.LinearLayout;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -20,6 +24,7 @@ import com.google.gson.Gson;
 import com.jcodecraeer.xrecyclerview.ProgressStyle;
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
 
+import java.io.File;
 import java.util.List;
 
 public class MusicDownloadActivity extends BaseActivity implements XRecyclerView.LoadingListener {
@@ -41,7 +46,6 @@ public class MusicDownloadActivity extends BaseActivity implements XRecyclerView
 
     @Override
     protected void initData() {
-
     }
 
     @Override

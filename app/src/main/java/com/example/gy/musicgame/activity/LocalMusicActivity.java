@@ -44,6 +44,7 @@ public class LocalMusicActivity extends BaseActivity implements OnRefreshListene
     protected void initData() {
     }
 
+
     @Override
     protected void initAction() {
         getLocalMusic();
