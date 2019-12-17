@@ -14,6 +14,7 @@ import com.example.gy.musicgame.adapter.AlbumLoveLinearAdapter;
 import com.example.gy.musicgame.api.Api;
 import com.example.gy.musicgame.constant.Constants;
 import com.example.gy.musicgame.dao.BottomBarDao;
+import com.example.gy.musicgame.event.CustomEvent;
 import com.example.gy.musicgame.helper.LoadingDialogHelper;
 import com.example.gy.musicgame.helper.RetrofitHelper;
 import com.example.gy.musicgame.listener.OnItemClickListener;
@@ -21,11 +22,14 @@ import com.example.gy.musicgame.model.BaseAlbumLoveVo;
 import com.example.gy.musicgame.model.BottomBarVo;
 import com.example.gy.musicgame.utils.HandlerUtils;
 import com.example.gy.musicgame.utils.MusicUtils;
+import com.example.gy.musicgame.utils.SharedPreferenceUtil;
 import com.example.gy.musicgame.view.TitleView;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.jcodecraeer.xrecyclerview.ProgressStyle;
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.lang.reflect.Type;
 import java.util.List;
@@ -174,11 +178,15 @@ public class AlbumLoveActivity extends BaseActivity implements OnItemClickListen
             MusicUtils.play(bottomBarVo.getPath(), mActivity, new MusicUtils.IMusicListener() {
                 @Override
                 public void success() {
+                    SharedPreferenceUtil preferenceUtil = new SharedPreferenceUtil();
+                    String json = new Gson().toJson(bottomBarVo);
+                    preferenceUtil.saveObject(json, mActivity, Constants.CURRENT_BOTTOM_VO);
                     BottomBarDao bottomBarDao = new BottomBarDao(mActivity);
                     List<BottomBarVo> list = bottomBarDao.queryForSongId(bottomBarVo.getSongId());
                     if (list == null || list.size() == 0) {
                         bottomBarDao.add(bottomBarVo);
                     }
+                    EventBus.getDefault().post(new CustomEvent());
                 }
 
                 @Override

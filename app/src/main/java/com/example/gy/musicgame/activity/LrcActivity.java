@@ -105,7 +105,7 @@ public class LrcActivity extends BaseActivity implements AdapterView.OnItemClick
     @SuppressLint("SdCardPath")
     private static final String savePath = "/sdcard/music_game_download/";
     private int progress;
-    private static final String saveFileName = savePath + UUID.randomUUID().toString().replaceAll("-", "");
+    private static String saveFileName = savePath + "SoloMusic-";
     private boolean interceptFlag = false;
     @SuppressLint("HandlerLeak")
     private Handler mHandler = new Handler() {
@@ -167,10 +167,17 @@ public class LrcActivity extends BaseActivity implements AdapterView.OnItemClick
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     private void downloadMusic() {
+        saveFileName = saveFileName + title + ".mp3";
         if (TextUtils.isEmpty(path)) {
             ToastUtils.showShort("下载链接不存在！");
             return;
         }
+        File f = new File(saveFileName);
+        if (f.exists()) {
+            ToastUtils.showShort("你已经下载过该歌曲了！");
+            return;
+        }
+        ToastUtils.showShort("正在后台下载中...");
         try {
             URL url = new URL(path);
 
@@ -183,7 +190,6 @@ public class LrcActivity extends BaseActivity implements AdapterView.OnItemClick
             if (!file.exists()) {
                 file.mkdir();
             }
-            File f = new File(saveFileName);
             FileOutputStream out = new FileOutputStream(f);
 
             int count = 0;

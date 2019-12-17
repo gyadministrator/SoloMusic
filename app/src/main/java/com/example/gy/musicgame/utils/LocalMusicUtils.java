@@ -6,7 +6,9 @@ import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.MediaMetadataRetriever;
 import android.net.Uri;
+import android.os.Build;
 import android.os.ParcelFileDescriptor;
 import android.provider.MediaStore;
 
@@ -53,7 +55,9 @@ public class LocalMusicUtils {
                 id = cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media._ID));
                 singer = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.ARTIST));
                 path = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DATA));
-                duration = cursor.getInt(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DURATION));
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    duration = cursor.getInt(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DURATION));
+                }
                 size = cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.SIZE));
                 albumId = cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.ALBUM_ID));
                 //把歌曲名字和歌手切割开
@@ -230,6 +234,17 @@ public class LocalMusicUtils {
         }
         //return BitmapFactory.decodeStream(context.getResources().openRawResource(R.drawable.defaultalbum), null, opts);
         return null;
+    }
+
+    /**
+     * 加载封面
+     * @param mediaUri MP3文件路径
+     */
+    public static Bitmap loadingCover(String mediaUri) {
+        MediaMetadataRetriever mediaMetadataRetriever=new MediaMetadataRetriever();
+        mediaMetadataRetriever.setDataSource(mediaUri);
+        byte[] picture = mediaMetadataRetriever.getEmbeddedPicture();
+        return BitmapFactory.decodeByteArray(picture,0,picture.length);
     }
 
     /**

@@ -25,6 +25,8 @@ import com.example.gy.musicgame.listener.OnItemClickListener;
 import com.example.gy.musicgame.model.BottomBarVo;
 import com.example.gy.musicgame.model.SearchMusicModel;
 import com.example.gy.musicgame.utils.MusicUtils;
+import com.example.gy.musicgame.utils.SharedPreferenceUtil;
+import com.google.gson.Gson;
 
 import java.util.List;
 import java.util.Map;
@@ -126,6 +128,9 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
                                     MusicUtils.play(bottomBarVo.getPath(), mActivity, new MusicUtils.IMusicListener() {
                                         @Override
                                         public void success() {
+                                            SharedPreferenceUtil preferenceUtil = new SharedPreferenceUtil();
+                                            String json = new Gson().toJson(bottomBarVo);
+                                            preferenceUtil.saveObject(json, mActivity, Constants.CURRENT_BOTTOM_VO);
                                             BottomBarDao bottomBarDao = new BottomBarDao(mActivity);
                                             List<BottomBarVo> list = bottomBarDao.queryForSongId(bottomBarVo.getSongId());
                                             if (list == null || list.size() == 0) {

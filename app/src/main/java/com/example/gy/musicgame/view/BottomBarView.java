@@ -100,6 +100,9 @@ public class BottomBarView extends LinearLayout {
         MusicUtils.play(bottomBarVo.getPath(), mContext, new MusicUtils.IMusicListener() {
             @Override
             public void success() {
+                SharedPreferenceUtil preferenceUtil = new SharedPreferenceUtil();
+                String json = new Gson().toJson(bottomBarVo);
+                preferenceUtil.saveObject(json, mContext, Constants.CURRENT_BOTTOM_VO);
                 BottomBarDao bottomBarDao = new BottomBarDao(mContext);
                 List<BottomBarVo> list = bottomBarDao.queryForSongId(bottomBarVo.getSongId());
                 if (list == null || list.size() == 0) {
@@ -197,6 +200,9 @@ public class BottomBarView extends LinearLayout {
                     MusicUtils.play(bottomBarVo.getPath(), mContext, new MusicUtils.IMusicListener() {
                         @Override
                         public void success() {
+                            SharedPreferenceUtil preferenceUtil = new SharedPreferenceUtil();
+                            String json = new Gson().toJson(bottomBarVo);
+                            preferenceUtil.saveObject(json, mContext, Constants.CURRENT_BOTTOM_VO);
                             BottomBarDao bottomBarDao = new BottomBarDao(mContext);
                             List<BottomBarVo> list = bottomBarDao.queryForSongId(bottomBarVo.getSongId());
                             if (list == null || list.size() == 0) {

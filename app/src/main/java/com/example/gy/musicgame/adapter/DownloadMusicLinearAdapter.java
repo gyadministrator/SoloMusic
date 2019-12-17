@@ -2,8 +2,8 @@ package com.example.gy.musicgame.adapter;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -23,14 +23,17 @@ import com.example.gy.musicgame.model.BottomBarVo;
 import com.example.gy.musicgame.model.LocalMusicModel;
 import com.example.gy.musicgame.utils.LocalMusicUtils;
 
+import java.util.Iterator;
 import java.util.List;
+
+import static android.content.Context.MODE_PRIVATE;
 
 /**
  * Description: CustomerMusic
  * Created by gy(1984629668@qq.com)
  * Created Time on 2019/10/31 9:13
  */
-public class LocalMusicLinearAdapter extends RecyclerView.Adapter<LocalMusicLinearAdapter.ViewHolder> {
+public class DownloadMusicLinearAdapter extends RecyclerView.Adapter<DownloadMusicLinearAdapter.ViewHolder> {
     private Context mContext;
     private List<LocalMusicModel> list;
     private OnItemClickListener onItemClickListener;
@@ -39,9 +42,21 @@ public class LocalMusicLinearAdapter extends RecyclerView.Adapter<LocalMusicLine
         this.onItemClickListener = onItemClickListener;
     }
 
-    public LocalMusicLinearAdapter(Context mContext, List<LocalMusicModel> list) {
+    public DownloadMusicLinearAdapter(Context mContext, List<LocalMusicModel> list) {
         this.mContext = mContext;
+        Iterator<LocalMusicModel> iterator = list.iterator();
+        while (iterator.hasNext()) {
+            LocalMusicModel musicModel = iterator.next();
+            if (!musicModel.getSinger().contains("SoloMusic")) {
+                iterator.remove();
+            }
+        }
         this.list = list;
+
+        SharedPreferences preferences = mContext.getSharedPreferences("myFragment", MODE_PRIVATE);
+        SharedPreferences.Editor edit = preferences.edit();
+        edit.putInt("myDownload", list.size());
+        edit.apply();
     }
 
     @NonNull
@@ -55,6 +70,9 @@ public class LocalMusicLinearAdapter extends RecyclerView.Adapter<LocalMusicLine
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         final LocalMusicModel musicModel = list.get(position);
+        if (musicModel.getSinger() != null) {
+            if (!musicModel.getSinger().contains("SoloMusic")) return;
+        }
         holder.tvAuthor.setText(musicModel.getSinger());
         final String title = musicModel.getName();
         if (title.length() > 15) {

@@ -10,12 +10,18 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import com.blankj.utilcode.util.ToastUtils;
 import com.example.gy.musicgame.R;
 import com.example.gy.musicgame.adapter.LocalRecordLinearAdapter;
+import com.example.gy.musicgame.constant.Constants;
 import com.example.gy.musicgame.dao.BottomBarDao;
+import com.example.gy.musicgame.event.CustomEvent;
 import com.example.gy.musicgame.listener.OnItemClickListener;
 import com.example.gy.musicgame.model.BottomBarVo;
 import com.example.gy.musicgame.utils.MusicUtils;
+import com.example.gy.musicgame.utils.SharedPreferenceUtil;
+import com.google.gson.Gson;
 import com.jcodecraeer.xrecyclerview.ProgressStyle;
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.List;
 
@@ -92,7 +98,15 @@ public class LocalRecordActivity extends BaseActivity implements XRecyclerView.L
             MusicUtils.play(bottomBarVo.getPath(), mActivity, new MusicUtils.IMusicListener() {
                 @Override
                 public void success() {
-
+                    SharedPreferenceUtil preferenceUtil = new SharedPreferenceUtil();
+                    String json = new Gson().toJson(bottomBarVo);
+                    preferenceUtil.saveObject(json, mActivity, Constants.CURRENT_BOTTOM_VO);
+                    BottomBarDao bottomBarDao = new BottomBarDao(mActivity);
+                    List<BottomBarVo> list = bottomBarDao.queryForSongId(bottomBarVo.getSongId());
+                    if (list == null || list.size() == 0) {
+                        bottomBarDao.add(bottomBarVo);
+                    }
+                    EventBus.getDefault().post(new CustomEvent());
                 }
 
                 @Override

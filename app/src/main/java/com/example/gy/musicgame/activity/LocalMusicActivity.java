@@ -9,12 +9,15 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import com.blankj.utilcode.util.ToastUtils;
 import com.example.gy.musicgame.R;
 import com.example.gy.musicgame.adapter.LocalMusicLinearAdapter;
+import com.example.gy.musicgame.constant.Constants;
 import com.example.gy.musicgame.dao.BottomBarDao;
 import com.example.gy.musicgame.listener.OnItemClickListener;
 import com.example.gy.musicgame.model.BottomBarVo;
 import com.example.gy.musicgame.model.LocalMusicModel;
 import com.example.gy.musicgame.utils.LocalMusicUtils;
 import com.example.gy.musicgame.utils.MusicUtils;
+import com.example.gy.musicgame.utils.SharedPreferenceUtil;
+import com.google.gson.Gson;
 import com.jcodecraeer.xrecyclerview.ProgressStyle;
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
@@ -65,6 +68,9 @@ public class LocalMusicActivity extends BaseActivity implements OnRefreshListene
                 MusicUtils.play(bottomBarVo.getPath(), mActivity, new MusicUtils.IMusicListener() {
                     @Override
                     public void success() {
+                        SharedPreferenceUtil preferenceUtil = new SharedPreferenceUtil();
+                        String json = new Gson().toJson(bottomBarVo);
+                        preferenceUtil.saveObject(json, mActivity, Constants.CURRENT_BOTTOM_VO);
                         BottomBarDao bottomBarDao = new BottomBarDao(mActivity);
                         List<BottomBarVo> list = bottomBarDao.queryForSongId(bottomBarVo.getSongId());
                         if (list == null || list.size() == 0) {
