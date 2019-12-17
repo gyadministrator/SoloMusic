@@ -13,7 +13,7 @@ import java.io.Serializable;
  **/
 @DatabaseTable
 public class BottomBarVo implements Serializable {
-    @DatabaseField(id = true)
+    @DatabaseField(generatedId = true)
     public int id;
     @DatabaseField
     private String image;

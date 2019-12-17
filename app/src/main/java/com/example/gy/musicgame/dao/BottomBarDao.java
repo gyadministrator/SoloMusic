@@ -92,6 +92,16 @@ public class BottomBarDao {
         return bottomBarVo;
     }
 
+    public List<BottomBarVo> queryForSongId(String songId) {
+        List<BottomBarVo> list = null;
+        try {
+            list = dao.queryForEq("songId", songId);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
 
     /**
      * 查询所有记录

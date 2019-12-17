@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Build;
+import android.os.Bundle;
 import android.widget.RemoteViews;
 
 import androidx.annotation.RequiresApi;
@@ -70,6 +71,9 @@ public class NotificationUtils {
         PendingIntent intent = PendingIntent.getActivity(context, -1, new Intent(context, MainActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
         remoteViews.setOnClickPendingIntent(R.id.ll_back, intent);
         Intent service = new Intent(context, MusicService.class);
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("bottomBarVo", bottomBarVo);
+        service.putExtra("bottomBarVo", bundle);
 
         //清除
         service.setAction(Constants.CANCEL);

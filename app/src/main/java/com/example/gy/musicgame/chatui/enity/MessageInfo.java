@@ -10,7 +10,7 @@ import java.io.Serializable;
  */
 @DatabaseTable
 public class MessageInfo implements Serializable{
-    @DatabaseField(id = true)
+    @DatabaseField(generatedId = true)
     public int id;
     @DatabaseField
     private int type;

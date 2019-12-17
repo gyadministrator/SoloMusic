@@ -36,6 +36,7 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.List;
 import java.util.Objects;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -92,6 +93,7 @@ public class BottomBarView extends LinearLayout {
     }
 
     public void play(final BottomBarVo bottomBarVo) {
+        this.bottomBarVo=bottomBarVo;
         SharedPreferenceUtil preferenceUtil = new SharedPreferenceUtil();
         String json = new Gson().toJson(bottomBarVo);
         preferenceUtil.saveObject(json, mContext, Constants.CURRENT_BOTTOM_VO);
@@ -99,12 +101,10 @@ public class BottomBarView extends LinearLayout {
             @Override
             public void success() {
                 BottomBarDao bottomBarDao = new BottomBarDao(mContext);
-                BottomBarVo barVo = bottomBarDao.queryForId(bottomBarVo.getId());
-                if (barVo == null) {
+                List<BottomBarVo> list = bottomBarDao.queryForSongId(bottomBarVo.getSongId());
+                if (list == null || list.size() == 0) {
                     bottomBarDao.add(bottomBarVo);
                 }
-
-
                 ivIcon.startAnimation(playAnimation);
                 ivPlay.setImageResource(R.mipmap.stop);
                 if (!TextUtils.isEmpty(bottomBarVo.getName())) {
@@ -198,10 +198,11 @@ public class BottomBarView extends LinearLayout {
                         @Override
                         public void success() {
                             BottomBarDao bottomBarDao = new BottomBarDao(mContext);
-                            BottomBarVo barVo = bottomBarDao.queryForId(bottomBarVo.getId());
-                            if (barVo == null) {
+                            List<BottomBarVo> list = bottomBarDao.queryForSongId(bottomBarVo.getSongId());
+                            if (list == null || list.size() == 0) {
                                 bottomBarDao.add(bottomBarVo);
                             }
+                            openNotice(bottomBarVo);
                         }
 
                         @Override
@@ -223,6 +224,7 @@ public class BottomBarView extends LinearLayout {
                         ivIcon.startAnimation(playAnimation);
                         tvName.setTextColor(mContext.getResources().getColor(R.color.pressed));
                         tvAuthor.setTextColor(mContext.getResources().getColor(R.color.pressed));
+                        openNotice(bottomBarVo);
                     }
                 }
             }

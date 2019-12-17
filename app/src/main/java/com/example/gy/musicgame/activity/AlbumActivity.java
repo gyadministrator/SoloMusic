@@ -28,6 +28,7 @@ import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -121,8 +122,8 @@ public class AlbumActivity extends BaseActivity implements OnRefreshListener, On
                                             @Override
                                             public void success() {
                                                 bottomBarDao = new BottomBarDao(mActivity);
-                                                BottomBarVo barVo = bottomBarDao.queryForId(bottomBarVo.getId());
-                                                if (barVo == null) {
+                                                List<BottomBarVo> list = bottomBarDao.queryForSongId(bottomBarVo.getSongId());
+                                                if (list == null || list.size() == 0) {
                                                     bottomBarDao.add(bottomBarVo);
                                                 }
                                             }

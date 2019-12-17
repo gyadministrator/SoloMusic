@@ -12,6 +12,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Binder;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.IBinder;
 
 import androidx.annotation.RequiresApi;
@@ -19,10 +20,13 @@ import androidx.annotation.RequiresApi;
 import com.example.gy.musicgame.R;
 import com.example.gy.musicgame.activity.MainActivity;
 import com.example.gy.musicgame.constant.Constants;
+import com.example.gy.musicgame.event.CustomEvent;
 import com.example.gy.musicgame.model.BottomBarVo;
 import com.example.gy.musicgame.utils.MusicUtils;
 import com.example.gy.musicgame.utils.NotificationPermissionUtil;
 import com.example.gy.musicgame.utils.NotificationUtils;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -57,19 +61,23 @@ public class MusicService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         String action = intent.getAction();
+        Bundle bundle = intent.getBundleExtra("bottomBarVo");
+        bottomBarVo = (BottomBarVo) bundle.getSerializable("bottomBarVo");
         if (action != null) {
             if (Constants.CANCEL.equals(action)) {
                 //取消
                 NotificationUtils.closeNotification();
-            } else if (Constants.PLAY.equals(action) && MusicUtils.getMediaPlayer() != null && bottomBarVo != null) {
+            } else if (Constants.PLAY.equals(action)) {
                 //播放
                 if (MusicUtils.isPlaying()) {
-                    NotificationUtils.sendCustomNotification(mContext, bottomBarVo, bitmap, R.mipmap.play);
+                    NotificationUtils.sendCustomNotification(mContext, this.bottomBarVo, bitmap, R.mipmap.play);
                     MusicUtils.pause();
                 } else {
-                    NotificationUtils.sendCustomNotification(mContext, bottomBarVo, bitmap, R.mipmap.stop);
+                    NotificationUtils.sendCustomNotification(mContext, this.bottomBarVo, bitmap, R.mipmap.stop);
                     MusicUtils.playContinue();
                 }
+
+                EventBus.getDefault().post(new CustomEvent());
             }
         }
         return super.onStartCommand(intent, flags, startId);

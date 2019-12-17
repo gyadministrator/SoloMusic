@@ -175,8 +175,8 @@ public class AlbumLoveActivity extends BaseActivity implements OnItemClickListen
                 @Override
                 public void success() {
                     BottomBarDao bottomBarDao = new BottomBarDao(mActivity);
-                    BottomBarVo barVo = bottomBarDao.queryForId(bottomBarVo.getId());
-                    if (barVo == null) {
+                    List<BottomBarVo> list = bottomBarDao.queryForSongId(bottomBarVo.getSongId());
+                    if (list == null || list.size() == 0) {
                         bottomBarDao.add(bottomBarVo);
                     }
                 }

@@ -112,12 +112,8 @@ public class LrcActivity extends BaseActivity implements AdapterView.OnItemClick
         @RequiresApi(api = Build.VERSION_CODES.O)
         @SuppressLint("SetTextI18n")
         public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case DOWN_OVER:
-                    ToastUtils.showShort("下载成功！");
-                    break;
-                default:
-                    break;
+            if (msg.what == DOWN_OVER) {
+                ToastUtils.showShort("下载成功！");
             }
         }
     };

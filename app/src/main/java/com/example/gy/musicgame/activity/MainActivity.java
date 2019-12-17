@@ -21,6 +21,7 @@ import androidx.fragment.app.Fragment;
 
 import com.example.gy.musicgame.R;
 import com.example.gy.musicgame.constant.Constants;
+import com.example.gy.musicgame.event.CustomEvent;
 import com.example.gy.musicgame.fragment.FriendFragment;
 import com.example.gy.musicgame.fragment.InfoFragment;
 import com.example.gy.musicgame.fragment.ListenFragment;
@@ -122,6 +123,14 @@ public class MainActivity extends BaseActivity {
         registerReceiver(musicReceiver, filter);
         getUnreadMsg();
         showTip();
+    }
+
+    @Override
+    public void onEvent(Object object) {
+        super.onEvent(object);
+        if (object instanceof CustomEvent) {
+            setBottomBarData();
+        }
     }
 
     /**
