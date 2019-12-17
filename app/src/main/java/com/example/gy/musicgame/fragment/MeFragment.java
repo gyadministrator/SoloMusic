@@ -133,7 +133,7 @@ public class MeFragment extends Fragment implements View.OnClickListener, XRecyc
         int loveAlbum = preferences.getInt("loveAlbum", 0);
         tvLoveNum.setText(String.valueOf(loveAlbum));
         int localRecord = preferences.getInt("localRecord", 0);
-        tvLoveNum.setText(String.valueOf(localRecord));
+        tvLocalRecord.setText(String.valueOf(localRecord));
         setUserInfo();
     }
 
