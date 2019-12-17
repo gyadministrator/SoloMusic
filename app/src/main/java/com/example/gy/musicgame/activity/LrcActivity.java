@@ -149,6 +149,12 @@ public class LrcActivity extends BaseActivity implements AdapterView.OnItemClick
                     @Override
                     public void onNext(Map map) {
                         HandlerUtils.isHandler(map, mActivity);
+                        if (map.containsKey("errno")) {
+                            double code = (double) map.get("errno");
+                            if (code==0){
+                                ToastUtils.showShort("添加成功");
+                            }
+                        }
                     }
 
                     @Override
@@ -285,6 +291,12 @@ public class LrcActivity extends BaseActivity implements AdapterView.OnItemClick
                     @Override
                     public void onNext(Map map) {
                         HandlerUtils.isHandler(map, mActivity);
+                        if (map.containsKey("errno")) {
+                            double code = (double) map.get("errno");
+                            if (code==0){
+                                ToastUtils.showShort("添加成功");
+                            }
+                        }
                     }
 
                     @Override
