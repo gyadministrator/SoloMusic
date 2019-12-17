@@ -51,6 +51,9 @@
         android:theme="@style/AppTheme"
         tools:ignore="UnusedAttribute">
         <activity
+            android:name=".activity.GuideActivity"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".activity.AlbumLoveActivity"
             android:screenOrientation="portrait" />
         <activity

@@ -178,7 +178,7 @@ dependencies {
     implementation 'com.hyphenate:hyphenate-sdk:3.3.0'
     //拼音
     implementation 'com.belerweb:pinyin4j:2.5.1'
-    //butterknife
+    //butterKnife
     implementation 'com.jakewharton:butterknife:10.0.0'
     annotationProcessor 'com.jakewharton:butterknife-compiler:10.0.0'
     implementation 'com.jude:easyrecyclerview:4.2.3'
