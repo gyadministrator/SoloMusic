@@ -92,7 +92,7 @@ public class AgentWebUtils {
     /**
      * 网页执行Android的方法
      */
-    public static void operationAndroidFunction() {
+    private static void operationAndroidFunction() {
         if (mAgentWeb != null) {
             mAgentWeb.getJsInterfaceHolder().addJavaObject(Constants.PLUGIN_NAME, new NativePlugin());
             //window.android.方法名;

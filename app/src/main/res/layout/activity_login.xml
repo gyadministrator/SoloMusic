@@ -12,6 +12,7 @@
         android:layout_height="wrap_content"
         app:showBack="true"
         app:showRight="false"
+        app:srcBack="@mipmap/close"
         app:title="@string/login" />
 
     <ImageView
