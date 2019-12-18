@@ -269,7 +269,7 @@
 
 #Glide4
 -keep public class * implements com.bumptech.glide.module.AppGlideModule
--keep public class * implements com.bumptech.glide.module.LibraryGlideModule
+#-keep public class * implements com.bumptech.glide.module.LibraryGlideModule
 -keep public enum com.bumptech.glide.load.ImageHeaderParser$** {
   **[] $VALUES;
   public *;
@@ -311,5 +311,14 @@
 }
 
 -keepattributes Signature
+
+#mob
+-keep class cn.sharesdk.**{*;}
+-keep class com.sina.**{*;}
+-keep class com.mob.**{*;}
+-keep class com.bytedance.**{*;}
+-dontwarn cn.sharesdk.**
+-dontwarn com.sina.**
+-dontwarn com.mob.**
 
 

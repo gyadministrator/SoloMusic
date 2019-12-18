@@ -14,10 +14,10 @@ MobSDK {
     ShareSDK {
         //平台配置信息
         devInfo {
-           /* Wechat {//微信暂不提供
-                appId "wx4868b35061f87885"
-                appSecret "64020361b8ec4c99936c0e3999a9f249"
-            }*/
+            /* Wechat {//微信暂不提供
+                 appId "wx4868b35061f87885"
+                 appSecret "64020361b8ec4c99936c0e3999a9f249"
+             }*/
             QQ {//QQ
                 appId "101573654"
                 appKey "cc25df73eccb9c19b800e9cb3bc4c647"
@@ -32,14 +32,10 @@ MobSDK {
                 callbackUri "https://shouji.baidu.com/software/25845640.html"
                 shareByAppClient false
             }
-        }
-    }
-
-    PaySDK {
-        info {
-            AliPay {}
-            Wechat {}
-            UnionPay {}
+            Dingding {
+                appKey "4226869023"
+                appSecret "f9adef54afbfac953193d4ea11edbe18"
+            }
         }
     }
 }
