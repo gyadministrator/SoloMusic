@@ -101,10 +101,10 @@ android {
 
     productFlavors {
         //根据渠道配置
-        customer_music_debug {
+        solo_music_debug {
             buildConfigField "String", "CHANNEL", "\"music_debug\""
         }
-        customer_music_release {
+        solo_music_release {
             buildConfigField "String", "CHANNEL", "\"music_release\""
         }
     }
