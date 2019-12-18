@@ -81,7 +81,7 @@
             android:scaleType="centerCrop"
             android:src="@mipmap/add" />
 
-        <com.example.gy.musicgame.chatui.widget.StateButton
+        <com.android.customer.music.chatui.widget.StateButton
             android:id="@+id/emotion_send"
             android:layout_width="40dp"
             android:layout_height="30dp"
@@ -105,7 +105,7 @@
         android:orientation="vertical"
         android:visibility="gone">
 
-        <com.example.gy.musicgame.chatui.widget.NoScrollViewPager
+        <com.android.customer.music.chatui.widget.NoScrollViewPager
             android:id="@+id/viewpager"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />

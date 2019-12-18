@@ -32,7 +32,7 @@
             android:layout_toStartOf="@id/chat_item_header"
             android:layout_toLeftOf="@id/chat_item_header">
 
-            <com.example.gy.musicgame.chatui.widget.BubbleImageView
+            <com.android.customer.music.chatui.widget.BubbleImageView
                 android:id="@+id/chat_item_content_image"
                 android:layout_width="150dp"
                 android:layout_height="wrap_content"
@@ -54,7 +54,7 @@
                 android:background="@mipmap/chatto_bg_normal"
                 tools:ignore="RtlHardcoded">
 
-                <com.example.gy.musicgame.chatui.widget.GifTextView
+                <com.android.customer.music.chatui.widget.GifTextView
                     android:id="@+id/chat_item_content_text"
                     style="@style/text_subhead_black"
                     android:layout_marginRight="@dimen/content_horizontal_margin"

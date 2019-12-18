@@ -7,7 +7,7 @@
     android:orientation="vertical"
     android:padding="@dimen/dp_12">
 
-    <com.example.gy.musicgame.view.ClearEditText
+    <com.android.customer.music.view.ClearEditText
         android:id="@+id/et_album"
         android:layout_width="match_parent"
         android:layout_height="@dimen/btn_height"

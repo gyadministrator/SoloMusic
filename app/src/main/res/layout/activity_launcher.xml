@@ -4,6 +4,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/layer_launcher"
-    tools:context="com.example.gy.musicgame.activity.LauncherActivity">
+    tools:context="com.android.customer.music.activity.LauncherActivity">
 
 </androidx.constraintlayout.widget.ConstraintLayout>

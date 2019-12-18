@@ -7,13 +7,13 @@
     android:orientation="vertical"
     tools:context=".activity.RegisterActivity">
 
-    <com.example.gy.musicgame.view.TitleView
+    <com.android.customer.music.view.TitleView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:showRight="false"
         app:title="@string/register" />
 
-    <com.example.gy.musicgame.view.ClearEditText
+    <com.android.customer.music.view.ClearEditText
         android:id="@+id/et_user"
         android:layout_width="match_parent"
         android:layout_height="@dimen/btn_height"
@@ -26,7 +26,7 @@
         android:theme="@style/customEditText"
         tools:ignore="RtlSymmetry" />
 
-    <com.example.gy.musicgame.view.ClearEditText
+    <com.android.customer.music.view.ClearEditText
         android:id="@+id/et_password"
         android:layout_width="match_parent"
         android:layout_height="@dimen/btn_height"
@@ -39,7 +39,7 @@
         android:theme="@style/customEditText"
         tools:ignore="RtlSymmetry" />
 
-    <com.example.gy.musicgame.view.ClearEditText
+    <com.android.customer.music.view.ClearEditText
         android:id="@+id/et_sure_password"
         android:layout_width="match_parent"
         android:layout_height="@dimen/btn_height"

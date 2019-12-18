@@ -7,13 +7,13 @@
     android:orientation="vertical"
     tools:context=".activity.MobileActivity">
 
-    <com.example.gy.musicgame.view.TitleView
+    <com.android.customer.music.view.TitleView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:showRight="false"
         app:title="@string/mobile" />
 
-    <com.example.gy.musicgame.view.ClearEditText
+    <com.android.customer.music.view.ClearEditText
         android:id="@+id/et_mobile"
         android:layout_width="match_parent"
         android:layout_height="@dimen/btn_height"
@@ -33,7 +33,7 @@
         android:layout_marginTop="@dimen/btn_margin"
         android:orientation="horizontal">
 
-        <com.example.gy.musicgame.view.ClearEditText
+        <com.android.customer.music.view.ClearEditText
             android:id="@+id/et_code"
             android:layout_width="0dp"
             android:layout_height="match_parent"

@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <com.example.gy.musicgame.view.WidthEqualHeightImageView
+        <com.android.customer.music.view.WidthEqualHeightImageView
             android:id="@+id/iv_album"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <com.example.gy.musicgame.view.TitleView
+        <com.android.customer.music.view.TitleView
             android:id="@+id/titleView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -32,7 +32,7 @@
                 android:divider="@color/transparent"
                 android:scrollbars="none" />
 
-            <com.example.gy.musicgame.friend.SideBar
+            <com.android.customer.music.friend.SideBar
                 android:id="@+id/side_bar"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"

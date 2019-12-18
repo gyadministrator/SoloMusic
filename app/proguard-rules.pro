@@ -184,11 +184,11 @@
 #---------------------------------实体类---------------------------------
 #--------(实体Model不能混淆，否则找不到对应的属性获取不到值)-----
 #
--dontwarn com.example.gy.musicgame.model.**
--dontwarn com.example.gy.musicgame.chatui.entity.**
+-dontwarn com.android.customer.music.model.**
+-dontwarn com.android.customer.music.chatui.entity.**
 #对含有反射类的处理
--keep class com.example.gy.musicgame.model.** { *; }
--keep class com.example.gy.musicgame.chatui.entity.** { *; }
+-keep class com.android.customer.music.model.** { *; }
+-keep class com.android.customer.music.chatui.entity.** { *; }
 #
 # ----------------------------- 其他的 -----------------------------
 #
@@ -294,7 +294,7 @@
 }
 -dontwarn com.just.agentweb.**
 
--keepclassmembers class com.example.gy.musicgame.plugin{ *; }
+-keepclassmembers class com.android.customer.music.plugin{ *; }
 
 # OrmLite uses reflection
 -keep class com.j256.**

@@ -17,7 +17,7 @@
             android:layout_height="wrap_content" />
     </LinearLayout>
 
-    <com.example.gy.musicgame.chatui.widget.IndicatorView
+    <com.android.customer.music.chatui.widget.IndicatorView
         android:id="@+id/fragment_chat_group"
         android:layout_width="match_parent"
         android:layout_height="30dp"
