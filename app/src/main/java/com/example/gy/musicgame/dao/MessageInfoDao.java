@@ -2,6 +2,7 @@ package com.example.gy.musicgame.dao;
 
 import android.content.Context;
 
+import com.blankj.utilcode.util.ToastUtils;
 import com.example.gy.musicgame.chatui.enity.MessageInfo;
 import com.example.gy.musicgame.helper.DBHelper;
 import com.j256.ormlite.dao.Dao;
@@ -89,6 +90,16 @@ public class MessageInfoDao {
             e.printStackTrace();
         }
         return messageInfo;
+    }
+
+    public List<MessageInfo> queryForMsgId(String msgId) {
+        List<MessageInfo> list = null;
+        try {
+            list = dao.queryForEq("msgId", msgId);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
     }
 
 

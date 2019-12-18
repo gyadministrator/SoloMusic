@@ -113,6 +113,7 @@ public class MeFragment extends Fragment implements View.OnClickListener, XRecyc
     private TextView tvLocalRecord;
     private LinearLayout llMyDownload;
     private TextView tvMyDownload;
+    private boolean isShow = false;
 
     public static MeFragment newInstance() {
         return new MeFragment();
@@ -130,6 +131,11 @@ public class MeFragment extends Fragment implements View.OnClickListener, XRecyc
 
     private void initData() {
         initImagePicker();
+        getNumber();
+        setUserInfo();
+    }
+
+    private void getNumber() {
         preferences = mActivity.getSharedPreferences("myFragment", MODE_PRIVATE);
         int localMusicSize = preferences.getInt("localMusicSize", 0);
         tvLocalMusic.setText(String.valueOf(localMusicSize));
@@ -139,7 +145,27 @@ public class MeFragment extends Fragment implements View.OnClickListener, XRecyc
         tvLocalRecord.setText(String.valueOf(localRecord));
         int myDownload = preferences.getInt("myDownload", 0);
         tvMyDownload.setText(String.valueOf(myDownload));
-        setUserInfo();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (isShow) {
+            getNumber();
+            isShow = false;
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        isShow = true;
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        isShow = true;
     }
 
     private void setUserInfo() {

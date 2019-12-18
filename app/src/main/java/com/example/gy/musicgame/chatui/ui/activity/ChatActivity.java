@@ -10,7 +10,6 @@ import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.EditText;
@@ -40,7 +39,6 @@ import com.example.gy.musicgame.chatui.widget.NoScrollViewPager;
 import com.example.gy.musicgame.chatui.widget.StateButton;
 import com.example.gy.musicgame.dao.MessageInfoDao;
 import com.example.gy.musicgame.listener.IMessageListener;
-import com.example.gy.musicgame.model.User;
 import com.example.gy.musicgame.model.UserInfoVo;
 import com.example.gy.musicgame.utils.MessageUtils;
 import com.example.gy.musicgame.utils.UserManager;
@@ -59,6 +57,7 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 import butterknife.BindView;
@@ -118,7 +117,6 @@ public class ChatActivity extends BaseActivity {
         IntentFilter filter = new IntentFilter();
         filter.addAction("accept_message");
         registerReceiver(messageReceiver, filter);
-        getRecordMessage(username);
     }
 
     @Override
@@ -131,10 +129,14 @@ public class ChatActivity extends BaseActivity {
 
     @Override
     protected void initAction() {
+        getHistoryMsg();
+    }
+
+    private void getHistoryMsg() {
         //获取历史消息
-        //保存数据库
         MessageInfoDao messageInfoDao = new MessageInfoDao(mActivity);
         List<MessageInfo> list = messageInfoDao.queryForAll();
+        messageInfos.clear();
         messageInfos.addAll(list);
         if (chatAdapter != null) {
             chatAdapter.addAll(messageInfos);
@@ -352,9 +354,6 @@ public class ChatActivity extends BaseActivity {
                 }
             });
         }
-        //保存数据库
-        MessageInfoDao messageInfoDao = new MessageInfoDao(mActivity);
-        messageInfoDao.add(messageInfo);
     }
 
     /**
@@ -395,10 +394,6 @@ public class ChatActivity extends BaseActivity {
         messageInfos.add(message);
         chatAdapter.add(message);
         chatList.scrollToPosition(chatAdapter.getCount() - 1);
-
-        //保存数据库
-        MessageInfoDao messageInfoDao = new MessageInfoDao(mActivity);
-        messageInfoDao.add(message);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -414,9 +409,31 @@ public class ChatActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        messageInfos = removeDuplicate(messageInfos);
+        //保存数据库
+        MessageInfoDao messageInfoDao = new MessageInfoDao(mActivity);
+        for (MessageInfo messageInfo : messageInfos) {
+            List<MessageInfo> list = messageInfoDao.queryForMsgId(messageInfo.getMsgId());
+            if (list == null || list.size() == 0) {
+                messageInfoDao.add(messageInfo);
+            }
+        }
         EventBus.getDefault().removeStickyEvent(this);
         EventBus.getDefault().unregister(this);
         unregisterReceiver(messageReceiver);
+    }
+
+    /**
+     * 集合数据去重
+     *
+     * @param list
+     * @return
+     */
+    private static List<MessageInfo> removeDuplicate(List<MessageInfo> list) {
+        HashSet<MessageInfo> h = new HashSet<>(list);
+        list.clear();
+        list.addAll(h);
+        return list;
     }
 
     public class MessageReceiver extends BroadcastReceiver {

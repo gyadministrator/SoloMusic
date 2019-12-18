@@ -3,17 +3,26 @@ package com.example.gy.musicgame.service;
 import android.annotation.SuppressLint;
 import android.app.Service;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+import android.text.TextUtils;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 
 import com.android.recipe.topmessage.view.WindowHeadToast;
+import com.blankj.utilcode.util.ToastUtils;
+import com.example.gy.musicgame.api.Api;
 import com.example.gy.musicgame.chatui.enity.MessageInfo;
 import com.example.gy.musicgame.chatui.util.Constants;
+import com.example.gy.musicgame.helper.RetrofitHelper;
+import com.example.gy.musicgame.model.IMVo;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.hyphenate.EMContactListener;
 import com.hyphenate.EMMessageListener;
 import com.hyphenate.chat.EMClient;
@@ -23,8 +32,17 @@ import com.hyphenate.chat.EMMessageBody;
 import com.hyphenate.chat.EMTextMessageBody;
 import com.hyphenate.chat.EMVoiceMessageBody;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
+import io.reactivex.Observable;
+import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * Description: Recipe
@@ -66,7 +84,6 @@ public class AcceptMessageService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.e(TAG, "onStartCommand:消息服务");
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -85,7 +102,6 @@ public class AcceptMessageService extends Service {
             @Override
             public void onContactInvited(final String username, String reason) {
                 //收到好友邀请
-                Log.e(TAG, "onContactInvited: " + username + reason);
                 receiver.setAction("invited");
                 receiver.putExtra("username", username);
                 receiver.putExtra("reason", reason);
@@ -204,10 +220,53 @@ public class AcceptMessageService extends Service {
         }
         message.setHeader(DEFAULT_HEADER_URL);
         //查询用户
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                queryUser(emMessage.getUserName(), message);
+            }
+        }).start();
         messageInfos.add(message);
         header = message.getHeader();
         currentMessage = emMessage;
         mHandler.sendEmptyMessage(0);
+    }
+
+    private void queryUser(String username, MessageInfo messageInfo) {
+        RetrofitHelper retrofitHelper = RetrofitHelper.getInstance();
+        Api api = retrofitHelper.initRetrofit(com.example.gy.musicgame.constant.Constants.SERVER_URL);
+        Observable<Map> observable = api.queryByAccount(username);
+        observable.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<Map>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(Map map) {
+                        Gson gson = new Gson();
+                        String json = gson.toJson(map.get("data"));
+                        Type type = new TypeToken<IMVo>() {
+                        }.getType();
+                        IMVo imVo = gson.fromJson(json, type);
+
+                        if (imVo != null && !TextUtils.isEmpty(imVo.getAvatar())) {
+                            messageInfo.setHeader(imVo.getAvatar());
+                        }
+                    }
+
+                    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+                    @Override
+                    public void onError(Throwable e) {
+                        ToastUtils.showShort(Objects.requireNonNull(e.getMessage()));
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
     }
 
 }
