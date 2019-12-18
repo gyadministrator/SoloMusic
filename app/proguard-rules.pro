@@ -184,9 +184,11 @@
 #---------------------------------实体类---------------------------------
 #--------(实体Model不能混淆，否则找不到对应的属性获取不到值)-----
 #
--dontwarn com.android.customer.music.model.**
+-dontwarn com.example.gy.musicgame.model.**
+-dontwarn com.example.gy.musicgame.chatui.entity.**
 #对含有反射类的处理
--keep class com.android.customer.music.model.** { *; }
+-keep class com.example.gy.musicgame.model.** { *; }
+-keep class com.example.gy.musicgame.chatui.entity.** { *; }
 #
 # ----------------------------- 其他的 -----------------------------
 #
@@ -293,3 +295,21 @@
 -dontwarn com.just.agentweb.**
 
 -keepclassmembers class com.example.gy.musicgame.plugin{ *; }
+
+# OrmLite uses reflection
+-keep class com.j256.**
+-keepclassmembers class com.j256.** { *; }
+-keep enum com.j256.**
+-keepclassmembers enum com.j256.** { *; }
+-keep interface com.j256.**
+-keepclassmembers interface com.j256.** { *; }
+
+-keepattributes *Annotation*
+
+-keepclassmembers class * {
+@com.j256.ormlite.field.DatabaseField *;
+}
+
+-keepattributes Signature
+
+
