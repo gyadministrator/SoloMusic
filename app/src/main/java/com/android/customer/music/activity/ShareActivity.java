@@ -34,6 +34,7 @@ public class ShareActivity extends BaseActivity implements View.OnLongClickListe
     private ImageView ivCode;
     private Bitmap bitmap;
     private String name = "solo_download";
+    private String downloadUrl;
     private final String[] PERMISSIONS = new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE};
 
     @Override
@@ -64,7 +65,7 @@ public class ShareActivity extends BaseActivity implements View.OnLongClickListe
     @Override
     protected void initData() {
         SharedPreferences preferences = mActivity.getSharedPreferences("apk", Context.MODE_PRIVATE);
-        String downloadUrl = preferences.getString("downloadUrl", "");
+        downloadUrl = preferences.getString("downloadUrl", "");
         if (TextUtils.isEmpty(downloadUrl)) {
             ToastUtils.showShort("获取APP下载链接失败！");
         }
@@ -80,7 +81,7 @@ public class ShareActivity extends BaseActivity implements View.OnLongClickListe
         titleView.setRightClickListener(new TitleView.OnRightClickListener() {
             @Override
             public void clickRight(View view) {
-                ShareUtils.showShare(mActivity, getString(R.string.app_name), getString(R.string.download_tip), "");
+                ShareUtils.showShare(mActivity, getString(R.string.app_name), getString(R.string.download_tip), downloadUrl);
             }
 
             @Override

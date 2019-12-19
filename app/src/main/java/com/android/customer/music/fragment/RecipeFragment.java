@@ -2,6 +2,7 @@ package com.android.customer.music.fragment;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -250,7 +251,9 @@ public class RecipeFragment extends Fragment implements RecyclerRecipeAdapter.On
 
     @Override
     public void click(String cid) {
-        DetailActivity.startActivity(getActivity(), cid, null);
+        SharedPreferences preferences = mActivity.getSharedPreferences("apk", Context.MODE_PRIVATE);
+        String downloadUrl = preferences.getString("downloadUrl", "");
+        DetailActivity.startActivity(getActivity(), cid, downloadUrl);
     }
 
     @Override

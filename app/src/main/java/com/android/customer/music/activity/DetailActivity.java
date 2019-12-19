@@ -46,6 +46,7 @@ public class DetailActivity extends BaseActivity {
     private String material = "";
     private List<StepModel> list = new ArrayList<>();
     private RelativeLayout rlNoData;
+    private String url;
 
     @Override
     protected void initView() {
@@ -57,7 +58,7 @@ public class DetailActivity extends BaseActivity {
     @Override
     protected void initData() {
         cid = getIntent().getStringExtra("cid");
-        String url = getIntent().getStringExtra("url");
+        url = getIntent().getStringExtra("url");
         getData(cid);
     }
 
@@ -167,7 +168,7 @@ public class DetailActivity extends BaseActivity {
         titleView.setRightClickListener(new TitleView.OnRightClickListener() {
             @Override
             public void clickRight(View view) {
-                ShareUtils.showShare(DetailActivity.this, name, material, "");
+                ShareUtils.showShare(DetailActivity.this, name, material, url);
             }
 
             @Override
