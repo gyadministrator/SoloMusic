@@ -7,6 +7,16 @@
     tools:context=".fragment.RecipeFragment">
 
     <LinearLayout
+        android:id="@+id/ll_no_data"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <include layout="@layout/empty_data" />
+    </LinearLayout>
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
@@ -47,5 +57,14 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
+            android:id="@+id/tv_status"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/btn_height"
+            android:gravity="center"
+            android:textColor="@color/mainColor"
+            android:textSize="@dimen/btn_size"
+            android:visibility="gone" />
     </LinearLayout>
 </FrameLayout>

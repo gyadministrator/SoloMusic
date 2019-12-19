@@ -8,6 +8,10 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -16,8 +20,6 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
-import com.blankj.utilcode.util.ToastUtils;
-import com.cooltechworks.views.shimmer.ShimmerRecyclerView;
 import com.android.customer.music.R;
 import com.android.customer.music.activity.DetailActivity;
 import com.android.customer.music.adapter.RecyclerRecipeAdapter;
@@ -26,6 +28,8 @@ import com.android.customer.music.constant.Constants;
 import com.android.customer.music.helper.RetrofitHelper;
 import com.android.customer.music.model.RecipeSearchModel;
 import com.android.customer.music.model.RecipeTypeModel;
+import com.blankj.utilcode.util.ToastUtils;
+import com.cooltechworks.views.shimmer.ShimmerRecyclerView;
 import com.jcodecraeer.xrecyclerview.ProgressStyle;
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
 import com.lqr.dropdownLayout.LQRDropdownLayout;
@@ -58,8 +62,11 @@ public class RecipeFragment extends Fragment implements RecyclerRecipeAdapter.On
     private boolean flag = true;
     private int total;
     private RecyclerRecipeAdapter adapter;
+    private LinearLayout llNoData;
+    private TextView tvStatus;
     private List<Map<String, String>> mapList = new ArrayList<>();
     private Activity mActivity;
+    private Animation animation;
     private List<Map<String, List<RecipeTypeModel.ResultBean.ChildsBeanX.ChildsBean.CategoryInfoBeanXX>>> maps = new ArrayList<>();
     private ArrayList<RecipeTypeModel.ResultBean.ChildsBeanX.ChildsBean.CategoryInfoBeanXX> categoryInfoBeans;
 
@@ -85,9 +92,9 @@ public class RecipeFragment extends Fragment implements RecyclerRecipeAdapter.On
     }
 
     private void initAction() {
-        getRecipe();
         shimmerRecyclerView.setVisibility(View.VISIBLE);
         shimmerRecyclerView.showShimmerAdapter();
+        getRecipe();
     }
 
     private void getRecipe() {
@@ -114,6 +121,7 @@ public class RecipeFragment extends Fragment implements RecyclerRecipeAdapter.On
 
                     @Override
                     public void onComplete() {
+                        shimmerRecyclerView.setVisibility(View.GONE);
                     }
                 });
     }
@@ -121,6 +129,8 @@ public class RecipeFragment extends Fragment implements RecyclerRecipeAdapter.On
     private void setData(RecipeTypeModel recipeTypeModel) {
         if (recipeTypeModel.getRetCode().equals("200")) {
             dl.setVisibility(View.VISIBLE);
+            llNoData.setVisibility(View.GONE);
+            shimmerRecyclerView.setVisibility(View.GONE);
             if (recipeTypeModel.getResult().getChilds().size() == 0) {
                 dl.setVisibility(View.GONE);
             } else {
@@ -150,6 +160,25 @@ public class RecipeFragment extends Fragment implements RecyclerRecipeAdapter.On
                     }
                     mapList.add(mapString);
                 }
+                //设置头部
+                if (xRecyclerView == null) {
+                    xRecyclerView = new XRecyclerView(mActivity);
+                }
+                xRecyclerView.setRefreshProgressStyle(ProgressStyle.BallSpinFadeLoader);
+                xRecyclerView.setLoadingMoreProgressStyle(ProgressStyle.Pacman);
+                xRecyclerView.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
+                xRecyclerView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+                adapter = new RecyclerRecipeAdapter(list, mActivity);
+                adapter.setOnRecyclerViewListener(RecipeFragment.this);
+                xRecyclerView.setAdapter(adapter);
+
+                dl.setCols(headers.size());
+                if (dl.getChildCount() == 0) {
+                    dl.setListMaxHeight(ViewGroup.LayoutParams.MATCH_PARENT);
+                    dl.init(xRecyclerView, mapList);
+                }
+                dl.setOnDropdownListListener(RecipeFragment.this);
+                //初始化头部结束
                 ArrayList<Integer> list = new ArrayList<>();
                 list.add(6);
                 list.add(0);
@@ -161,6 +190,8 @@ public class RecipeFragment extends Fragment implements RecyclerRecipeAdapter.On
                 //初始化数据
                 initContent(cid, recipeName);
             }
+        } else {
+            llNoData.setVisibility(View.VISIBLE);
         }
     }
 
@@ -192,54 +223,70 @@ public class RecipeFragment extends Fragment implements RecyclerRecipeAdapter.On
     }
 
     private void setContent(RecipeSearchModel recipeSearchModel) {
-        shimmerRecyclerView.setVisibility(View.GONE);
-        if (recipeSearchModel.getRetCode().trim().equals("20201")) {
-            if (list.size() != 0) {
-                xRecyclerView.setNoMore(true);
+        if (recipeSearchModel != null) {
+            if (recipeSearchModel.getResult() == null || recipeSearchModel.getRetCode().equals("10020")) {
+                dl.setVisibility(View.VISIBLE);
+                llNoData.setVisibility(View.VISIBLE);
+                tvStatus.setVisibility(View.VISIBLE);
+                tvStatus.setText(recipeSearchModel.getMsg());
+                tvStatus.startAnimation(animation);
+                return;
             }
-        } else {
-            if (recipeSearchModel.getRetCode().equals("200")) {
-                list = recipeSearchModel.getResult().getList();
-                if (list.size() == 0) {
-                    dl.setVisibility(View.GONE);
-                    return;
+        }
+        tvStatus.clearAnimation();
+        tvStatus.setVisibility(View.GONE);
+        shimmerRecyclerView.setVisibility(View.GONE);
+        if (recipeSearchModel != null) {
+            if (recipeSearchModel.getRetCode().trim().equals("20201")) {
+                if (list.size() != 0) {
+                    xRecyclerView.setNoMore(true);
                 }
-                total = recipeSearchModel.getResult().getTotal();
-                if (flag) {
-                    if (xRecyclerView == null) {
-                        xRecyclerView = new XRecyclerView(mActivity);
+            } else {
+                if (recipeSearchModel.getRetCode().equals("200")) {
+                    list = recipeSearchModel.getResult().getList();
+                    if (list.size() == 0) {
+                        dl.setVisibility(View.GONE);
+                        return;
                     }
-                    xRecyclerView.setRefreshProgressStyle(ProgressStyle.BallSpinFadeLoader);
-                    xRecyclerView.setLoadingMoreProgressStyle(ProgressStyle.Pacman);
-                    xRecyclerView.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
-                    xRecyclerView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-                    adapter = new RecyclerRecipeAdapter(list, mActivity);
-                    adapter.setOnRecyclerViewListener(RecipeFragment.this);
-                    xRecyclerView.setAdapter(adapter);
-                    flag = false;
-                }
-                if (page > 1) {
-                    list.addAll(recipeSearchModel.getResult().getList());
-                }
-                xRecyclerView.setLoadingListener(RecipeFragment.this);
+                    total = recipeSearchModel.getResult().getTotal();
+                    if (flag) {
+                        if (xRecyclerView == null) {
+                            xRecyclerView = new XRecyclerView(mActivity);
+                        }
+                        xRecyclerView.setRefreshProgressStyle(ProgressStyle.BallSpinFadeLoader);
+                        xRecyclerView.setLoadingMoreProgressStyle(ProgressStyle.Pacman);
+                        xRecyclerView.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
+                        xRecyclerView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+                        adapter = new RecyclerRecipeAdapter(list, mActivity);
+                        adapter.setOnRecyclerViewListener(RecipeFragment.this);
+                        xRecyclerView.setAdapter(adapter);
+                        flag = false;
+                    }
+                    if (page > 1) {
+                        list.addAll(recipeSearchModel.getResult().getList());
+                    }
+                    xRecyclerView.setLoadingListener(RecipeFragment.this);
 
-                dl.setCols(headers.size());
-                if (dl.getChildCount() == 0) {
-                    dl.setListMaxHeight(ViewGroup.LayoutParams.MATCH_PARENT);
-                    dl.init(xRecyclerView, mapList);
+                    dl.setCols(headers.size());
+                    if (dl.getChildCount() == 0) {
+                        dl.setListMaxHeight(ViewGroup.LayoutParams.MATCH_PARENT);
+                        dl.init(xRecyclerView, mapList);
+                    }
+                    dl.setOnDropdownListListener(RecipeFragment.this);
                 }
-                dl.setOnDropdownListListener(RecipeFragment.this);
             }
         }
     }
 
     private void initData() {
-
+        animation = AnimationUtils.loadAnimation(mActivity, R.anim.show_status);
     }
 
     private void initView(View view) {
         dl = view.findViewById(R.id.dl);
         shimmerRecyclerView = view.findViewById(R.id.shimmer_recycler_view);
+        llNoData = view.findViewById(R.id.ll_no_data);
+        tvStatus = view.findViewById(R.id.tv_status);
     }
 
     @Override
