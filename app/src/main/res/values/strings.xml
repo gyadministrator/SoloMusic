@@ -73,4 +73,15 @@
     <string name="album_name">歌单名称</string>
     <string name="save">保存</string>
     <string name="start_use">开始体验</string>
+
+    <string name="other_network">加入其它网络...</string>
+    <string name="input_pwd">请输入密码...</string>
+    <string name="ok">确定</string>
+    <string name="connect">连接</string>
+
+    <array name="safe">
+        <item>开放</item>
+        <item>WEP</item>
+        <item>WPA</item>
+    </array>
 </resources>

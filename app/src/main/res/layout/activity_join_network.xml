@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activity.JoinNetworkActivity">
+
+    <include
+        android:id="@+id/include2"
+        layout="@layout/activity_title" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="30dp"
+        android:text="输入网络信息"
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/include2"
+        tools:ignore="HardcodedText" />
+
+    <com.android.customer.music.view.ClearEditText
+        android:id="@+id/net_name"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/btn_height"
+        android:layout_marginStart="@dimen/btn_margin"
+        android:layout_marginLeft="@dimen/btn_margin"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginRight="20dp"
+        android:cursorVisible="true"
+        android:hint="网络名称..."
+        android:inputType="text"
+        android:textColorHint="@color/hint_color"
+        android:theme="@style/customEditText"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView"
+        tools:ignore="HardcodedText,RtlSymmetry" />
+
+    <TextView
+        android:id="@+id/safe_tv"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/btn_height"
+        android:layout_marginStart="@dimen/btn_margin"
+        android:layout_marginLeft="@dimen/btn_margin"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginRight="20dp"
+        android:text="开放"
+        android:gravity="center_vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView3"
+        tools:ignore="HardcodedText,RtlSymmetry" />
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="40dp"
+        android:text="安全性"
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/net_name"
+        tools:ignore="HardcodedText" />
+
+    <com.android.customer.music.view.ClearEditText
+        android:id="@+id/input_pwd"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/btn_height"
+        android:layout_marginStart="@dimen/btn_margin"
+        android:layout_marginLeft="@dimen/btn_margin"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginRight="20dp"
+        android:cursorVisible="true"
+        android:hint="密码..."
+        android:inputType="textPassword"
+        android:textColorHint="@color/hint_color"
+        android:theme="@style/customEditText"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/safe_tv"
+        tools:ignore="HardcodedText,RtlSymmetry" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

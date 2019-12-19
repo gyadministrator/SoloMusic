@@ -40,6 +40,17 @@
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
+    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.FORCE_STOP_PACKAGES"
+        tools:ignore="ProtectedPermissions" />
+    <uses-permission android:name="android.permission.MASTER_CLEAR"
+        tools:ignore="ProtectedPermissions" />
+    <uses-permission android:name="android.permission.CAMERA" />
+
     <application
         android:name=".application.MyApplication"
         android:allowBackup="true"
@@ -50,6 +61,15 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="UnusedAttribute">
+        <activity
+            android:name=".activity.WifiActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.ConnectWifiActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.JoinNetworkActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".activity.MusicDownloadActivity"
             android:screenOrientation="portrait" />

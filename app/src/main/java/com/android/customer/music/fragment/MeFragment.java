@@ -23,6 +23,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.android.customer.music.activity.WifiActivity;
 import com.blankj.utilcode.util.ToastUtils;
 import com.bumptech.glide.Glide;
 import com.android.customer.music.R;
@@ -111,6 +112,8 @@ public class MeFragment extends Fragment implements View.OnClickListener, XRecyc
     private TextView tvLocalRecord;
     private LinearLayout llMyDownload;
     private TextView tvMyDownload;
+    private LinearLayout llWifi;
+    private TextView tvWifi;
     private boolean isShow = false;
 
     public static MeFragment newInstance() {
@@ -143,6 +146,13 @@ public class MeFragment extends Fragment implements View.OnClickListener, XRecyc
         tvLocalRecord.setText(String.valueOf(localRecord));
         int myDownload = preferences.getInt("myDownload", 0);
         tvMyDownload.setText(String.valueOf(myDownload));
+
+        boolean myWifi = preferences.getBoolean("myWifi", false);
+        if (myWifi) {
+            tvWifi.setText("已开启");
+            tvWifi.setTextColor(getResources().getColor(R.color.cancel));
+        }
+
     }
 
     @Override
@@ -340,11 +350,14 @@ public class MeFragment extends Fragment implements View.OnClickListener, XRecyc
         ivAdd = view.findViewById(R.id.iv_add);
         llLocalRecord = view.findViewById(R.id.ll_local_record);
         tvLocalRecord = view.findViewById(R.id.tv_local_record);
+        llWifi = view.findViewById(R.id.ll_wifi);
+        tvWifi = view.findViewById(R.id.tv_wifi);
         ivAdd.setOnClickListener(this);
         llLocalMusic.setOnClickListener(this);
         llLocalRecord.setOnClickListener(this);
         recyclerView.setLoadingListener(this);
         llMyDownload.setOnClickListener(this);
+        llWifi.setOnClickListener(this);
         titleView.setRightClickListener(new TitleView.OnRightClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
             @Override
@@ -407,6 +420,9 @@ public class MeFragment extends Fragment implements View.OnClickListener, XRecyc
                 break;
             case R.id.ll_my_download:
                 startActivity(new Intent(mActivity, MusicDownloadActivity.class));
+                break;
+            case R.id.ll_wifi:
+                startActivity(new Intent(mActivity, WifiActivity.class));
                 break;
         }
     }

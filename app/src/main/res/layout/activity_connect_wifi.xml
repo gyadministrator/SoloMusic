@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activity.ConnectWifiActivity">
+
+    <include
+        android:id="@+id/include"
+        layout="@layout/activity_title" />
+
+    <TextView
+        android:id="@+id/wifi_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
+        android:textSize="18sp"
+        android:layout_marginEnd="@dimen/dp_20"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/include"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="@dimen/dp_20" />
+
+    <com.android.customer.music.view.ClearEditText
+        android:id="@+id/pwd_txt"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/btn_height"
+        android:layout_marginStart="@dimen/btn_margin"
+        android:layout_marginLeft="@dimen/btn_margin"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginRight="20dp"
+        android:cursorVisible="true"
+        android:hint="密码..."
+        android:inputType="textPassword"
+        android:textColorHint="@color/hint_color"
+        android:theme="@style/customEditText"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/wifi_name"
+        tools:ignore="HardcodedText,RtlSymmetry" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
