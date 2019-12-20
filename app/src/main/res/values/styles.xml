@@ -20,10 +20,12 @@
     </style>
 
     <!--应用启动页主题-->
-    <style name="AppTheme.StartingWindowTheme" parent="AppTheme">
+    <style name="AppTheme.StartingWindowTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:windowBackground">@drawable/layer_launcher</item>
         <item name="windowNoTitle">true</item>
-        <item name="android:windowFullscreen">true</item>
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/splash_top_color</item>
+        <item name="colorAccent">@color/colorAccent</item>
     </style>
 
     <declare-styleable name="TitleView">

@@ -3,8 +3,8 @@ apply plugin: 'com.mob.sdk'
 
 // 在MobSDK的扩展中注册MobPush的相关信息
 MobSDK {
-    appKey "29c9b0cece51d"
-    appSecret "251072b5d3cce225be6516bfded12018"
+    appKey "2d8ce3403a7a0"
+    appSecret "1a78a6e1599c76dcb5c765d55d38d7bc"
 
     googlePlay true
 

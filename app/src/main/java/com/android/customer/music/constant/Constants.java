@@ -37,7 +37,7 @@ public class Constants {
 
     public static final String CURRENT_BOTTOM_VO = "current_bottom_vo";
 
-    public static final String MOB_APP_KEY = "29c9b0cece51d";
+    public static final String MOB_APP_KEY = "2d8ce3403a7a0";
 
     public static final String RECIPE_URL = "https://apicloud.mob.com/";
 

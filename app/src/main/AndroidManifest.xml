@@ -45,9 +45,11 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <uses-permission android:name="android.permission.FORCE_STOP_PACKAGES"
+    <uses-permission
+        android:name="android.permission.FORCE_STOP_PACKAGES"
         tools:ignore="ProtectedPermissions" />
-    <uses-permission android:name="android.permission.MASTER_CLEAR"
+    <uses-permission
+        android:name="android.permission.MASTER_CLEAR"
         tools:ignore="ProtectedPermissions" />
     <uses-permission android:name="android.permission.CAMERA" />
 
@@ -204,6 +206,7 @@
 
         <activity
             android:name=".activity.LauncherActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.StartingWindowTheme">
             <intent-filter>
