@@ -126,7 +126,7 @@ public class FriendFragment extends Fragment implements AdapterView.OnItemClickL
                 //新朋友
                 tvNum.setText("");
                 tvNum.setVisibility(View.GONE);
-                ((MainActivity) mActivity).clearMsgPoint(2);
+                ((MainActivity) mActivity).clearMsgPoint(1);
                 startActivity(new Intent(mActivity, NewFriendActivity.class));
             }
         });
@@ -158,7 +158,7 @@ public class FriendFragment extends Fragment implements AdapterView.OnItemClickL
                 //新朋友
                 tvNum.setText("");
                 tvNum.setVisibility(View.GONE);
-                ((MainActivity) mActivity).clearMsgPoint(2);
+                ((MainActivity) mActivity).clearMsgPoint(1);
                 startActivity(new Intent(mActivity, NewFriendActivity.class));
             }
         });

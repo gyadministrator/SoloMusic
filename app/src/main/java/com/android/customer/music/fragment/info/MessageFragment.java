@@ -135,6 +135,6 @@ public class MessageFragment extends Fragment implements XRecyclerView.LoadingLi
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     @Override
     public void onItemClick(int position) {
-        ((MainActivity) mActivity).clearMsgPoint(3);
+        ((MainActivity) mActivity).clearMsgPoint(2);
     }
 }

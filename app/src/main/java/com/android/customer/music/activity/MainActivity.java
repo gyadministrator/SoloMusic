@@ -51,11 +51,11 @@ import zhy.com.highlight.shape.CircleLightShape;
 @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
 public class MainActivity extends BaseActivity {
     private static final int REQUEST_CODE = 1002;
-    private String[] tabText = {"听歌", "美食", "歌友", "消息", "我的"};
+    private String[] tabText = {"听歌", "歌友", "消息", "我的"};
     //未选中icon
-    private int[] normalIcon = {R.mipmap.listen, R.mipmap.record, R.mipmap.friend, R.mipmap.info, R.mipmap.me};
+    private int[] normalIcon = {R.mipmap.listen, R.mipmap.friend, R.mipmap.info, R.mipmap.me};
     //选中时icon
-    private int[] selectIcon = {R.mipmap.listen_pressed, R.mipmap.record_pressed, R.mipmap.friend_pressed, R.mipmap.info_pressed, R.mipmap.me_pressed};
+    private int[] selectIcon = {R.mipmap.listen_pressed, R.mipmap.friend_pressed, R.mipmap.info_pressed, R.mipmap.me_pressed};
 
     private List<Fragment> fragments = new ArrayList<>();
     private EasyNavigationBar navigationBar;
@@ -101,7 +101,6 @@ public class MainActivity extends BaseActivity {
     protected void initData() {
         setSwipeBackEnable(false);
         fragments.add(ListenFragment.newInstance());
-        fragments.add(RecipeFragment.newInstance());
         fragments.add(FriendFragment.newInstance());
         fragments.add(InfoFragment.newInstance());
         fragments.add(MeFragment.newInstance());
@@ -182,7 +181,7 @@ public class MainActivity extends BaseActivity {
     private void getUnreadMsg() {
         int unreadMessageCount = EMClient.getInstance().chatManager().getUnreadMessageCount();
         if (unreadMessageCount > 0) {
-            setMsgPoint(3, unreadMessageCount);
+            setMsgPoint(2, unreadMessageCount);
         }
     }
 
@@ -261,7 +260,7 @@ public class MainActivity extends BaseActivity {
         super.acceptApply();
         List<NewFriendVo> newFriendVoList = getNewFriendVoList();
         if (newFriendVoList != null && newFriendVoList.size() > 0) {
-            setMsgPoint(2, newFriendVoList.size());
+            setMsgPoint(1, newFriendVoList.size());
         }
     }
 
