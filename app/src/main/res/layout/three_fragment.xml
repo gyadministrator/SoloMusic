@@ -10,20 +10,21 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="fitXY"
-        android:src="@mipmap/three" />
+        android:src="@drawable/three" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="bottom"
-        android:gravity="bottom"
         android:layout_marginBottom="@dimen/dp_30"
+        android:gravity="bottom"
         android:orientation="vertical">
 
         <TextView
             android:id="@+id/tv_skip"
-            android:layout_width="match_parent"
+            android:layout_width="@dimen/dp_150"
             android:layout_height="@dimen/btn_height"
+            android:layout_gravity="center"
             android:layout_margin="@dimen/btn_margin"
             android:background="@drawable/btn_selector"
             android:gravity="center"

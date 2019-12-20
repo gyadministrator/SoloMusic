@@ -1,7 +1,6 @@
 package com.android.customer.music.activity;
 
 import android.view.View;
-import android.view.WindowManager;
 
 import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
@@ -11,17 +10,17 @@ import com.android.customer.music.adapter.ViewPagerAdapter;
 import com.android.customer.music.fragment.guide.OneFragment;
 import com.android.customer.music.fragment.guide.ThreeFragment;
 import com.android.customer.music.fragment.guide.TwoFragment;
+import com.gyf.barlibrary.ImmersionBar;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class GuideActivity extends BaseActivity {
     private List<View> listImg;
+    private ImmersionBar immersionBar;
 
     @Override
     protected void initView() {
-        //将屏幕设置为全屏
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         ViewPager viewPager = fd(R.id.viewpager);
         listImg = new ArrayList<>();
         listImg.add(fd(R.id.y1));
@@ -29,6 +28,14 @@ public class GuideActivity extends BaseActivity {
         listImg.add(fd(R.id.y3));
         viewPager.setAdapter(new ViewPagerAdapter(getSupportFragmentManager(), showView()));
         viewPager.setOnPageChangeListener(showPageChange);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (immersionBar != null) {
+            immersionBar.destroy();
+        }
     }
 
     ViewPager.OnPageChangeListener showPageChange = new ViewPager.OnPageChangeListener() {
@@ -82,6 +89,11 @@ public class GuideActivity extends BaseActivity {
     @Override
     protected void initData() {
         setSwipeBackEnable(false);
+        immersionBar = ImmersionBar.with(mActivity);
+        immersionBar.statusBarDarkFont(true, 0.2f)
+                .statusBarColor(R.color.transparent)
+                .navigationBarColor(R.color.splash_top_color)
+                .init();
     }
 
     @Override
