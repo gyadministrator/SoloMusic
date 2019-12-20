@@ -7,7 +7,6 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Environment;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
@@ -33,7 +32,6 @@ import java.util.Objects;
  * Created Time on 2019/8/28 15:19
  */
 public class CrashHandler implements Thread.UncaughtExceptionHandler {
-    private static final String TAG = "CrashHandler";
     //系统默认的UncaughtException处理类
     private Thread.UncaughtExceptionHandler mDefaultHandler;
     //CrashHandler实例
@@ -152,7 +150,6 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
             try {
                 field.setAccessible(true);
                 map.put(field.getName(), Objects.requireNonNull(field.get(null)).toString());
-                Log.d(TAG, field.getName() + " : " + field.get(null));
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -185,7 +182,7 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
         try {
             long timestamp = System.currentTimeMillis();
             String time = formatter.format(new Date());
-            String fileName = "crash-music-game-" + time + "-" + timestamp + ".log";
+            String fileName = "soloMusic-" + time + "-" + timestamp + ".log";
             if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
                 @SuppressLint("SdCardPath") String path = "/sdcard/crash/";
                 File dir = new File(path);

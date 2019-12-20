@@ -103,9 +103,11 @@ android {
         //根据渠道配置
         solo_music_debug {
             buildConfigField "String", "CHANNEL", "\"music_debug\""
+            buildConfigField "boolean", "IsDebug", "true"
         }
         solo_music_release {
             buildConfigField "String", "CHANNEL", "\"music_release\""
+            buildConfigField "boolean", "IsDebug", "false"
         }
     }
 }

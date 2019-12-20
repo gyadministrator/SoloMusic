@@ -36,11 +36,11 @@ public class MyApplication extends Application {
         // 初始化MultiDex
         MultiDex.install(this);
         Utils.init(this);
-        Bugly.init(getApplicationContext(), Constants.BUGLY_APPID, Constants.isDebug);
+        Bugly.init(getApplicationContext(), Constants.BUG_APP_ID, Constants.isDebug);
         initIM();
         initScreenSize();
         if (Constants.isDebug) {
-            //initCrash();
+            initCrash();
         }
     }
 
