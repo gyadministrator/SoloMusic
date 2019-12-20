@@ -39,7 +39,7 @@ public class MobileActivity extends BaseActivity implements View.OnClickListener
     private TextView tvCode;
     private TextView tvNext;
     private int mType;
-    private boolean isRegister = false;
+    private boolean isRegister;
 
     @Override
     protected void initView() {
@@ -70,6 +70,14 @@ public class MobileActivity extends BaseActivity implements View.OnClickListener
         }
         if (!PhoneUtils.isPhone()) {
             ToastUtils.showShort("手机号格式不对！");
+            return false;
+        }
+        return true;
+    }
+
+    private boolean validateCode(String code) {
+        if (TextUtils.isEmpty(code)) {
+            ToastUtils.showShort("验证码不能为空！");
             return false;
         }
         return true;
@@ -122,6 +130,10 @@ public class MobileActivity extends BaseActivity implements View.OnClickListener
                         if (!handler) {
                             isRegister = (boolean) map.get("data");
                         }
+                        if (mType == 1 && !isRegister) {
+                            ToastUtils.showShort("此手机号已注册！");
+                            return;
+                        }
                         if (mType == 1 && isRegister) {
                             SSMUtils.sendCode("86", mobile);
                             SSMUtils.setSsmListener(MobileActivity.this);
@@ -157,7 +169,11 @@ public class MobileActivity extends BaseActivity implements View.OnClickListener
                 break;
             case R.id.tv_next:
                 //下一步
-                if (validate) {
+                if (validate && validateCode(getCode())) {
+                    if (mType == 1 && !isRegister) {
+                        ToastUtils.showShort("此手机号已注册！");
+                        return;
+                    }
                     validateCode(getMobile(), getCode());
                 }
                 break;
