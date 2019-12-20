@@ -29,6 +29,20 @@
             app:showRight="false"
             app:title="@string/bottom_recipe" />
 
+        <TextView
+            android:id="@+id/tv_status"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/btn_height"
+            android:background="@color/colorAccent"
+            android:ellipsize="marquee"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:padding="10dp"
+            android:singleLine="true"
+            android:textColor="@color/white"
+            android:textSize="@dimen/btn_size" />
+
         <com.cooltechworks.views.shimmer.ShimmerRecyclerView
             android:id="@+id/shimmer_recycler_view"
             android:layout_width="match_parent"
@@ -57,14 +71,5 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
-
-        <TextView
-            android:id="@+id/tv_status"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/btn_height"
-            android:gravity="center"
-            android:textColor="@color/mainColor"
-            android:textSize="@dimen/btn_size"
-            android:visibility="gone" />
     </LinearLayout>
 </FrameLayout>

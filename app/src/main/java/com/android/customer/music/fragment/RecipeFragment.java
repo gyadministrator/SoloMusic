@@ -8,8 +8,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -66,7 +64,6 @@ public class RecipeFragment extends Fragment implements RecyclerRecipeAdapter.On
     private TextView tvStatus;
     private List<Map<String, String>> mapList = new ArrayList<>();
     private Activity mActivity;
-    private Animation animation;
     private List<Map<String, List<RecipeTypeModel.ResultBean.ChildsBeanX.ChildsBean.CategoryInfoBeanXX>>> maps = new ArrayList<>();
     private ArrayList<RecipeTypeModel.ResultBean.ChildsBeanX.ChildsBean.CategoryInfoBeanXX> categoryInfoBeans;
 
@@ -229,11 +226,9 @@ public class RecipeFragment extends Fragment implements RecyclerRecipeAdapter.On
                 llNoData.setVisibility(View.VISIBLE);
                 tvStatus.setVisibility(View.VISIBLE);
                 tvStatus.setText(recipeSearchModel.getMsg());
-                tvStatus.startAnimation(animation);
                 return;
             }
         }
-        tvStatus.clearAnimation();
         tvStatus.setVisibility(View.GONE);
         shimmerRecyclerView.setVisibility(View.GONE);
         if (recipeSearchModel != null) {
@@ -279,7 +274,6 @@ public class RecipeFragment extends Fragment implements RecyclerRecipeAdapter.On
     }
 
     private void initData() {
-        animation = AnimationUtils.loadAnimation(mActivity, R.anim.show_status);
     }
 
     private void initView(View view) {

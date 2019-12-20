@@ -51,7 +51,7 @@ public class LinearAdapter extends RecyclerView.Adapter<LinearAdapter.ViewHolder
     private boolean isFlag;
     private OnItemClickListener onItemClickListener;
 
-   public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
+    public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
         this.onItemClickListener = onItemClickListener;
     }
 
@@ -167,7 +167,7 @@ public class LinearAdapter extends RecyclerView.Adapter<LinearAdapter.ViewHolder
 
     @Override
     public int getItemCount() {
-        return list.size();
+        return list == null ? 0 : list.size();
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
