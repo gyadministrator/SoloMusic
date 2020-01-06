@@ -40,6 +40,9 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.hyphenate.chat.EMClient;
 import com.next.easynavigation.view.EasyNavigationBar;
+import com.tencent.imsdk.TIMConversation;
+import com.tencent.imsdk.TIMConversationType;
+import com.tencent.imsdk.TIMManager;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -125,6 +128,15 @@ public class MainActivity extends BaseActivity {
         registerReceiver(musicReceiver, filter);
         getUnreadMsg();
         showTip();
+
+        initUnread();
+    }
+
+    private void initUnread() {
+        String loginUser = TIMManager.getInstance().getLoginUser();
+        TIMConversation conversation = TIMManager.getInstance().getConversation(TIMConversationType.C2C, loginUser);
+        long unreadMessageNum = conversation.getUnreadMessageNum();
+        setMsgPoint(2, (int) unreadMessageNum);
     }
 
     @Override

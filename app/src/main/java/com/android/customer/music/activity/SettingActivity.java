@@ -38,6 +38,9 @@ import com.hyphenate.chat.EMClient;
 import com.hyphenate.exceptions.HyphenateException;
 import com.lzy.imagepicker.ImagePicker;
 import com.lzy.imagepicker.view.CropImageView;
+import com.tencent.imsdk.TIMCallBack;
+import com.tencent.imsdk.TIMManager;
+import com.tencent.qcloud.tim.uikit.utils.ToastUtil;
 import com.yzq.zxinglibrary.android.CaptureActivity;
 import com.yzq.zxinglibrary.common.Constant;
 
@@ -105,6 +108,17 @@ public class SettingActivity extends BaseActivity implements AdapterView.OnItemC
                         CleanUtils.cleanExternalCache();
                         CleanUtils.cleanInternalCache();
                         LoginActivity.startActivity(mActivity);
+                        TIMManager.getInstance().logout(new TIMCallBack() {
+                            @Override
+                            public void onError(int i, String s) {
+                                ToastUtil.toastShortMessage("退出失败：" + i + " " + s);
+                            }
+
+                            @Override
+                            public void onSuccess() {
+
+                            }
+                        });
                     }
 
                     @Override

@@ -18,18 +18,29 @@ import android.view.ViewGroup;
 import com.android.customer.music.R;
 import com.android.customer.music.activity.SearchFriendActivity;
 import com.android.customer.music.activity.TxChatActivity;
+import com.android.customer.music.utils.LogUtils;
+import com.tencent.imsdk.TIMCallBack;
+import com.tencent.imsdk.TIMConversation;
+import com.tencent.imsdk.TIMManager;
 import com.tencent.qcloud.tim.uikit.base.ITitleBarLayout;
 import com.tencent.qcloud.tim.uikit.component.TitleBarLayout;
 import com.tencent.qcloud.tim.uikit.modules.contact.ContactItemBean;
 import com.tencent.qcloud.tim.uikit.modules.conversation.ConversationLayout;
+import com.tencent.qcloud.tim.uikit.modules.conversation.ConversationListAdapter;
 import com.tencent.qcloud.tim.uikit.modules.conversation.ConversationListLayout;
+import com.tencent.qcloud.tim.uikit.modules.conversation.ConversationProvider;
 import com.tencent.qcloud.tim.uikit.modules.conversation.base.ConversationInfo;
+import com.tencent.qcloud.tim.uikit.modules.conversation.interfaces.IConversationProvider;
+import com.tencent.qcloud.tim.uikit.utils.ToastUtil;
+
+import java.util.List;
 
 public class ConversationFragment extends Fragment implements ConversationListLayout.OnItemClickListener {
 
     private ConversationViewModel mViewModel;
     private Activity mActivity;
     private ConversationLayout conversationLayout;
+    private int count;
 
     public static ConversationFragment newInstance() {
         return new ConversationFragment();
@@ -56,6 +67,18 @@ public class ConversationFragment extends Fragment implements ConversationListLa
     }
 
     private void initData() {
+        String loginUser = TIMManager.getInstance().getLoginUser();
+        TIMManager.getInstance().initStorage(loginUser, new TIMCallBack() {
+            @Override
+            public void onError(int i, String s) {
+                ToastUtil.toastShortMessage("获取会话失败：" + i + " " + s);
+            }
+
+            @Override
+            public void onSuccess() {
+
+            }
+        });
     }
 
     private void initView(View view) {
@@ -65,8 +88,8 @@ public class ConversationFragment extends Fragment implements ConversationListLa
         TitleBarLayout titleBar = conversationLayout.getTitleBar();
         titleBar.setVisibility(View.GONE);
 
-        ConversationListLayout conversationList = conversationLayout.getConversationList();
-        conversationList.setOnItemClickListener(this);
+        ConversationListLayout conversationListLayout = conversationLayout.getConversationList();
+        conversationListLayout.setOnItemClickListener(this);
     }
 
     @Override

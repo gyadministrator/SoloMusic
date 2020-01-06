@@ -7,12 +7,16 @@ import android.text.TextUtils;
 import android.view.View;
 
 import com.android.customer.music.R;
+import com.android.customer.music.utils.LogUtils;
 import com.android.customer.music.view.TitleView;
 import com.tencent.imsdk.TIMConversationType;
+import com.tencent.imsdk.TIMFriendshipManager;
+import com.tencent.imsdk.TIMUserProfile;
 import com.tencent.qcloud.tim.uikit.component.TitleBarLayout;
 import com.tencent.qcloud.tim.uikit.modules.chat.ChatLayout;
 import com.tencent.qcloud.tim.uikit.modules.chat.base.ChatInfo;
 import com.tencent.qcloud.tim.uikit.modules.contact.ContactItemBean;
+import com.tencent.qcloud.tim.uikit.utils.ToastUtil;
 
 public class TxChatActivity extends BaseActivity {
     private ChatLayout chatLayout;
@@ -62,7 +66,7 @@ public class TxChatActivity extends BaseActivity {
 
     @Override
     protected void initAction() {
-
+        TIMUserProfile timUserProfile = TIMFriendshipManager.getInstance().querySelfProfile();
     }
 
     @Override

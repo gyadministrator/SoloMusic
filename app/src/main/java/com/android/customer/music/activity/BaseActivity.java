@@ -175,7 +175,7 @@ public abstract class BaseActivity extends SwipeBackActivity {
         public boolean onNewMessages(List<TIMMessage> list) {
             if (list != null && list.size() > 0) {
                 for (TIMMessage timMessage : list) {
-                    ToastUtil.toastShortMessage(timMessage.getSenderNickname());
+                    LogUtils.e("message", timMessage.toString());
                 }
             }
             return true;
