@@ -38,6 +38,10 @@ import com.hyphenate.EMCallBack;
 import com.hyphenate.EMConnectionListener;
 import com.hyphenate.EMError;
 import com.hyphenate.chat.EMClient;
+import com.tencent.imsdk.TIMManager;
+import com.tencent.imsdk.TIMMessage;
+import com.tencent.imsdk.TIMMessageListener;
+import com.tencent.qcloud.tim.uikit.utils.ToastUtil;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -162,7 +166,21 @@ public abstract class BaseActivity extends SwipeBackActivity {
         EMClient.getInstance().addConnectionListener(new MyConnectionListener());
         registerReceiver();
         ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.SYSTEM_ALERT_WINDOW}, 1001);
+
+        TIMManager.getInstance().addMessageListener(messageListener);
     }
+
+    private TIMMessageListener messageListener = new TIMMessageListener() {
+        @Override
+        public boolean onNewMessages(List<TIMMessage> list) {
+            if (list != null && list.size() > 0) {
+                for (TIMMessage timMessage : list) {
+                    ToastUtil.toastShortMessage(timMessage.getSenderNickname());
+                }
+            }
+            return true;
+        }
+    };
 
     private void registerReceiver() {
         friendReceiver = new FriendReceiver();
@@ -232,6 +250,10 @@ public abstract class BaseActivity extends SwipeBackActivity {
         //解绑eventBus
         EventBus.getDefault().unregister(this);
         EventBus.getDefault().removeStickyEvent(this);
+
+        if (messageListener != null) {
+            TIMManager.getInstance().removeMessageListener(messageListener);
+        }
     }
 
     @Override

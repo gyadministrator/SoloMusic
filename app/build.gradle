@@ -59,7 +59,7 @@ android {
     useLibrary 'org.apache.http.legacy'
     defaultConfig {
         applicationId "com.android.customer.music"
-        minSdkVersion 15
+        minSdkVersion 16
         targetSdkVersion 29
         versionCode 1
         versionName "1.0"
@@ -185,4 +185,6 @@ dependencies {
     //orm数据库
     implementation 'com.j256.ormlite:ormlite-android:4.48'
     implementation 'com.j256.ormlite:ormlite-core:4.48'
+    //腾讯IM
+    implementation 'com.tencent.imsdk:tuikit:4.6.51'
 }

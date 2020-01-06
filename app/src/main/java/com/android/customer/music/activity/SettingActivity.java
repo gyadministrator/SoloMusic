@@ -100,7 +100,7 @@ public class SettingActivity extends BaseActivity implements AdapterView.OnItemC
                 new DialogListener() {
                     @Override
                     public void clickSure() {
-                        CleanUtils.cleanInternalSp();
+                        //CleanUtils.cleanInternalSp();
                         CleanUtils.cleanInternalFiles();
                         CleanUtils.cleanExternalCache();
                         CleanUtils.cleanInternalCache();

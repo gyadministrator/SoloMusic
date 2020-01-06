@@ -27,6 +27,11 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.exceptions.HyphenateException;
+import com.tencent.imsdk.TIMFriendshipManager;
+import com.tencent.imsdk.TIMValueCallBack;
+import com.tencent.imsdk.friendship.TIMFriendRequest;
+import com.tencent.imsdk.friendship.TIMFriendResult;
+import com.tencent.qcloud.tim.uikit.utils.ToastUtil;
 
 import java.lang.reflect.Type;
 import java.util.Map;
@@ -84,17 +89,30 @@ public class SearchFriendActivity extends BaseActivity implements TextWatcher, V
 
     private void addFriend(final String username) {
         DialogHelper dialogHelper = DialogHelper.getInstance();
-        dialogHelper.showInputDialog(mActivity, "请输入添加" + username + "的理由", new InputDialogListener() {
+        dialogHelper.showInputDialog(mActivity, "请设置" + username + "的备注", new InputDialogListener() {
             @Override
             public void sure(String result) {
                 //参数为要添加的好友的username和添加理由
-                try {
+               /* try {
                     EMClient.getInstance().contactManager().addContact(username, result);
                     ToastUtils.showShort("发送请求成功");
                 } catch (HyphenateException e) {
                     e.printStackTrace();
                     ToastUtils.showShort("添加好友失败：" + e.getErrorCode() + e.getMessage());
-                }
+                }*/
+                TIMFriendRequest request = new TIMFriendRequest(username);
+                request.setRemark(result);
+                TIMFriendshipManager.getInstance().addFriend(request, new TIMValueCallBack<TIMFriendResult>() {
+                    @Override
+                    public void onError(int i, String s) {
+                        ToastUtil.toastShortMessage("添加好友失败：" + i + " " + s);
+                    }
+
+                    @Override
+                    public void onSuccess(TIMFriendResult timFriendResult) {
+                        ToastUtil.toastShortMessage("发送请求成功");
+                    }
+                });
             }
         });
     }

@@ -10,6 +10,11 @@ import com.android.customer.music.constant.Constants;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMOptions;
 import com.tencent.bugly.Bugly;
+import com.tencent.imsdk.TIMSdkConfig;
+import com.tencent.qcloud.tim.uikit.TUIKit;
+import com.tencent.qcloud.tim.uikit.config.CustomFaceConfig;
+import com.tencent.qcloud.tim.uikit.config.GeneralConfig;
+import com.tencent.qcloud.tim.uikit.config.TUIKitConfigs;
 
 /**
  * Description: CustomerMusic
@@ -42,6 +47,18 @@ public class MyApplication extends Application {
         if (Constants.isDebug) {
             initCrash();
         }
+
+        initTXIM();
+    }
+
+    private void initTXIM() {
+        // 配置 Config，请按需配置
+        TUIKitConfigs configs = TUIKit.getConfigs();
+        configs.setSdkConfig(new TIMSdkConfig(Constants.TX_IM_APP_ID));
+        configs.setCustomFaceConfig(new CustomFaceConfig());
+        configs.setGeneralConfig(new GeneralConfig());
+
+        TUIKit.init(this, Constants.TX_IM_APP_ID, configs);
     }
 
     /**

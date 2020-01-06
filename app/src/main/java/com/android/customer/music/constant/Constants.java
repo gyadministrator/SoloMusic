@@ -42,4 +42,8 @@ public class Constants {
     public static final String RECIPE_URL = "https://apicloud.mob.com/";
 
     public static final String PLUGIN_NAME = "NativePlugin";
+
+    public static final int TX_IM_APP_ID = 1400302376;
+
+    public static final String TX_IM_APP_SCRET = "07a33b88cc94a5fd7e5fe449167dfbe3cc4cb2e82760d5672453a0474daf6c5b";
 }

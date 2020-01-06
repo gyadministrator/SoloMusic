@@ -321,4 +321,7 @@
 -dontwarn com.sina.**
 -dontwarn com.mob.**
 
+#腾讯IM
+-keep class com.tencent.** { *; }
+
 

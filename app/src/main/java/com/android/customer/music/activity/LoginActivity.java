@@ -19,6 +19,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 
+import com.android.customer.music.utils.GenerateUserSig;
 import com.blankj.utilcode.util.ActivityUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.android.customer.music.R;
@@ -32,6 +33,9 @@ import com.android.customer.music.utils.SharedPreferenceUtil;
 import com.android.customer.music.utils.UserManager;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.tencent.imsdk.TIMCallBack;
+import com.tencent.imsdk.TIMManager;
+import com.tencent.qcloud.tim.uikit.utils.ToastUtil;
 
 import java.lang.reflect.Type;
 import java.util.Map;
@@ -189,6 +193,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                                         preferenceUtil.saveObject(user, mActivity, Constants.CURRENT_USER_NAME);
                                         startActivity(new Intent(mActivity, MainActivity.class));
                                         finish();
+
                                     }
                                 } else {
                                     ToastUtils.showShort("数据异常，token未获取");
@@ -217,6 +222,19 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         edit.putString("username", user);
         edit.putString("password", password);
         edit.apply();
+
+        String userSig = GenerateUserSig.genTestUserSig(user);
+        TIMManager.getInstance().login(user, userSig, new TIMCallBack() {
+            @Override
+            public void onError(int i, String s) {
+                ToastUtil.toastShortMessage("连接IM失败：" + i + " " + s);
+            }
+
+            @Override
+            public void onSuccess() {
+
+            }
+        });
     }
 
 

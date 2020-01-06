@@ -27,6 +27,8 @@ import com.android.customer.music.fragment.InfoFragment;
 import com.android.customer.music.fragment.ListenFragment;
 import com.android.customer.music.fragment.MeFragment;
 import com.android.customer.music.fragment.RecipeFragment;
+import com.android.customer.music.fragment.im.ContactFragment;
+import com.android.customer.music.fragment.im.ConversationFragment;
 import com.android.customer.music.model.BottomBarVo;
 import com.android.customer.music.model.NewFriendVo;
 import com.android.customer.music.topmessage.utils.FloatWindowManager;
@@ -101,8 +103,10 @@ public class MainActivity extends BaseActivity {
     protected void initData() {
         setSwipeBackEnable(false);
         fragments.add(ListenFragment.newInstance());
-        fragments.add(FriendFragment.newInstance());
-        fragments.add(InfoFragment.newInstance());
+        fragments.add(ContactFragment.newInstance());
+        fragments.add(ConversationFragment.newInstance());
+        //fragments.add(FriendFragment.newInstance());
+        //fragments.add(InfoFragment.newInstance());
         fragments.add(MeFragment.newInstance());
 
         navigationBar.titleItems(tabText)

@@ -8,6 +8,10 @@ import com.android.customer.music.R;
 import com.android.customer.music.adapter.NewFriendItemAdapter;
 import com.android.customer.music.event.NewFriendListEvent;
 import com.android.customer.music.model.NewFriendVo;
+import com.tencent.imsdk.TIMFriendshipManager;
+import com.tencent.imsdk.TIMValueCallBack;
+import com.tencent.imsdk.friendship.TIMFriendResponse;
+import com.tencent.imsdk.friendship.TIMFriendResult;
 
 import java.util.List;
 
@@ -54,7 +58,22 @@ public class NewFriendActivity extends BaseActivity {
 
     @Override
     protected void initAction() {
+        initFriendResponse();
+    }
 
+    private void initFriendResponse() {
+        TIMFriendResponse response=new TIMFriendResponse();
+        TIMFriendshipManager.getInstance().doResponse(response, new TIMValueCallBack<TIMFriendResult>() {
+            @Override
+            public void onError(int i, String s) {
+
+            }
+
+            @Override
+            public void onSuccess(TIMFriendResult timFriendResult) {
+
+            }
+        });
     }
 
     @Override
