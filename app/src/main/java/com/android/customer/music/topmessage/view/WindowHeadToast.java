@@ -1,4 +1,4 @@
-package com.android.recipe.topmessage.view;
+package com.android.customer.music.topmessage.view;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -19,6 +19,7 @@ import com.android.customer.music.R;
 import com.hyphenate.chat.EMMessage;
 import com.hyphenate.chat.EMMessageBody;
 import com.hyphenate.chat.EMTextMessageBody;
+import com.tencent.imsdk.TIMMessage;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -51,6 +52,13 @@ public class WindowHeadToast implements View.OnTouchListener {
 
     public void showCustomToast(EMMessage emMessage, String header) {
         initHeadToastView(emMessage, header);
+        setHeadToastViewAnim();
+        // 延迟4s后关闭
+        mHandler.sendEmptyMessageDelayed(ANIM_CLOSE, ANIM_DISMISS_DURATION);
+    }
+
+    public void showCustomToast(TIMMessage timMessage, String header) {
+        initHeadToastView(timMessage, header);
         setHeadToastViewAnim();
         // 延迟4s后关闭
         mHandler.sendEmptyMessageDelayed(ANIM_CLOSE, ANIM_DISMISS_DURATION);
@@ -110,6 +118,46 @@ public class WindowHeadToast implements View.OnTouchListener {
         if (null != linearLayout && null != linearLayout.getParent()) {
             wm.removeView(linearLayout);
         }
+    }
+
+    private void initHeadToastView(TIMMessage timMessage, String header) {
+        //准备Window要添加的View
+        linearLayout = new LinearLayout(mContext);
+        final LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        linearLayout.setLayoutParams(layoutParams);
+        View headToastView = View.inflate(mContext, R.layout.header_toast, null);
+
+        CircleImageView head_image = headToastView.findViewById(R.id.header_toast_smallimg);
+        if (!TextUtils.isEmpty(header)) {
+            Glide.with(mContext).load(header).into(head_image);
+        }
+        TextView header_toast_title = headToastView.findViewById(R.id.header_toast_title);
+        header_toast_title.setText(timMessage.getConversation().getPeer());
+        TextView header_toast_name = headToastView.findViewById(R.id.header_toast_name);
+        header_toast_name.setText(timMessage.getConversation().getLastMsg().getCustomStr());
+
+
+        // 为headToastView设置Touch事件
+        headToastView.setOnTouchListener(this);
+        linearLayout.addView(headToastView);
+        // 定义WindowManager 并且将View添加到WindowManager中去
+        wm = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
+        WindowManager.LayoutParams wm_params = new WindowManager.LayoutParams();
+        wm_params.flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
+                | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
+                | WindowManager.LayoutParams.FLAG_FULLSCREEN
+                | WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN;
+        //wm_params.type = WindowManager.LayoutParams.TYPE_SYSTEM_ERROR;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            wm_params.type = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
+        } else {
+            wm_params.type = WindowManager.LayoutParams.TYPE_SYSTEM_ERROR;
+        }
+        wm_params.x = 0;
+        wm_params.y = 100;
+        wm_params.format = -3;  // 会影响Toast中的布局消失的时候父控件和子控件消失的时机不一致，比如设置为-1之后就会不同步
+        wm_params.alpha = 1f;
+        wm.addView(linearLayout, wm_params);
     }
 
     private void initHeadToastView(EMMessage emMessage, String header) {

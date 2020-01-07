@@ -22,6 +22,8 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
 
+import com.android.customer.music.constant.Constants;
+import com.android.customer.music.topmessage.view.WindowHeadToast;
 import com.blankj.utilcode.util.CleanUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.android.customer.music.R;
@@ -175,9 +177,16 @@ public abstract class BaseActivity extends SwipeBackActivity {
         public boolean onNewMessages(List<TIMMessage> list) {
             if (list != null && list.size() > 0) {
                 for (TIMMessage timMessage : list) {
-                    ToastUtil.toastShortMessage("收到一条消息");
-                    LogUtils.e("message", timMessage.toString());
+                    if (!timMessage.isRead()) {
+                        Constants.unRead += 1;
+                    }
+                    //弹出顶部消息
+                    WindowHeadToast windowHeadToast = new WindowHeadToast(getApplicationContext());
+                    windowHeadToast.showCustomToast(timMessage, "");
                 }
+            }
+            if (mActivity instanceof MainActivity) {
+                ((MainActivity) mActivity).setMsgPoint(2, Constants.unRead);
             }
             return false;
         }

@@ -109,24 +109,6 @@ public class MyApplication extends Application {
                     public void onWifiNeedAuth(String name) {
                         ToastUtil.toastShortMessage("onWifiNeedAuth：" + name);
                     }
-                })
-                //设置群组事件监听器
-                .setGroupEventListener(new TIMGroupEventListener() {
-                    @Override
-                    public void onGroupTipsEvent(TIMGroupTipsElem elem) {
-
-                    }
-                })
-                //设置会话刷新监听器
-                .setRefreshListener(new TIMRefreshListener() {
-                    @Override
-                    public void onRefresh() {
-
-                    }
-
-                    @Override
-                    public void onRefreshConversation(List<TIMConversation> conversations) {
-                    }
                 });
 
         //禁用本地所有存储
