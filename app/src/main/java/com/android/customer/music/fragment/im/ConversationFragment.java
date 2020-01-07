@@ -16,18 +16,22 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.android.customer.music.R;
+import com.android.customer.music.activity.MainActivity;
 import com.android.customer.music.activity.SearchFriendActivity;
 import com.android.customer.music.activity.TxChatActivity;
 import com.android.customer.music.utils.LogUtils;
 import com.tencent.imsdk.TIMCallBack;
 import com.tencent.imsdk.TIMConversation;
+import com.tencent.imsdk.TIMConversationType;
 import com.tencent.imsdk.TIMManager;
 import com.tencent.qcloud.tim.uikit.base.ITitleBarLayout;
+import com.tencent.qcloud.tim.uikit.base.IUIKitCallBack;
 import com.tencent.qcloud.tim.uikit.component.TitleBarLayout;
 import com.tencent.qcloud.tim.uikit.modules.contact.ContactItemBean;
 import com.tencent.qcloud.tim.uikit.modules.conversation.ConversationLayout;
 import com.tencent.qcloud.tim.uikit.modules.conversation.ConversationListAdapter;
 import com.tencent.qcloud.tim.uikit.modules.conversation.ConversationListLayout;
+import com.tencent.qcloud.tim.uikit.modules.conversation.ConversationManagerKit;
 import com.tencent.qcloud.tim.uikit.modules.conversation.ConversationProvider;
 import com.tencent.qcloud.tim.uikit.modules.conversation.base.ConversationInfo;
 import com.tencent.qcloud.tim.uikit.modules.conversation.interfaces.IConversationProvider;
@@ -41,6 +45,7 @@ public class ConversationFragment extends Fragment implements ConversationListLa
     private Activity mActivity;
     private ConversationLayout conversationLayout;
     private int count;
+    private List<ConversationInfo> conversationInfos;
 
     public static ConversationFragment newInstance() {
         return new ConversationFragment();
@@ -56,6 +61,17 @@ public class ConversationFragment extends Fragment implements ConversationListLa
         return view;
     }
 
+    private void initUnread() {
+        if (conversationInfos != null && conversationInfos.size() > 0) {
+            for (ConversationInfo conversationInfo : conversationInfos) {
+                TIMConversation conversation = TIMManager.getInstance().getConversation(TIMConversationType.C2C, conversationInfo.getConversationId());
+                long unreadMessageNum = conversation.getUnreadMessageNum();
+                count += unreadMessageNum;
+            }
+        }
+        ((MainActivity) mActivity).setMsgPoint(2, count);
+    }
+
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
@@ -63,7 +79,6 @@ public class ConversationFragment extends Fragment implements ConversationListLa
     }
 
     private void initAction() {
-
     }
 
     private void initData() {

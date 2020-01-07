@@ -175,10 +175,11 @@ public abstract class BaseActivity extends SwipeBackActivity {
         public boolean onNewMessages(List<TIMMessage> list) {
             if (list != null && list.size() > 0) {
                 for (TIMMessage timMessage : list) {
+                    ToastUtil.toastShortMessage("收到一条消息");
                     LogUtils.e("message", timMessage.toString());
                 }
             }
-            return true;
+            return false;
         }
     };
 

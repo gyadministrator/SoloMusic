@@ -78,6 +78,17 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
      */
     public static void startActivity(Activity activity) {
         ActivityUtils.finishAllActivitiesExceptNewest();
+        TIMManager.getInstance().logout(new TIMCallBack() {
+            @Override
+            public void onError(int i, String s) {
+                ToastUtil.toastShortMessage("退出IM失败：" + i + " " + s);
+            }
+
+            @Override
+            public void onSuccess() {
+
+            }
+        });
         Intent intent = new Intent(activity, LoginActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         activity.startActivity(intent);
@@ -276,7 +287,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
         @Override
         public void onClick(@NonNull View view) {
-           WebActivity.startActivity(mActivity,"file:///android_asset/userSecret.html");
+            WebActivity.startActivity(mActivity, "file:///android_asset/userSecret.html");
         }
     }
 
@@ -292,7 +303,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
         @Override
         public void onClick(@NonNull View view) {
-            WebActivity.startActivity(mActivity,"http://www.mob.com/about/policy");
+            WebActivity.startActivity(mActivity, "http://www.mob.com/about/policy");
         }
     }
 
@@ -308,7 +319,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
         @Override
         public void onClick(@NonNull View view) {
-           WebActivity.startActivity(mActivity,"http://www.mob.com/about/service");
+            WebActivity.startActivity(mActivity, "http://www.mob.com/about/service");
         }
     }
 }

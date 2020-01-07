@@ -128,15 +128,6 @@ public class MainActivity extends BaseActivity {
         registerReceiver(musicReceiver, filter);
         getUnreadMsg();
         showTip();
-
-        initUnread();
-    }
-
-    private void initUnread() {
-        String loginUser = TIMManager.getInstance().getLoginUser();
-        TIMConversation conversation = TIMManager.getInstance().getConversation(TIMConversationType.C2C, loginUser);
-        long unreadMessageNum = conversation.getUnreadMessageNum();
-        setMsgPoint(2, (int) unreadMessageNum);
     }
 
     @Override
