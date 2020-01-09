@@ -22,20 +22,20 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
 
-import com.android.customer.music.constant.Constants;
-import com.android.customer.music.topmessage.view.WindowHeadToast;
-import com.blankj.utilcode.util.CleanUtils;
-import com.blankj.utilcode.util.ToastUtils;
 import com.android.customer.music.R;
+import com.android.customer.music.constant.Constants;
 import com.android.customer.music.event.FriendChangeEvent;
 import com.android.customer.music.event.NewFriendEvent;
 import com.android.customer.music.event.NewFriendListEvent;
 import com.android.customer.music.model.NewFriendVo;
 import com.android.customer.music.service.AcceptApplyService;
+import com.android.customer.music.topmessage.view.WindowHeadToast;
 import com.android.customer.music.utils.LogUtils;
 import com.android.customer.music.utils.NetWorkUtils;
 import com.android.customer.music.utils.NotificationPermissionUtil;
 import com.android.customer.music.utils.NotificationUtils;
+import com.blankj.utilcode.util.CleanUtils;
+import com.blankj.utilcode.util.ToastUtils;
 import com.hyphenate.EMCallBack;
 import com.hyphenate.EMConnectionListener;
 import com.hyphenate.EMError;
@@ -43,7 +43,8 @@ import com.hyphenate.chat.EMClient;
 import com.tencent.imsdk.TIMManager;
 import com.tencent.imsdk.TIMMessage;
 import com.tencent.imsdk.TIMMessageListener;
-import com.tencent.qcloud.tim.uikit.utils.ToastUtil;
+import com.tencent.imsdk.TIMUserProfile;
+import com.tencent.imsdk.TIMValueCallBack;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -182,7 +183,17 @@ public abstract class BaseActivity extends SwipeBackActivity {
                     }
                     //弹出顶部消息
                     WindowHeadToast windowHeadToast = new WindowHeadToast(getApplicationContext());
-                    windowHeadToast.showCustomToast(timMessage, "");
+                    timMessage.getSenderProfile(new TIMValueCallBack<TIMUserProfile>() {
+                        @Override
+                        public void onError(int i, String s) {
+
+                        }
+
+                        @Override
+                        public void onSuccess(TIMUserProfile timUserProfile) {
+                            windowHeadToast.showCustomToast(timMessage, timUserProfile.getFaceUrl());
+                        }
+                    });
                 }
             }
             if (mActivity instanceof MainActivity) {

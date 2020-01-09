@@ -132,9 +132,9 @@ public class WindowHeadToast implements View.OnTouchListener {
             Glide.with(mContext).load(header).into(head_image);
         }
         TextView header_toast_title = headToastView.findViewById(R.id.header_toast_title);
-        header_toast_title.setText(timMessage.getConversation().getPeer());
+        header_toast_title.setText(timMessage.getSenderNickname());
         TextView header_toast_name = headToastView.findViewById(R.id.header_toast_name);
-        header_toast_name.setText("");
+        header_toast_name.setText(timMessage.getConversation().getLastMsg().toString());
 
 
         // 为headToastView设置Touch事件
