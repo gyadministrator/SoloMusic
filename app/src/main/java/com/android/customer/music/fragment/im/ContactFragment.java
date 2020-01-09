@@ -78,7 +78,7 @@ public class ContactFragment extends Fragment implements ContactListView.OnItemC
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(Object o) {
         if (o instanceof DeleteEvent) {
-            contactLayout.getContactListView().getAdapter().notifyDataSetChanged();
+            contactLayout.initDefault();
         }
     }
 

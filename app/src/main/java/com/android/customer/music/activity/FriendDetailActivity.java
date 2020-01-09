@@ -3,6 +3,7 @@ package com.android.customer.music.activity;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.TextView;
 
@@ -10,6 +11,7 @@ import com.android.customer.music.R;
 import com.android.customer.music.event.DeleteEvent;
 import com.android.customer.music.helper.DialogHelper;
 import com.android.customer.music.listener.DialogListener;
+import com.bumptech.glide.Glide;
 import com.tencent.imsdk.TIMFriendshipManager;
 import com.tencent.imsdk.TIMUserProfile;
 import com.tencent.imsdk.TIMValueCallBack;
@@ -24,6 +26,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 public class FriendDetailActivity extends BaseActivity implements View.OnClickListener {
     private List<String> list = new ArrayList<>();
     private String userId;
@@ -32,6 +36,7 @@ public class FriendDetailActivity extends BaseActivity implements View.OnClickLi
     private TextView tvBirthday;
     private TextView tvAddress;
     private TextView tvDelete;
+    private CircleImageView ivUser;
 
     @Override
     protected void initView() {
@@ -40,6 +45,7 @@ public class FriendDetailActivity extends BaseActivity implements View.OnClickLi
         tvBirthday = fd(R.id.tv_birthday);
         tvAddress = fd(R.id.tv_address);
         tvDelete = fd(R.id.tv_delete);
+        ivUser = fd(R.id.iv_user);
         tvDelete.setOnClickListener(this);
     }
 
@@ -80,10 +86,13 @@ public class FriendDetailActivity extends BaseActivity implements View.OnClickLi
             if (timUserProfiles.size() == 1) {
                 TIMUserProfile timUserProfile = timUserProfiles.get(0);
                 if (timUserProfile != null) {
-                    tvNickName.setText(timUserProfile.getNickName());
-                    tvSex.setText(timUserProfile.getGender());
+                    tvNickName.setText(timUserProfile.getIdentifier());
+                    tvSex.setText(String.valueOf(timUserProfile.getGender()));
                     tvBirthday.setText(millsToDateString(timUserProfile.getBirthday()));
                     tvAddress.setText(timUserProfile.getLocation());
+                    if (!TextUtils.isEmpty(timUserProfile.getFaceUrl())) {
+                        Glide.with(mActivity).load(timUserProfile.getFaceUrl()).into(ivUser);
+                    }
                 }
             } else {
                 ToastUtil.toastShortMessage("获取歌友资料失败");
