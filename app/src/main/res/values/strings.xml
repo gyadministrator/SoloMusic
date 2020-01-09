@@ -22,6 +22,7 @@
     <string name="scan">扫一扫</string>
     <string name="zan">赞助开发者</string>
     <string name="share_app">分享APP</string>
+    <string name="notice">通知</string>
     <string name="logout">退出登录</string>
     <string name="modify">修改</string>
     <string name="login">登录</string>
