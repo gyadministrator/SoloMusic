@@ -1,25 +1,24 @@
 package com.android.customer.music.fragment.im;
 
-import androidx.lifecycle.ViewModelProviders;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProviders;
+
 import com.android.customer.music.R;
 import com.android.customer.music.activity.SearchFriendActivity;
 import com.android.customer.music.activity.TxChatActivity;
+import com.android.customer.music.event.DeleteEvent;
 import com.android.customer.music.model.UserInfoVo;
 import com.android.customer.music.utils.GenerateUserSig;
 import com.android.customer.music.utils.UserManager;
@@ -28,12 +27,15 @@ import com.tencent.imsdk.TIMCallBack;
 import com.tencent.imsdk.TIMFriendshipManager;
 import com.tencent.imsdk.TIMManager;
 import com.tencent.imsdk.TIMUserProfile;
-import com.tencent.qcloud.tim.uikit.base.ITitleBarLayout;
 import com.tencent.qcloud.tim.uikit.component.TitleBarLayout;
 import com.tencent.qcloud.tim.uikit.modules.contact.ContactItemBean;
 import com.tencent.qcloud.tim.uikit.modules.contact.ContactLayout;
 import com.tencent.qcloud.tim.uikit.modules.contact.ContactListView;
 import com.tencent.qcloud.tim.uikit.utils.ToastUtil;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.HashMap;
 
@@ -57,13 +59,27 @@ public class ContactFragment extends Fragment implements ContactListView.OnItemC
         initView(view);
         initData();
         initAction();
+        EventBus.getDefault().register(this);
         return view;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
     }
 
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         mActivity = getActivity();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(Object o) {
+        if (o instanceof DeleteEvent) {
+            contactLayout.getContactListView().getAdapter().notifyDataSetChanged();
+        }
     }
 
     private void initAction() {
