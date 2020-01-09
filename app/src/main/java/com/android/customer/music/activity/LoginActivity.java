@@ -78,17 +78,20 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
      */
     public static void startActivity(Activity activity) {
         ActivityUtils.finishAllActivitiesExceptNewest();
-        TIMManager.getInstance().logout(new TIMCallBack() {
-            @Override
-            public void onError(int i, String s) {
-                ToastUtil.toastShortMessage("退出IM失败：" + i + " " + s);
-            }
+        int loginStatus = TIMManager.getInstance().getLoginStatus();
+        if (loginStatus == TIMManager.TIM_STATUS_LOGINED) {
+            TIMManager.getInstance().logout(new TIMCallBack() {
+                @Override
+                public void onError(int i, String s) {
+                    ToastUtil.toastShortMessage("退出IM失败：" + i + " " + s);
+                }
 
-            @Override
-            public void onSuccess() {
+                @Override
+                public void onSuccess() {
 
-            }
-        });
+                }
+            });
+        }
         Intent intent = new Intent(activity, LoginActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         activity.startActivity(intent);
@@ -204,7 +207,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                                         preferenceUtil.saveObject(user, mActivity, Constants.CURRENT_USER_NAME);
                                         startActivity(new Intent(mActivity, MainActivity.class));
                                         finish();
-
                                     }
                                 } else {
                                     ToastUtils.showShort("数据异常，token未获取");

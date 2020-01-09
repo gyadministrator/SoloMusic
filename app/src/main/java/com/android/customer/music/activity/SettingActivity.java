@@ -108,17 +108,20 @@ public class SettingActivity extends BaseActivity implements AdapterView.OnItemC
                         CleanUtils.cleanExternalCache();
                         CleanUtils.cleanInternalCache();
                         LoginActivity.startActivity(mActivity);
-                        TIMManager.getInstance().logout(new TIMCallBack() {
-                            @Override
-                            public void onError(int i, String s) {
-                                ToastUtil.toastShortMessage("退出失败：" + i + " " + s);
-                            }
+                        int loginStatus = TIMManager.getInstance().getLoginStatus();
+                        if (loginStatus == TIMManager.TIM_STATUS_LOGINED) {
+                            TIMManager.getInstance().logout(new TIMCallBack() {
+                                @Override
+                                public void onError(int i, String s) {
+                                    ToastUtil.toastShortMessage("退出失败：" + i + " " + s);
+                                }
 
-                            @Override
-                            public void onSuccess() {
+                                @Override
+                                public void onSuccess() {
 
-                            }
-                        });
+                                }
+                            });
+                        }
                     }
 
                     @Override

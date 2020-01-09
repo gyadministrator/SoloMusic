@@ -134,7 +134,7 @@ public class WindowHeadToast implements View.OnTouchListener {
         TextView header_toast_title = headToastView.findViewById(R.id.header_toast_title);
         header_toast_title.setText(timMessage.getConversation().getPeer());
         TextView header_toast_name = headToastView.findViewById(R.id.header_toast_name);
-        header_toast_name.setText(timMessage.getConversation().getLastMsg().getCustomStr());
+        header_toast_name.setText("");
 
 
         // 为headToastView设置Touch事件
