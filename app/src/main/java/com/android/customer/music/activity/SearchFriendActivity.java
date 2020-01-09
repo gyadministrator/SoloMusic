@@ -101,7 +101,7 @@ public class SearchFriendActivity extends BaseActivity implements TextWatcher, V
                     ToastUtils.showShort("添加好友失败：" + e.getErrorCode() + e.getMessage());
                 }*/
                 TIMFriendRequest request = new TIMFriendRequest(username);
-                request.setRemark(result);
+                request.setAddWording(result);
                 TIMFriendshipManager.getInstance().addFriend(request, new TIMValueCallBack<TIMFriendResult>() {
                     @Override
                     public void onError(int i, String s) {

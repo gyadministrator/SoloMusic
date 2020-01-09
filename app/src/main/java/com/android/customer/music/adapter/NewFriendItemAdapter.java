@@ -13,6 +13,11 @@ import com.android.customer.music.R;
 import com.android.customer.music.model.NewFriendVo;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.exceptions.HyphenateException;
+import com.tencent.imsdk.TIMFriendshipManager;
+import com.tencent.imsdk.TIMValueCallBack;
+import com.tencent.imsdk.friendship.TIMFriendResponse;
+import com.tencent.imsdk.friendship.TIMFriendResult;
+import com.tencent.qcloud.tim.uikit.utils.ToastUtil;
 
 import java.util.List;
 
@@ -79,7 +84,7 @@ public class NewFriendItemAdapter extends BaseAdapter {
         viewHolder.tvAccept.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                try {
+                /*try {
                     if (newFriendVo != null) {
                         EMClient.getInstance().contactManager().acceptInvitation(newFriendVo.getUsername());
                     }
@@ -94,6 +99,9 @@ public class NewFriendItemAdapter extends BaseAdapter {
                 } catch (HyphenateException e) {
                     e.printStackTrace();
                     ToastUtils.showShort("发生了异常，请稍后再试...");
+                }*/
+                if (newFriendVo != null) {
+                    initFriendResponse(newFriendVo, true);
                 }
             }
         });
@@ -101,7 +109,7 @@ public class NewFriendItemAdapter extends BaseAdapter {
         viewHolder.tvDecline.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                try {
+               /* try {
                     if (newFriendVo != null) {
                         EMClient.getInstance().contactManager().declineInvitation(newFriendVo.getUsername());
                     }
@@ -116,10 +124,38 @@ public class NewFriendItemAdapter extends BaseAdapter {
                 } catch (HyphenateException e) {
                     e.printStackTrace();
                     ToastUtils.showShort("发生了异常，请稍后再试...");
+                }*/
+                if (newFriendVo != null) {
+                    initFriendResponse(newFriendVo, false);
                 }
             }
         });
         return convertView;
+    }
+
+    private void initFriendResponse(NewFriendVo newFriendVo, boolean isAccept) {
+        TIMFriendResponse response = new TIMFriendResponse();
+        response.setIdentifier(newFriendVo.getUsername());
+        if (isAccept) {
+            response.setResponseType(TIMFriendResponse.TIM_FRIEND_RESPONSE_AGREE_AND_ADD);
+        } else {
+            response.setResponseType(TIMFriendResponse.TIM_FRIEND_RESPONSE_REJECT);
+        }
+        TIMFriendshipManager.getInstance().doResponse(response, new TIMValueCallBack<TIMFriendResult>() {
+            @Override
+            public void onError(int i, String s) {
+                ToastUtil.toastShortMessage("处理好友请求失败：" + i + " " + s);
+                list.remove(newFriendVo);
+                notifyDataSetChanged();
+            }
+
+            @Override
+            public void onSuccess(TIMFriendResult timFriendResult) {
+                ToastUtil.toastShortMessage(timFriendResult.getResultInfo());
+                list.remove(newFriendVo);
+                notifyDataSetChanged();
+            }
+        });
     }
 
     class ViewHolder {

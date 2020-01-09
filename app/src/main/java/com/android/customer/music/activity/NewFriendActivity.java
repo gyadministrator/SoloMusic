@@ -10,9 +10,13 @@ import com.android.customer.music.event.NewFriendListEvent;
 import com.android.customer.music.model.NewFriendVo;
 import com.tencent.imsdk.TIMFriendshipManager;
 import com.tencent.imsdk.TIMValueCallBack;
-import com.tencent.imsdk.friendship.TIMFriendResponse;
-import com.tencent.imsdk.friendship.TIMFriendResult;
+import com.tencent.imsdk.friendship.TIMFriendPendencyItem;
+import com.tencent.imsdk.friendship.TIMFriendPendencyRequest;
+import com.tencent.imsdk.friendship.TIMFriendPendencyResponse;
+import com.tencent.imsdk.friendship.TIMPendencyType;
+import com.tencent.qcloud.tim.uikit.utils.ToastUtil;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class NewFriendActivity extends BaseActivity {
@@ -58,20 +62,34 @@ public class NewFriendActivity extends BaseActivity {
 
     @Override
     protected void initAction() {
-        initFriendResponse();
+        initPendencyList();
     }
 
-    private void initFriendResponse() {
-        TIMFriendResponse response=new TIMFriendResponse();
-        TIMFriendshipManager.getInstance().doResponse(response, new TIMValueCallBack<TIMFriendResult>() {
+    private void initPendencyList() {
+        TIMFriendPendencyRequest request = new TIMFriendPendencyRequest();
+        request.setTimPendencyGetType(TIMPendencyType.TIM_PENDENCY_BOTH);
+        request.setNumPerPage(100);
+        TIMFriendshipManager.getInstance().getPendencyList(request, new TIMValueCallBack<TIMFriendPendencyResponse>() {
             @Override
             public void onError(int i, String s) {
-
+                ToastUtil.toastShortMessage("获取未读事件失败：" + i + " " + s);
             }
 
             @Override
-            public void onSuccess(TIMFriendResult timFriendResult) {
+            public void onSuccess(TIMFriendPendencyResponse timFriendPendencyResponse) {
+                List<TIMFriendPendencyItem> items = timFriendPendencyResponse.getItems();
+                List<NewFriendVo> newFriendVoList = new ArrayList<>();
+                if (items != null && items.size() > 0) {
+                    for (TIMFriendPendencyItem timFriendPendencyItem : items) {
+                        NewFriendVo newFriendVo = new NewFriendVo();
+                        newFriendVo.setReason(timFriendPendencyItem.getAddWording());
+                        newFriendVo.setTitle("歌友通知");
+                        newFriendVo.setUsername(timFriendPendencyItem.getIdentifier());
+                        newFriendVoList.add(newFriendVo);
+                    }
+                }
 
+                getNewFriendNotice(newFriendVoList);
             }
         });
     }

@@ -420,9 +420,9 @@ public abstract class BaseActivity extends SwipeBackActivity {
     }
 
     protected void clearMsgList() {
-        if (newFriendVoList != null) {
+       /* if (newFriendVoList != null) {
             newFriendVoList.clear();
-        }
+        }*/
     }
 
     private class FriendReceiver extends BroadcastReceiver {

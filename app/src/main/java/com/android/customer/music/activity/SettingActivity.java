@@ -278,7 +278,7 @@ public class SettingActivity extends BaseActivity implements AdapterView.OnItemC
                     ToastUtils.showShort("添加好友失败：" + e.getErrorCode() + e.getMessage());
                 }*/
                 TIMFriendRequest request = new TIMFriendRequest(username);
-                request.setRemark(result);
+                request.setAddWording(result);
                 TIMFriendshipManager.getInstance().addFriend(request, new TIMValueCallBack<TIMFriendResult>() {
                     @Override
                     public void onError(int i, String s) {

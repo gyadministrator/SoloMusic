@@ -16,6 +16,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.android.customer.music.R;
+import com.android.customer.music.activity.NewFriendActivity;
 import com.android.customer.music.activity.SearchFriendActivity;
 import com.android.customer.music.activity.TxChatActivity;
 import com.android.customer.music.event.DeleteEvent;
@@ -167,6 +168,10 @@ public class ContactFragment extends Fragment implements ContactListView.OnItemC
 
     @Override
     public void onItemClick(int position, ContactItemBean contact) {
+        if (position == 0) {
+            startActivity(new Intent(mActivity, NewFriendActivity.class));
+            return;
+        }
         if (position > 2) {
             TxChatActivity.startActivity(mActivity, contact);
         }

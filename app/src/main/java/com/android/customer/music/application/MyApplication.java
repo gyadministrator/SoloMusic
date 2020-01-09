@@ -1,15 +1,19 @@
 package com.android.customer.music.application;
 
 import android.app.Application;
+import android.net.Uri;
 import android.util.DisplayMetrics;
 
 import androidx.multidex.MultiDex;
 
+import com.android.customer.music.R;
 import com.android.customer.music.constant.Constants;
 import com.blankj.utilcode.util.Utils;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMOptions;
 import com.tencent.bugly.Bugly;
+import com.tencent.imsdk.TIMManager;
+import com.tencent.imsdk.TIMOfflinePushSettings;
 import com.tencent.imsdk.TIMSdkConfig;
 import com.tencent.qcloud.tim.uikit.TUIKit;
 import com.tencent.qcloud.tim.uikit.config.CustomFaceConfig;
@@ -59,6 +63,19 @@ public class MyApplication extends Application {
         configs.setGeneralConfig(new GeneralConfig());
 
         TUIKit.init(this, Constants.TX_IM_APP_ID, configs);
+
+        initOffline();
+    }
+
+    private void initOffline() {
+        TIMOfflinePushSettings settings = new TIMOfflinePushSettings();
+        //开启离线推送
+        settings.setEnabled(true);
+        //设置收到 C2C 离线消息时的提示声音，以把声音文件放在 res/raw 文件夹下为例
+        //settings.setC2cMsgRemindSound(Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.dudulu));
+        //设置收到群离线消息时的提示声音，以把声音文件放在 res/raw 文件夹下为例
+        //settings.setGroupMsgRemindSound(Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.dudulu));
+        TIMManager.getInstance().setOfflinePushSettings(settings);
     }
 
     /**
