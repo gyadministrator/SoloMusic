@@ -14,12 +14,17 @@ import android.view.WindowManager;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.android.customer.music.utils.LogUtils;
 import com.bumptech.glide.Glide;
 import com.android.customer.music.R;
 import com.hyphenate.chat.EMMessage;
 import com.hyphenate.chat.EMMessageBody;
 import com.hyphenate.chat.EMTextMessageBody;
+import com.tencent.imsdk.TIMCustomElem;
+import com.tencent.imsdk.TIMElem;
+import com.tencent.imsdk.TIMElemType;
 import com.tencent.imsdk.TIMMessage;
+import com.tencent.imsdk.TIMTextElem;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -134,7 +139,26 @@ public class WindowHeadToast implements View.OnTouchListener {
         TextView header_toast_title = headToastView.findViewById(R.id.header_toast_title);
         header_toast_title.setText(timMessage.getSenderNickname());
         TextView header_toast_name = headToastView.findViewById(R.id.header_toast_name);
-        header_toast_name.setText(timMessage.getConversation().getLastMsg().toString());
+        if (timMessage.getConversation() != null && timMessage.getConversation().getLastMsg() != null) {
+            LogUtils.d("msg", timMessage.getConversation().getLastMsg().toString());
+            int elementCount = timMessage.getConversation().getLastMsg().getElementCount();
+            StringBuilder builder = new StringBuilder();
+            for (int i = 0; i < elementCount; i++) {
+                TIMElem elem = timMessage.getElement(i);
+                if (elem != null) {
+                    if (elem.getType() == TIMElemType.Text) {
+                        TIMTextElem textElem = (TIMTextElem) elem;
+                        builder.append(textElem.getText());
+                    } else if (elem.getType() == TIMElemType.Custom) {
+                        TIMCustomElem customElem = (TIMCustomElem) elem;
+                        builder.append(new String(customElem.getExt()));
+                    }
+                }
+            }
+            header_toast_name.setText(builder.toString());
+        } else {
+            header_toast_name.setText("收到一条新消息");
+        }
 
 
         // 为headToastView设置Touch事件
