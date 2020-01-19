@@ -69,9 +69,6 @@
             android:name=".activity.FriendDetailActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.TxChatActivity"
-            android:screenOrientation="portrait" />
-        <activity
             android:name=".activity.WifiActivity"
             android:screenOrientation="portrait" />
         <activity

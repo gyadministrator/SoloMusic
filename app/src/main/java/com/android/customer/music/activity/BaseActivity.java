@@ -7,7 +7,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -24,14 +23,11 @@ import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
 
 import com.android.customer.music.R;
-import com.android.customer.music.constant.Constants;
 import com.android.customer.music.event.FriendChangeEvent;
 import com.android.customer.music.event.NewFriendEvent;
 import com.android.customer.music.event.NewFriendListEvent;
 import com.android.customer.music.model.NewFriendVo;
 import com.android.customer.music.service.AcceptApplyService;
-import com.android.customer.music.topmessage.view.WindowHeadToast;
-import com.android.customer.music.utils.GenerateUserSig;
 import com.android.customer.music.utils.LogUtils;
 import com.android.customer.music.utils.NetWorkUtils;
 import com.android.customer.music.utils.NotificationPermissionUtil;
@@ -42,16 +38,6 @@ import com.hyphenate.EMCallBack;
 import com.hyphenate.EMConnectionListener;
 import com.hyphenate.EMError;
 import com.hyphenate.chat.EMClient;
-import com.tencent.imsdk.TIMCallBack;
-import com.tencent.imsdk.TIMConnListener;
-import com.tencent.imsdk.TIMManager;
-import com.tencent.imsdk.TIMMessage;
-import com.tencent.imsdk.TIMMessageListener;
-import com.tencent.imsdk.TIMUserConfig;
-import com.tencent.imsdk.TIMUserProfile;
-import com.tencent.imsdk.TIMUserStatusListener;
-import com.tencent.imsdk.TIMValueCallBack;
-import com.tencent.qcloud.tim.uikit.utils.ToastUtil;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -176,104 +162,7 @@ public abstract class BaseActivity extends SwipeBackActivity {
         EMClient.getInstance().addConnectionListener(new MyConnectionListener());
         registerReceiver();
         ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.SYSTEM_ALERT_WINDOW}, 1001);
-
-        TIMManager.getInstance().addMessageListener(messageListener);
-
-        initListener();
     }
-
-    private void initListener() {
-        //基本用户配置
-        TIMUserConfig userConfig = new TIMUserConfig()
-                //设置用户状态变更事件监听器
-                .setUserStatusListener(new TIMUserStatusListener() {
-                    @Override
-                    public void onForceOffline() {
-                        //被其他终端踢下线
-                        ToastUtil.toastShortMessage("你的账户在其它设备上登录，请重新登录");
-                        LoginActivity.startActivity(mActivity);
-                    }
-
-                    @Override
-                    public void onUserSigExpired() {
-                        //用户签名过期了，需要刷新 userSig 重新登录 IM SDK
-                        loginIM();
-                    }
-                })
-                //设置连接状态事件监听器
-                .setConnectionListener(new TIMConnListener() {
-                    @Override
-                    public void onConnected() {
-                        ToastUtil.toastShortMessage("IM已连接");
-                    }
-
-                    @Override
-                    public void onDisconnected(int code, String desc) {
-                        ToastUtil.toastShortMessage("IM已经断开：" + code + " " + desc);
-                    }
-
-                    @Override
-                    public void onWifiNeedAuth(String name) {
-                        ToastUtil.toastShortMessage("onWifiNeedAuth：" + name);
-                    }
-                });
-
-        //禁用本地所有存储
-        //userConfig.disableStorage();
-        //开启消息已读回执
-        userConfig.enableReadReceipt(true);
-
-        //将用户配置与通讯管理器进行绑定
-        TIMManager.getInstance().setUserConfig(userConfig);
-    }
-
-    private void loginIM() {
-        SharedPreferences sharedPreferences = getSharedPreferences("login", MODE_PRIVATE);
-        //TODO 设置用户数据
-        final String username = sharedPreferences.getString("username", null);
-        String userSig = GenerateUserSig.genTestUserSig(username);
-        TIMManager.getInstance().login(username, userSig, new TIMCallBack() {
-            @Override
-            public void onError(int i, String s) {
-                loginIM();
-            }
-
-            @Override
-            public void onSuccess() {
-
-            }
-        });
-    }
-
-    private TIMMessageListener messageListener = new TIMMessageListener() {
-        @Override
-        public boolean onNewMessages(List<TIMMessage> list) {
-            if (list != null && list.size() > 0) {
-                for (TIMMessage timMessage : list) {
-                    if (!timMessage.isRead()) {
-                        Constants.unRead += 1;
-                    }
-                    //弹出顶部消息
-                    WindowHeadToast windowHeadToast = new WindowHeadToast(getApplicationContext());
-                    timMessage.getSenderProfile(new TIMValueCallBack<TIMUserProfile>() {
-                        @Override
-                        public void onError(int i, String s) {
-
-                        }
-
-                        @Override
-                        public void onSuccess(TIMUserProfile timUserProfile) {
-                            windowHeadToast.showCustomToast(timMessage, timUserProfile.getFaceUrl());
-                        }
-                    });
-                }
-            }
-            if (mActivity instanceof MainActivity) {
-                ((MainActivity) mActivity).setMsgPoint(2, Constants.unRead);
-            }
-            return false;
-        }
-    };
 
     private void registerReceiver() {
         friendReceiver = new FriendReceiver();
@@ -343,10 +232,6 @@ public abstract class BaseActivity extends SwipeBackActivity {
         //解绑eventBus
         EventBus.getDefault().unregister(this);
         EventBus.getDefault().removeStickyEvent(this);
-
-        if (messageListener != null) {
-            TIMManager.getInstance().removeMessageListener(messageListener);
-        }
     }
 
     @Override

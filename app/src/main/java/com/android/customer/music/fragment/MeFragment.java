@@ -60,10 +60,6 @@ import com.lzy.imagepicker.ImagePicker;
 import com.lzy.imagepicker.bean.ImageItem;
 import com.lzy.imagepicker.ui.ImageGridActivity;
 import com.lzy.imagepicker.view.CropImageView;
-import com.tencent.imsdk.TIMCallBack;
-import com.tencent.imsdk.TIMFriendshipManager;
-import com.tencent.imsdk.TIMUserProfile;
-import com.tencent.qcloud.tim.uikit.utils.ToastUtil;
 
 import java.io.File;
 import java.lang.reflect.Type;
@@ -650,8 +646,6 @@ public class MeFragment extends Fragment implements View.OnClickListener, XRecyc
                     @Override
                     public void onNext(Map map) {
                         HandlerUtils.isHandler(map, mActivity);
-
-                        updateIMIcon(url);
                     }
 
                     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
@@ -666,24 +660,6 @@ public class MeFragment extends Fragment implements View.OnClickListener, XRecyc
                         LoadingDialogHelper.dismiss();
                     }
                 });
-    }
-
-    private void updateIMIcon(String url) {
-        HashMap<String, Object> hashMap = new HashMap<>();
-        if (!TextUtils.isEmpty(url)) {
-            hashMap.put(TIMUserProfile.TIM_PROFILE_TYPE_KEY_FACEURL, url);
-        }
-        TIMFriendshipManager.getInstance().modifySelfProfile(hashMap, new TIMCallBack() {
-            @Override
-            public void onError(int i, String s) {
-                ToastUtil.toastShortMessage("获取用户头像失败：" + i + " " + s);
-            }
-
-            @Override
-            public void onSuccess() {
-
-            }
-        });
     }
 
     private void deleteAlbum(Integer id) {

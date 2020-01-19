@@ -1,4 +1,4 @@
-package com.android.customer.music.fragment.info;
+package com.android.customer.music.fragment;
 
 import androidx.lifecycle.ViewModel;
 

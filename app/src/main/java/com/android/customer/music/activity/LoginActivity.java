@@ -19,9 +19,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 
-import com.android.customer.music.utils.GenerateUserSig;
-import com.blankj.utilcode.util.ActivityUtils;
-import com.blankj.utilcode.util.ToastUtils;
 import com.android.customer.music.R;
 import com.android.customer.music.api.Api;
 import com.android.customer.music.constant.Constants;
@@ -31,11 +28,10 @@ import com.android.customer.music.model.LoginVo;
 import com.android.customer.music.model.UserInfoVo;
 import com.android.customer.music.utils.SharedPreferenceUtil;
 import com.android.customer.music.utils.UserManager;
+import com.blankj.utilcode.util.ActivityUtils;
+import com.blankj.utilcode.util.ToastUtils;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.tencent.imsdk.TIMCallBack;
-import com.tencent.imsdk.TIMManager;
-import com.tencent.qcloud.tim.uikit.utils.ToastUtil;
 
 import java.lang.reflect.Type;
 import java.util.Map;
@@ -78,20 +74,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
      */
     public static void startActivity(Activity activity) {
         ActivityUtils.finishAllActivitiesExceptNewest();
-        int loginStatus = TIMManager.getInstance().getLoginStatus();
-        if (loginStatus == TIMManager.TIM_STATUS_LOGINED) {
-            TIMManager.getInstance().logout(new TIMCallBack() {
-                @Override
-                public void onError(int i, String s) {
-                    ToastUtil.toastShortMessage("退出IM失败：" + i + " " + s);
-                }
-
-                @Override
-                public void onSuccess() {
-
-                }
-            });
-        }
         Intent intent = new Intent(activity, LoginActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         activity.startActivity(intent);
@@ -235,19 +217,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         edit.putString("username", user);
         edit.putString("password", password);
         edit.apply();
-
-        String userSig = GenerateUserSig.genTestUserSig(user);
-        TIMManager.getInstance().login(user, userSig, new TIMCallBack() {
-            @Override
-            public void onError(int i, String s) {
-                ToastUtil.toastShortMessage("连接IM失败：" + i + " " + s);
-            }
-
-            @Override
-            public void onSuccess() {
-
-            }
-        });
     }
 
 

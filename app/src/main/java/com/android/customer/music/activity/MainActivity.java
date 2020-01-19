@@ -23,12 +23,9 @@ import com.android.customer.music.R;
 import com.android.customer.music.constant.Constants;
 import com.android.customer.music.event.CustomEvent;
 import com.android.customer.music.fragment.FriendFragment;
-import com.android.customer.music.fragment.InfoFragment;
 import com.android.customer.music.fragment.ListenFragment;
 import com.android.customer.music.fragment.MeFragment;
-import com.android.customer.music.fragment.RecipeFragment;
-import com.android.customer.music.fragment.im.ContactFragment;
-import com.android.customer.music.fragment.im.ConversationFragment;
+import com.android.customer.music.fragment.MessageFragment;
 import com.android.customer.music.model.BottomBarVo;
 import com.android.customer.music.model.NewFriendVo;
 import com.android.customer.music.topmessage.utils.FloatWindowManager;
@@ -40,9 +37,6 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.hyphenate.chat.EMClient;
 import com.next.easynavigation.view.EasyNavigationBar;
-import com.tencent.imsdk.TIMConversation;
-import com.tencent.imsdk.TIMConversationType;
-import com.tencent.imsdk.TIMManager;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -106,10 +100,8 @@ public class MainActivity extends BaseActivity {
     protected void initData() {
         setSwipeBackEnable(false);
         fragments.add(ListenFragment.newInstance());
-        fragments.add(ContactFragment.newInstance());
-        fragments.add(ConversationFragment.newInstance());
-        //fragments.add(FriendFragment.newInstance());
-        //fragments.add(InfoFragment.newInstance());
+        fragments.add(FriendFragment.newInstance());
+        fragments.add(MessageFragment.newInstance());
         fragments.add(MeFragment.newInstance());
 
         navigationBar.titleItems(tabText)

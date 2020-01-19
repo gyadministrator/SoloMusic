@@ -3,23 +3,12 @@ package com.android.customer.music.activity;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
-import android.text.TextUtils;
 import android.view.View;
 import android.widget.TextView;
 
 import com.android.customer.music.R;
-import com.android.customer.music.event.DeleteEvent;
 import com.android.customer.music.helper.DialogHelper;
 import com.android.customer.music.listener.DialogListener;
-import com.bumptech.glide.Glide;
-import com.tencent.imsdk.TIMFriendshipManager;
-import com.tencent.imsdk.TIMUserProfile;
-import com.tencent.imsdk.TIMValueCallBack;
-import com.tencent.imsdk.friendship.TIMDelFriendType;
-import com.tencent.imsdk.friendship.TIMFriendResult;
-import com.tencent.qcloud.tim.uikit.utils.ToastUtil;
-
-import org.greenrobot.eventbus.EventBus;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -64,40 +53,7 @@ public class FriendDetailActivity extends BaseActivity implements View.OnClickLi
 
     @Override
     protected void initAction() {
-        getUsersInfo();
-    }
 
-    private void getUsersInfo() {
-        TIMFriendshipManager.getInstance().getUsersProfile(list, true, new TIMValueCallBack<List<TIMUserProfile>>() {
-            @Override
-            public void onError(int i, String s) {
-                ToastUtil.toastShortMessage("获取歌友资料失败：" + i + " " + s);
-            }
-
-            @Override
-            public void onSuccess(List<TIMUserProfile> timUserProfiles) {
-                setFriendInfo(timUserProfiles);
-            }
-        });
-    }
-
-    private void setFriendInfo(List<TIMUserProfile> timUserProfiles) {
-        if (timUserProfiles != null && timUserProfiles.size() > 0) {
-            if (timUserProfiles.size() == 1) {
-                TIMUserProfile timUserProfile = timUserProfiles.get(0);
-                if (timUserProfile != null) {
-                    tvNickName.setText(timUserProfile.getIdentifier());
-                    tvSex.setText(String.valueOf(timUserProfile.getGender()));
-                    tvBirthday.setText(millsToDateString(timUserProfile.getBirthday()));
-                    tvAddress.setText(timUserProfile.getLocation());
-                    if (!TextUtils.isEmpty(timUserProfile.getFaceUrl())) {
-                        Glide.with(mActivity).load(timUserProfile.getFaceUrl()).into(ivUser);
-                    }
-                }
-            } else {
-                ToastUtil.toastShortMessage("获取歌友资料失败");
-            }
-        }
     }
 
 
@@ -118,20 +74,6 @@ public class FriendDetailActivity extends BaseActivity implements View.OnClickLi
         DialogHelper.getInstance().showSureDialog(mActivity, "温馨提示", "你确定要删除该歌友吗？", new DialogListener() {
             @Override
             public void clickSure() {
-                List<String> identifiers = new ArrayList<>();
-                identifiers.add(userId);
-                TIMFriendshipManager.getInstance().deleteFriends(identifiers, TIMDelFriendType.TIM_FRIEND_DEL_SINGLE, new TIMValueCallBack<List<TIMFriendResult>>() {
-                    @Override
-                    public void onError(int i, String s) {
-                        ToastUtil.toastShortMessage("删除失败：" + i + " " + s);
-                    }
-
-                    @Override
-                    public void onSuccess(List<TIMFriendResult> timFriendResults) {
-                        ToastUtil.toastShortMessage("删除成功");
-                        EventBus.getDefault().post(new DeleteEvent());
-                    }
-                });
             }
 
             @Override

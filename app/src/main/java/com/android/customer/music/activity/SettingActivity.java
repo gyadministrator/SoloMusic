@@ -38,13 +38,6 @@ import com.hyphenate.chat.EMClient;
 import com.hyphenate.exceptions.HyphenateException;
 import com.lzy.imagepicker.ImagePicker;
 import com.lzy.imagepicker.view.CropImageView;
-import com.tencent.imsdk.TIMCallBack;
-import com.tencent.imsdk.TIMFriendshipManager;
-import com.tencent.imsdk.TIMManager;
-import com.tencent.imsdk.TIMValueCallBack;
-import com.tencent.imsdk.friendship.TIMFriendRequest;
-import com.tencent.imsdk.friendship.TIMFriendResult;
-import com.tencent.qcloud.tim.uikit.utils.ToastUtil;
 import com.yzq.zxinglibrary.android.CaptureActivity;
 import com.yzq.zxinglibrary.common.Constant;
 
@@ -112,20 +105,6 @@ public class SettingActivity extends BaseActivity implements AdapterView.OnItemC
                         CleanUtils.cleanExternalCache();
                         CleanUtils.cleanInternalCache();
                         LoginActivity.startActivity(mActivity);
-                        int loginStatus = TIMManager.getInstance().getLoginStatus();
-                        if (loginStatus == TIMManager.TIM_STATUS_LOGINED) {
-                            TIMManager.getInstance().logout(new TIMCallBack() {
-                                @Override
-                                public void onError(int i, String s) {
-                                    ToastUtil.toastShortMessage("退出失败：" + i + " " + s);
-                                }
-
-                                @Override
-                                public void onSuccess() {
-
-                                }
-                            });
-                        }
                     }
 
                     @Override
@@ -270,26 +249,13 @@ public class SettingActivity extends BaseActivity implements AdapterView.OnItemC
             @Override
             public void sure(String result) {
                 //参数为要添加的好友的username和添加理由
-                /*try {
+                try {
                     EMClient.getInstance().contactManager().addContact(username, result);
                     ToastUtils.showShort("发送请求成功");
                 } catch (HyphenateException e) {
                     e.printStackTrace();
                     ToastUtils.showShort("添加好友失败：" + e.getErrorCode() + e.getMessage());
-                }*/
-                TIMFriendRequest request = new TIMFriendRequest(username);
-                request.setAddWording(result);
-                TIMFriendshipManager.getInstance().addFriend(request, new TIMValueCallBack<TIMFriendResult>() {
-                    @Override
-                    public void onError(int i, String s) {
-                        ToastUtil.toastShortMessage("添加好友失败：" + i + " " + s);
-                    }
-
-                    @Override
-                    public void onSuccess(TIMFriendResult timFriendResult) {
-                        ToastUtil.toastShortMessage("发送请求成功");
-                    }
-                });
+                }
             }
         });
     }
