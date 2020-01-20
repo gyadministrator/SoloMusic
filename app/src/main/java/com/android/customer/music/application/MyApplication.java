@@ -40,7 +40,7 @@ public class MyApplication extends Application {
         initIM();
         initScreenSize();
         if (Constants.isDebug) {
-            initCrash();
+            //initCrash();
         }
     }
 

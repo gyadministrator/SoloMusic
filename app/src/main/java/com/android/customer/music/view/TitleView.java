@@ -13,7 +13,9 @@ import android.widget.TextView;
 import androidx.annotation.Nullable;
 
 import com.android.customer.music.R;
+import com.android.customer.music.activity.DrawerActivity;
 import com.android.customer.music.activity.MainActivity;
+import com.bumptech.glide.Glide;
 
 /**
  * Description: CustomerMusic
@@ -29,6 +31,9 @@ public class TitleView extends LinearLayout {
     private TextView tvTitle;
     private LinearLayout ll;
     private int bgColor;
+    private Context mContext;
+    private ImageView iv_back;
+    private ImageView iv_right;
 
     public TitleView(Context context) {
         this(context, null);
@@ -51,14 +56,23 @@ public class TitleView extends LinearLayout {
         init(context);
     }
 
+    public void setSrcBack(String url) {
+        Glide.with(mContext).load(url).into(iv_back);
+    }
+
+    public void setSrcRight(String url) {
+        Glide.with(mContext).load(url).into(iv_right);
+    }
+
     public void setTitle(String title) {
         tvTitle.setText(title);
     }
 
     private void init(final Context context) {
+        mContext = context;
         View view = LayoutInflater.from(context).inflate(R.layout.title_view, this);
-        ImageView iv_back = view.findViewById(R.id.iv_back);
-        ImageView iv_right = findViewById(R.id.iv_right);
+        iv_back = view.findViewById(R.id.iv_back);
+        iv_right = findViewById(R.id.iv_right);
         ll = findViewById(R.id.ll);
         tvTitle = findViewById(R.id.tv_title);
 
@@ -84,6 +98,11 @@ public class TitleView extends LinearLayout {
                 @Override
                 public void onClick(View view) {
                     if (context instanceof MainActivity) {
+                        if (rightClickListener != null) {
+                            rightClickListener.clickLeft(view);
+                            return;
+                        }
+                    } else if (context instanceof DrawerActivity) {
                         if (rightClickListener != null) {
                             rightClickListener.clickLeft(view);
                             return;

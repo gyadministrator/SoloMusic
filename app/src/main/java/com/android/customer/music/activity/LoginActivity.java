@@ -187,7 +187,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                                         setIMData(userInfoVo.getNickName(), password);
                                         preferenceUtil.saveObject(token, mActivity, Constants.CURRENT_TOKEN);
                                         preferenceUtil.saveObject(user, mActivity, Constants.CURRENT_USER_NAME);
-                                        startActivity(new Intent(mActivity, MainActivity.class));
+                                        startActivity(new Intent(mActivity, DrawerActivity.class));
                                         finish();
                                     }
                                 } else {

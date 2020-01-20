@@ -152,7 +152,7 @@ public class SplashActivity extends BaseActivity implements View.OnClickListener
     private void jumpActivity() {
         Intent intent;
         if (!TextUtils.isEmpty(token)) {
-            intent = new Intent(mActivity, MainActivity.class);
+            intent = new Intent(mActivity, DrawerActivity.class);
             startActivity(intent);
             finish();
         } else {

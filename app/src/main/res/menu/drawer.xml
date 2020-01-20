@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/navigation_item_about"
+            android:icon="@mipmap/about"
+            android:title="关于"
+            tools:ignore="HardcodedText" />
+        <item
+            android:id="@+id/navigation_item_clean"
+            android:icon="@mipmap/clean"
+            android:title="清除缓存"
+            tools:ignore="HardcodedText" />
+        <item
+            android:id="@+id/navigation_item_update"
+            android:icon="@mipmap/update"
+            android:title="检查更新"
+            tools:ignore="HardcodedText" />
+        <item
+            android:id="@+id/navigation_item_develop"
+            android:icon="@mipmap/develop"
+            android:title="赞助开发者"
+            tools:ignore="HardcodedText" />
+        <item
+            android:id="@+id/navigation_item_share"
+            android:icon="@mipmap/share"
+            android:title="分享APP"
+            tools:ignore="HardcodedText" />
+        <item
+            android:id="@+id/navigation_item_notice"
+            android:icon="@mipmap/notice"
+            android:title="通知"
+            tools:ignore="HardcodedText" />
+        <item
+            android:id="@+id/navigation_item_logout"
+            android:icon="@mipmap/exit"
+            android:title="退出登录"
+            tools:ignore="HardcodedText" />
+    </group>
+</menu>

@@ -11,13 +11,12 @@
     android:paddingEnd="@dimen/marginSize"
     tools:ignore="RtlSymmetry">
 
-    <ImageView
+    <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/iv_back"
         android:layout_width="25dp"
         android:layout_height="25dp"
         android:layout_gravity="center_vertical"
         android:backgroundTint="@color/white"
-        android:scaleType="fitXY"
         android:src="@mipmap/back"
         tools:targetApi="lollipop" />
 
@@ -31,13 +30,12 @@
         android:textColor="@color/white"
         android:textSize="@dimen/navTitleSize" />
 
-    <ImageView
+    <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/iv_right"
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:layout_gravity="center_vertical"
         android:backgroundTint="@color/white"
-        android:scaleType="fitXY"
         android:src="@mipmap/user"
         tools:targetApi="lollipop" />
 </LinearLayout>

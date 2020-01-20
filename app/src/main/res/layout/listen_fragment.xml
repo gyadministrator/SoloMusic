@@ -13,8 +13,8 @@
             android:id="@+id/navigation"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:showBack="false"
             app:showRight="true"
+            app:srcBack="@mipmap/user"
             app:srcRight="@mipmap/search"
             app:title="@string/bottom_listen" />
 
