@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
-
-    <group android:checkableBehavior="single">
+    <group android:id="@+id/gp_one">
         <item
             android:id="@+id/navigation_item_about"
             android:icon="@mipmap/about"
@@ -13,6 +12,8 @@
             android:icon="@mipmap/clean"
             android:title="清除缓存"
             tools:ignore="HardcodedText" />
+    </group>
+    <group android:id="@+id/gp_two">
         <item
             android:id="@+id/navigation_item_update"
             android:icon="@mipmap/update"
@@ -28,6 +29,8 @@
             android:icon="@mipmap/share"
             android:title="分享APP"
             tools:ignore="HardcodedText" />
+    </group>
+    <group android:id="@+id/gp_three">
         <item
             android:id="@+id/navigation_item_notice"
             android:icon="@mipmap/notice"

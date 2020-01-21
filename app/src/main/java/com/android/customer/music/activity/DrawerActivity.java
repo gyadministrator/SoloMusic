@@ -1,12 +1,14 @@
 package com.android.customer.music.activity;
 
 import android.Manifest;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.os.Build;
-import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
@@ -25,6 +27,7 @@ import com.android.customer.music.adapter.MainAdapter;
 import com.android.customer.music.adapter.RecyclerAdapter;
 import com.android.customer.music.api.Api;
 import com.android.customer.music.constant.Constants;
+import com.android.customer.music.event.CustomEvent;
 import com.android.customer.music.helper.DialogHelper;
 import com.android.customer.music.helper.LoadingDialogHelper;
 import com.android.customer.music.helper.RetrofitHelper;
@@ -35,9 +38,10 @@ import com.android.customer.music.model.BottomBarVo;
 import com.android.customer.music.model.RecommendMusicModel;
 import com.android.customer.music.model.UserInfoVo;
 import com.android.customer.music.presenter.MainPresenter;
+import com.android.customer.music.topmessage.utils.FloatWindowManager;
 import com.android.customer.music.utils.DataCleanManager;
 import com.android.customer.music.utils.HandlerUtils;
-import com.android.customer.music.utils.LogUtils;
+import com.android.customer.music.utils.NotificationPermissionUtil;
 import com.android.customer.music.utils.SharedPreferenceUtil;
 import com.android.customer.music.utils.UpdateManager;
 import com.android.customer.music.utils.UserManager;
@@ -88,6 +92,10 @@ public class DrawerActivity extends BaseActivity implements OnRefreshListener, T
     private BottomBarView bottomBarView;
     private NavigationView navigationView;
     private DrawerLayout drawerLayout;
+    private final String[] PERMISSIONS = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE
+            , Manifest.permission.CAMERA};
+    private MyMusicReceiver musicReceiver;
+    private static final int REQUEST_CODE = 1002;
 
     @Override
     protected void initView() {
@@ -119,8 +127,65 @@ public class DrawerActivity extends BaseActivity implements OnRefreshListener, T
             Glide.with(mActivity).load(userInfoVo.getAvatarUrl()).into(imageView);
             textView.setText(userInfoVo.getNickName());
         }
+        musicReceiver = new MyMusicReceiver();
+        IntentFilter filter = new IntentFilter();
+        filter.addAction("mainMusic");
+        registerReceiver(musicReceiver, filter);
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (musicReceiver != null) {
+            unregisterReceiver(musicReceiver);
+        }
+    }
+
+
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    private void checkNoticePermission() {
+        NotificationPermissionUtil.checkNotificationEnable(mActivity);
+        FloatWindowManager.getInstance().applyOrShowFloatWindow(this);
+    }
+
+    public void play(BottomBarVo bottomBarVo) {
+        if (bottomBarView != null) {
+            bottomBarView.play(bottomBarVo);
+        }
+    }
+
+    @Override
+    public void onEvent(Object object) {
+        super.onEvent(object);
+        if (object instanceof CustomEvent) {
+            setBottomBarData();
+        }
+    }
+
+    private void requestPermission() {
+        for (String permission : PERMISSIONS) {
+            if (ActivityCompat.checkSelfPermission(mActivity, permission) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(mActivity, PERMISSIONS, REQUEST_CODE);
+            }
+        }
+    }
+
+    @Override
+    protected void musicStop() {
+        super.musicStop();
+        bottomBarView.close();
+    }
+
+    private void setBottomBarData() {
+        SharedPreferenceUtil preferenceUtil = new SharedPreferenceUtil();
+        String json = preferenceUtil.getObject(mActivity, Constants.CURRENT_BOTTOM_VO);
+        Type type = new TypeToken<BottomBarVo>() {
+        }.getType();
+        BottomBarVo bottomBarVo = new Gson().fromJson(json, type);
+        bottomBarView.setBottomBarVo(bottomBarVo);
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     protected void initAction() {
         mainPresenter = new MainPresenter<>(this);
@@ -134,12 +199,20 @@ public class DrawerActivity extends BaseActivity implements OnRefreshListener, T
 
         SharedPreferenceUtil preferenceUtil = new SharedPreferenceUtil();
         token = preferenceUtil.getObject(mActivity, Constants.CURRENT_TOKEN);
+
+
+        requestPermission();
+        //检测通知栏权限
+        checkNoticePermission();
+        setBottomBarData();
+
         if (!isRefresh) {
-            checkUpdate();
+            checkUpdate(false);
         }
     }
 
-    private void checkUpdate() {
+    private void checkUpdate(boolean flag) {
+        LoadingDialogHelper.show(mActivity, "检查更新中...");
         String packageName = AppUtils.getAppPackageName();
         Integer versionCode = AppUtils.getAppVersionCode();
         RetrofitHelper retrofitHelper = RetrofitHelper.getInstance();
@@ -161,28 +234,33 @@ public class DrawerActivity extends BaseActivity implements OnRefreshListener, T
                             }.getType();
                             Gson gson = new Gson();
                             apkModel = gson.fromJson(Objects.requireNonNull(gson.toJson(map.get("data"))), type);
-                            if (apkModel != null) {
-                                int appVersionCode = AppUtils.getAppVersionCode();
-                                if (apkModel.getApkCode() > appVersionCode) {
-                                    showNotice(apkModel);
-                                }
-                                SharedPreferences preferences = mActivity.getSharedPreferences("apk", Context.MODE_PRIVATE);
-                                SharedPreferences.Editor edit = preferences.edit();
-                                edit.putString("downloadUrl", apkModel.getDownloadUrl());
-                                edit.apply();
+                            int appVersionCode = AppUtils.getAppVersionCode();
+                            if (apkModel != null && apkModel.getApkCode() > appVersionCode) {
+                                showNotice(apkModel);
+                            } else {
+                                if (!flag) return;
+                                ToastUtils.showShort("没有版本可更新！");
                             }
+                        } else {
+                            if (!flag) return;
+                            ToastUtils.showShort("没有版本可更新！");
                         }
                     }
 
                     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
                     @Override
                     public void onError(Throwable e) {
+                        if (flag) {
+                            LoadingDialogHelper.dismiss();
+                        }
                         Beta.checkUpgrade();
                     }
 
                     @Override
                     public void onComplete() {
-
+                        if (flag) {
+                            LoadingDialogHelper.dismiss();
+                        }
                     }
                 });
     }
@@ -202,6 +280,7 @@ public class DrawerActivity extends BaseActivity implements OnRefreshListener, T
         return R.layout.activity_drawer;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     public void onRefresh(@NonNull RefreshLayout refreshLayout) {
         isRefresh = true;
@@ -241,7 +320,7 @@ public class DrawerActivity extends BaseActivity implements OnRefreshListener, T
             @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
             @Override
             public void play(BottomBarVo bottomBarVo) {
-                ((MainActivity) mActivity).play(bottomBarVo);
+                bottomBarView.play(bottomBarVo);
             }
         });
     }
@@ -269,7 +348,6 @@ public class DrawerActivity extends BaseActivity implements OnRefreshListener, T
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-        LogUtils.e("menu", menuItem.getMenuInfo().toString());
         switch (menuItem.getItemId()) {
             case R.id.navigation_item_about:
                 //关于
@@ -281,7 +359,7 @@ public class DrawerActivity extends BaseActivity implements OnRefreshListener, T
                 break;
             case R.id.navigation_item_update:
                 //检测更新
-                checkUpdate();
+                checkUpdate(true);
                 break;
             case R.id.navigation_item_develop:
                 //赞助开发者
@@ -300,6 +378,7 @@ public class DrawerActivity extends BaseActivity implements OnRefreshListener, T
                 logout();
                 break;
         }
+        drawerLayout.closeDrawer(GravityCompat.START);
         return true;
     }
 
@@ -361,5 +440,18 @@ public class DrawerActivity extends BaseActivity implements OnRefreshListener, T
         imagePicker.setFocusHeight(800);                      //裁剪框的高度。单位像素（圆形自动取宽高最小值）
         imagePicker.setOutPutX(1000);                         //保存文件的宽度。单位像素
         imagePicker.setOutPutY(1000);                         //保存文件的高度。单位像素
+    }
+
+    private class MyMusicReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            if (action != null) {
+                if ("mainMusic".equals(action)) {
+                    setBottomBarData();
+                }
+            }
+        }
     }
 }

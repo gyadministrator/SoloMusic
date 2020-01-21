@@ -185,7 +185,7 @@ public class MainActivity extends BaseActivity {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-    private void checkPermission() {
+    private void checkNoticePermission() {
         NotificationPermissionUtil.checkNotificationEnable(mActivity);
         FloatWindowManager.getInstance().applyOrShowFloatWindow(this);
     }
@@ -290,7 +290,7 @@ public class MainActivity extends BaseActivity {
     protected void initAction() {
         requestPermission();
         //检测通知栏权限
-        checkPermission();
+        checkNoticePermission();
         setBottomBarData();
     }
 
