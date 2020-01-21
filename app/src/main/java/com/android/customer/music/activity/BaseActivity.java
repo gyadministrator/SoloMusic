@@ -193,7 +193,7 @@ public abstract class BaseActivity extends SwipeBackActivity {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            if (!this.getClass().getSimpleName().contains("MainActivity")) {
+            if (!this.getClass().getSimpleName().contains("DrawerActivity")) {
                 onBackPressed();
                 return true;
             }
