@@ -18,7 +18,7 @@ import android.os.IBinder;
 import androidx.annotation.RequiresApi;
 
 import com.android.customer.music.R;
-import com.android.customer.music.activity.MainActivity;
+import com.android.customer.music.activity.DrawerActivity;
 import com.android.customer.music.constant.Constants;
 import com.android.customer.music.event.CustomEvent;
 import com.android.customer.music.model.BottomBarVo;
@@ -180,7 +180,7 @@ public class MusicService extends Service {
          * 通知栏点击跳转的intent
          */
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
-                new Intent(this, MainActivity.class), PendingIntent.FLAG_CANCEL_CURRENT);
+                new Intent(this, DrawerActivity.class), PendingIntent.FLAG_CANCEL_CURRENT);
 
         /**
          * 设置notification在前台展示

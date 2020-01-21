@@ -18,6 +18,7 @@ import androidx.annotation.RequiresApi;
 
 import com.android.customer.music.BuildConfig;
 import com.android.customer.music.R;
+import com.android.customer.music.activity.DrawerActivity;
 import com.android.customer.music.activity.MainActivity;
 import com.android.customer.music.constant.Constants;
 import com.android.customer.music.model.BottomBarVo;
@@ -67,7 +68,7 @@ public class NotificationUtils {
         remoteViews.setTextViewText(R.id.back_music_title, title);
         remoteViews.setTextViewText(R.id.back_music_singer, bottomBarVo.getAuthor());
         remoteViews.setImageViewResource(R.id.back_play, image);
-        PendingIntent intent = PendingIntent.getActivity(context, -1, new Intent(context, MainActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent intent = PendingIntent.getActivity(context, -1, new Intent(context, DrawerActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
         remoteViews.setOnClickPendingIntent(R.id.ll_back, intent);
         Intent service = new Intent(context, MusicService.class);
         Bundle bundle = new Bundle();
@@ -105,7 +106,7 @@ public class NotificationUtils {
         }
         remoteViews.setTextViewText(R.id.tv_name, title);
         remoteViews.setTextViewText(R.id.tv_reason, newFriendVo.getReason());
-        PendingIntent intent = PendingIntent.getActivity(context, -1, new Intent(context, MainActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent intent = PendingIntent.getActivity(context, -1, new Intent(context, DrawerActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
         remoteViews.setOnClickPendingIntent(R.id.ll_content, intent);
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.O_MR1) {
             builder.setCustomContentView(remoteViews);
@@ -125,7 +126,7 @@ public class NotificationUtils {
         remoteViews = new RemoteViews(context.getPackageName(), R.layout.download_music_progress);
         remoteViews.setProgressBar(R.id.progress, 100, progress, false);
         remoteViews.setTextViewText(R.id.tv_progress, "正在下载中..." + progress + "%");
-        PendingIntent intent = PendingIntent.getActivity(context, -1, new Intent(context, MainActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent intent = PendingIntent.getActivity(context, -1, new Intent(context, DrawerActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
         remoteViews.setOnClickPendingIntent(R.id.ll_content, intent);
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.O_MR1) {
             builder.setCustomContentView(remoteViews);

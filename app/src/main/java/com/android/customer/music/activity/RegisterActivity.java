@@ -140,7 +140,7 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
                                         setIMData(registerVo.getUsername(), registerVo.getPassword());
                                         SharedPreferenceUtil preferenceUtil = new SharedPreferenceUtil();
                                         preferenceUtil.saveObject(token, mActivity, Constants.CURRENT_TOKEN);
-                                        startActivity(new Intent(mActivity, MainActivity.class));
+                                        startActivity(new Intent(mActivity, DrawerActivity.class));
                                         finish();
                                     }
                                 } else {
