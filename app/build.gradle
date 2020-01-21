@@ -61,8 +61,8 @@ android {
         applicationId "com.android.customer.music"
         minSdkVersion 16
         targetSdkVersion 29
-        versionCode 1
-        versionName "1.0"
+        versionCode 2
+        versionName "1.2"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         //必须要保证所有的flavor 都属于同一个维度
         flavorDimensions "default"
