@@ -131,6 +131,14 @@ public class DrawerActivity extends BaseActivity implements OnRefreshListener, T
         IntentFilter filter = new IntentFilter();
         filter.addAction("mainMusic");
         registerReceiver(musicReceiver, filter);
+
+        imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                drawerLayout.closeDrawer(GravityCompat.START);
+                startActivity(new Intent(mActivity, MyActivity.class));
+            }
+        });
     }
 
     @Override

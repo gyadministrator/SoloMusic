@@ -62,7 +62,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="UnusedAttribute">
-        <activity android:name=".activity.DrawerActivity"></activity>
+        <activity android:name=".activity.MyActivity"></activity>
+        <activity android:name=".activity.DrawerActivity" />
         <activity
             android:name=".activity.NoticeActivity"
             android:screenOrientation="portrait" />
